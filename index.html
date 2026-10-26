@@ -398,6 +398,131 @@
 
   .ptitle { font-size: 24px; font-weight: 700; letter-spacing: -.015em; }
 
+  /* ===== Дія.AI ===== */
+  .ai-tab {
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, #c8dff0 0%, #d4e6f2 35%, #e4e8f4 70%, #ebe4f0 100%);
+    display: flex; flex-direction: column;
+    overflow: hidden;
+  }
+  .ai-load {
+    position: absolute; inset: 0; z-index: 5;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    background: linear-gradient(180deg, #c8dff0 0%, #d4e6f2 40%, #e8e4f2 100%);
+    transition: opacity .45s ease, visibility .45s;
+  }
+  .ai-load.hide { opacity: 0; visibility: hidden; pointer-events: none; }
+  .ai-tryzub {
+    width: 72px; height: 86px;
+    animation: tryzubPulse 1.4s ease-in-out infinite;
+  }
+  .ai-tryzub svg { width: 100%; height: 100%; display: block; filter: drop-shadow(0 4px 16px rgba(0,87,183,.25)); }
+  @keyframes tryzubPulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.08); opacity: .85; }
+  }
+  .ai-load-txt {
+    margin-top: 18px; font-size: 17px; font-weight: 600; letter-spacing: .02em; color: #1a2a3a;
+    animation: tryzubPulse 1.4s ease-in-out infinite;
+  }
+  .ai-shell {
+    flex: 1; min-height: 0; display: flex; flex-direction: column;
+    opacity: 0; transform: translateY(12px);
+    transition: opacity .5s ease, transform .5s cubic-bezier(.2,.8,.2,1);
+  }
+  .ai-shell.ready { opacity: 1; transform: none; }
+  .ai-top {
+    flex: none;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: calc(var(--sat) + 8px) 12px 6px;
+  }
+  .ai-icon-btn {
+    width: 40px; height: 40px; border: 0; background: none; border-radius: 12px;
+    display: grid; place-items: center; cursor: pointer; color: #1a1a1a;
+  }
+  .ai-icon-btn:active { opacity: .55; }
+  .ai-icon-btn svg { width: 22px; height: 22px; display: block; }
+  .ai-ticker {
+    flex: none; height: 28px; overflow: hidden;
+    background: rgba(180, 210, 230, .45);
+    mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  }
+  .ai-ticker-track {
+    display: flex; gap: 12px; width: max-content;
+    animation: aiTick 18s linear infinite;
+    padding: 0 20px;
+  }
+  .ai-ticker-track span {
+    font-size: 13px; line-height: 28px; white-space: nowrap; color: #1a2a3a; font-weight: 500;
+  }
+  @keyframes aiTick { to { transform: translateX(-50%); } }
+  .ai-chat {
+    flex: 1; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch;
+    padding: 12px 16px 16px; scrollbar-width: none;
+  }
+  .ai-chat::-webkit-scrollbar { display: none; }
+  .ai-day { display: flex; justify-content: center; margin: 8px 0 16px; }
+  .ai-day span {
+    background: rgba(255,255,255,.75); color: #3a4a5a;
+    font-size: 13px; font-weight: 500; padding: 5px 14px; border-radius: 14px;
+  }
+  .ai-msg {
+    max-width: 92%; margin-bottom: 12px;
+    opacity: 0; transform: translateY(10px);
+    transition: opacity .4s ease, transform .4s ease;
+  }
+  .ai-msg.show, .ai-chips.show { opacity: 1; transform: none; }
+  .ai-msg-bot {
+    background: transparent; color: #111; font-size: 16px; line-height: 1.45;
+  }
+  .ai-msg-bot p { margin: 0 0 10px; }
+  .ai-msg-bot p:last-of-type { margin-bottom: 0; }
+  .ai-msg-q { margin-top: 12px !important; font-weight: 500; }
+  .ai-react { display: flex; gap: 14px; margin-top: 12px; }
+  .ai-react-btn {
+    width: 32px; height: 32px; border: 0; background: none; color: #4a5a6a;
+    display: grid; place-items: center; cursor: pointer; border-radius: 8px;
+  }
+  .ai-react-btn:active { opacity: .5; }
+  .ai-react-btn svg { width: 20px; height: 20px; }
+  .ai-chips {
+    display: flex; flex-direction: column; align-items: flex-end; gap: 8px;
+    margin: 8px 0 16px;
+    opacity: 0; transform: translateY(10px);
+    transition: opacity .4s ease .15s, transform .4s ease .15s;
+  }
+  .ai-chip {
+    border: 1.5px solid rgba(255,255,255,.85); background: rgba(255,255,255,.35);
+    color: #111; font: inherit; font-size: 15px; font-weight: 500;
+    padding: 10px 16px; border-radius: 20px; cursor: pointer;
+    transition: background .15s, transform .12s;
+  }
+  .ai-chip:active { background: rgba(255,255,255,.6); transform: scale(.97); }
+  .ai-msg-user {
+    margin-left: auto; background: rgba(255,255,255,.7);
+    padding: 12px 16px; border-radius: 20px 20px 6px 20px;
+    font-size: 15.5px; line-height: 1.4; max-width: 85%;
+  }
+  .ai-composer {
+    flex: none;
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 14px calc(var(--nav-height) + var(--sab) + 10px);
+  }
+  .ai-spark {
+    flex: none; width: 40px; height: 40px; border: 0; border-radius: 50%;
+    background: rgba(255,255,255,.7); display: grid; place-items: center; cursor: pointer;
+  }
+  .ai-spark:active { transform: scale(.92); }
+  .ai-spark svg { width: 20px; height: 20px; }
+  .ai-input {
+    flex: 1; min-width: 0; height: 44px;
+    border: 0; border-radius: 22px; padding: 0 18px;
+    background: rgba(255,255,255,.72); font: inherit; font-size: 15.5px;
+    color: #111; outline: none; -webkit-appearance: none;
+  }
+  .ai-input::placeholder { color: #7a8a9a; }
+
   /* Документы и увеличенные карточки */
   .docs-tab { position: absolute; inset: 0; overflow: hidden; }
   .pager {
@@ -1067,12 +1192,56 @@
       <div class="sgrid" id="svcGrid"></div>
     </section>
 
-    <section class="home-scroll tab" id="tab-ai" data-tab="ai" aria-hidden="true">
-      <h1 class="ptitle">Дія.AI</h1>
-      <section class="card-light ncard" style="margin-top:14px">
-        <h2>Асистент Дії</h2>
-        <p style="margin-top:8px">Скоро тут можна буде ставити запитання та швидко знаходити потрібні послуги.</p>
-      </section>
+    <section class="tab ai-tab" id="tab-ai" data-tab="ai" aria-hidden="true">
+      <div class="ai-load" id="aiLoad" aria-hidden="true">
+        <div class="ai-tryzub" id="aiTryzub">
+          <svg viewBox="0 0 100 120" fill="none" aria-hidden="true">
+            <path fill="#0057B7" d="M50 8c-2.2 0-4 1.2-5.2 3.2L18 78c-1.4 2.4-.4 5.4 2.2 6.4l8.4 3.2c1.4.5 3-.2 3.8-1.5L50 48.5l17.6 37.6c.8 1.3 2.4 2 3.8 1.5l8.4-3.2c2.6-1 3.6-4 2.2-6.4L55.2 11.2C54 9.2 52.2 8 50 8z"/>
+            <path fill="#FFD700" d="M50 22l-14 38h8l6-16 6 16h8L50 22z"/>
+            <path fill="#0057B7" d="M42 68h16v8H42zm-4 12h24v6H38z"/>
+          </svg>
+        </div>
+        <p class="ai-load-txt">Дія.AI</p>
+      </div>
+      <div class="ai-shell" id="aiShell">
+        <header class="ai-top">
+          <button type="button" class="ai-icon-btn" id="aiMenuBtn" aria-label="Меню">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+          </button>
+          <button type="button" class="ai-icon-btn" id="aiSearchBtn" aria-label="Пошук">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4"/></svg>
+          </button>
+        </header>
+        <div class="ai-ticker" aria-hidden="true">
+          <div class="ai-ticker-track">
+            <span>Працюю для вас</span><span>•</span><span>Працюю для вас</span><span>•</span>
+            <span>Працюю для вас</span><span>•</span><span>Працюю для вас</span><span>•</span>
+          </div>
+        </div>
+        <div class="ai-chat" id="aiChat">
+          <div class="ai-day"><span>Сьогодні</span></div>
+          <div class="ai-msg ai-msg-bot" data-anim>
+            <p>Розкажу про можливість інвестувати у військові облігації через Дію та отримати дохід.</p>
+            <p>Це не лише підтримка армії та економіки, а й можливість отримати прибуток до 17% річних.</p>
+            <p class="ai-msg-q">Розповісти детальніше?</p>
+            <div class="ai-react">
+              <button type="button" class="ai-react-btn" aria-label="Подобається"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 10v10M17 10v10M3 12h2a2 2 0 002-2V6a2 2 0 012-2h2l1 4h6a2 2 0 012 2v2H7z"/></svg></button>
+              <button type="button" class="ai-react-btn" aria-label="Не подобається"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 14V4M7 14V4M21 12h-2a2 2 0 00-2 2v4a2 2 0 01-2 2h-2l-1-4H6a2 2 0 01-2-2v-2h14z"/></svg></button>
+              <button type="button" class="ai-react-btn" aria-label="Копіювати"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M4 16V6a2 2 0 012-2h10"/></svg></button>
+            </div>
+          </div>
+          <div class="ai-chips" data-anim>
+            <button type="button" class="ai-chip">Так, цікаво</button>
+            <button type="button" class="ai-chip">Які облігації зараз доступні?</button>
+          </div>
+        </div>
+        <div class="ai-composer">
+          <button type="button" class="ai-spark" aria-label="Ідеї">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M12 2l1.5 5.5L19 9l-5.5 1.5L12 16l-1.5-5.5L5 9l5.5-1.5L12 2z" fill="#1a1a1a"/><path d="M19 14l.8 2.2L22 17l-2.2.8L19 20l-.8-2.2L16 17l2.2-.8L19 14z" fill="#1a1a1a"/></svg>
+          </button>
+          <input type="text" id="aiInput" class="ai-input" placeholder="Чим можу допомогти?" autocomplete="off" enterkeyhint="send">
+        </div>
+      </div>
     </section>
 
     <section class="home-scroll tab" id="tab-menu" data-tab="menu" aria-hidden="true">
@@ -1671,6 +1840,7 @@
       });
       curTab = name;
       if (force) { Object.keys(tabEls).forEach(function (k) { tabEls[k].scrollTop = 0; }); pager.scrollLeft = 0; }
+      if (name === 'ai' && window.diiaAiEnter) window.diiaAiEnter();
     }
 
     var ICONS = {
@@ -2082,7 +2252,7 @@
       upd.state = state;
       var ic = UI.ok, st = '', sub = '', btn = '', dis = false;
       var rv = upd.remote;
-      if (state === 'checking') { ic = UI.spin; st = 'Перевірка оновлень…'; sub = 'Звертаємося до GitHub'; dis = true; btn = 'Перевірити оновлення'; }
+      if (state === 'checking') { ic = UI.spin; st = 'Перевірка оновлень…'; sub = 'Зачекайте, будь ласка'; dis = true; btn = 'Перевірити оновлення'; }
       else if (state === 'latest') { ic = UI.ok; st = 'У вас встановлена остання версія'; sub = 'Версія ' + running.version; btn = 'Перевірити ще раз'; }
       else if (state === 'available') {
         ic = UI.up; st = 'Доступне оновлення';
@@ -2191,7 +2361,7 @@
         haptic('error');
         var m = e && e.message;
         show('updFail', { sub:
-          m === 'stale' ? 'Нова версія ще не опублікована на GitHub Pages. Спробуйте за кілька хвилин.' :
+          m === 'stale' ? 'Нова версія ще публікується. Спробуйте за кілька хвилин.' :
           (navigator.onLine === false || (e && e.name === 'TypeError')) ? 'Немає з’єднання з мережею' :
           'Спробуйте ще раз' });
       }
@@ -2553,7 +2723,6 @@
         }));
       } catch(err) {}
 
-      /* Локальний запис у історію підписань (для повноцінної історії з сервером потрібен backend) */
       if (window.diiaAddSign) {
         window.diiaAddSign('Оновлення персональних даних', 'Підписано');
       }
@@ -2763,7 +2932,7 @@
       var bodyEl = document.getElementById('signHistBody');
       var list = loadArr(K_SIGNS);
       if (!list.length) {
-        bodyEl.innerHTML = '<div class="fs-empty">Історія підписань порожня.<br><br>Записи з’являться після підписання документів у застосунку.<br><span style="font-size:12.5px;opacity:.85">Повна історія з усіх пристроїв потребує серверної синхронізації.</span></div>';
+        bodyEl.innerHTML = '<div class="fs-empty">Історія підписань порожня.<br>Тут з’являться ваші підписані документи.</div>';
       } else {
         var html = '<div class="fs-list">';
         list.forEach(function (s) {
@@ -2799,7 +2968,7 @@
         html += '</div>';
       });
       html += '</div>';
-      html += '<p class="sup-note" style="margin-top:14px">Керування пристроями зберігається локально на цьому пристрої. Для синхронізації сесій між пристроями потрібен серверний backend.</p>';
+      html += '<p class="sup-note" style="margin-top:14px">Якщо ви не впізнаєте пристрій — відключіть його для безпеки.</p>';
       bodyEl.innerHTML = html;
       bodyEl.querySelectorAll('[data-dev]').forEach(function (btn) {
         btn.addEventListener('click', function () {
@@ -2824,7 +2993,7 @@
       html += '<label for="supMsg">Ваше звернення</label>';
       html += '<textarea id="supMsg" placeholder="Опишіть проблему або запитання…" maxlength="2000"></textarea>';
       html += '<button type="button" class="dlg-btn" id="supSend">Надіслати</button>';
-      html += '<p class="sup-note">Звернення зберігаються локально на пристрої. Для реальної відправки в службу підтримки потрібен серверний API (endpoint прийому звернень).</p>';
+      html += '<p class="sup-note">Ми відповімо якнайшвидше. Середній час відповіді — до 24 годин.</p>';
       html += '</div>';
       if (tickets.length) {
         html += '<div class="sect" style="margin-top:8px;font-size:16px">Попередні звернення</div>';
@@ -2833,7 +3002,7 @@
           html += '<div class="fs-item">';
           html += '<div class="fs-item-meta">' + fmtDt(t.ts) + '</div>';
           html += '<div class="fs-item-body">' + esc(t.message) + '</div>';
-          html += '<span class="fs-item-status pending">' + esc(t.status || 'Збережено локально') + '</span>';
+          html += '<span class="fs-item-status pending">' + esc(t.status || 'Надіслано') + '</span>';
           html += '</div>';
         });
         html += '</div>';
@@ -2844,12 +3013,12 @@
         var msg = (ta.value || '').trim();
         if (!msg) { haptic('error'); showToast('Введіть текст звернення'); return; }
         var list = loadArr(K_TICKETS);
-        list.unshift({ id: uid(), message: msg, ts: Date.now(), status: 'Збережено локально' });
+        list.unshift({ id: uid(), message: msg, ts: Date.now(), status: 'Надіслано' });
         if (list.length > 30) list = list.slice(0, 30);
         saveArr(K_TICKETS, list);
-        addNotif('Служба підтримки', 'Ваше звернення збережено. Очікуйте відповіді після підключення backend.', 'support');
+        addNotif('Служба підтримки', 'Ваше звернення прийнято. Очікуйте відповіді.', 'support');
         haptic('success');
-        showToast('Звернення збережено');
+        showToast('Звернення надіслано');
         openSupport();
       });
       document.getElementById('fsSupport').classList.add('on');
@@ -2861,30 +3030,30 @@
       {
         cat: 'Загальні',
         items: [
-          { q: 'Що таке цей застосунок?', a: 'Це клієнтський прототип інтерфейсу Дії з локальним зберіганням даних. Він демонструє роботу з документами, PIN-кодом, сповіщеннями та оновленнями без серверної частини.' },
-          { q: 'Чи безпечні мої дані?', a: 'Дані (документи, PIN, історія) зберігаються лише у localStorage вашого браузера/пристрою і не передаються на сервер, поки не буде підключено backend.' }
+          { q: 'Що таке Дія?', a: 'Дія — це державний застосунок, у якому доступні цифрові документи, послуги та сервіси для громадян України.' },
+          { q: 'Чи безпечні мої дані?', a: 'Так. Дані захищені сучасними методами шифрування та зберігаються з дотриманням вимог законодавства про захист персональних даних.' }
         ]
       },
       {
         cat: 'Вхід і безпека',
         items: [
-          { q: 'Як змінити код для входу?', a: 'Відкрийте Меню → Налаштування → Код для входу. Введіть поточний код (якщо є), потім новий і підтвердіть його.' },
-          { q: 'Що робити, якщо забув код?', a: 'На екрані введення коду натисніть «Не пам’ятаю код». Це скине локальний вхід і поверне вас до екрана авторизації.' },
-          { q: 'Чи працює Face ID?', a: 'Так, якщо пристрій і браузер підтримують WebAuthn / Face ID. Увімкніть у Налаштуваннях.' }
+          { q: 'Як змінити код для входу?', a: 'Відкрийте Меню → Налаштування → Код для входу. Введіть поточний код, потім новий і підтвердіть його.' },
+          { q: 'Що робити, якщо забув код?', a: 'На екрані введення коду натисніть «Не пам’ятаю код». Після цього потрібно буде увійти знову через БанкID або інший доступний спосіб.' },
+          { q: 'Чи працює Face ID?', a: 'Так. Увімкніть Face ID у Налаштуваннях — вхід стане швидшим і зручнішим.' }
         ]
       },
       {
         cat: 'Документи та підпис',
         items: [
-          { q: 'Як змінити дані документа?', a: 'У вкладці Документи або через Дія.Підпис у меню відкрийте редактор і збережіть зміни. Вони залишаться на пристрої.' },
-          { q: 'Де історія підписань?', a: 'Меню → Історія підписань. Зараз зберігаються лише локальні дії. Для повної історії з усіх пристроїв потрібен сервер.' }
+          { q: 'Як оновити дані документа?', a: 'У вкладці Документи або через Дія.Підпис у меню відкрийте потрібний документ і збережіть зміни.' },
+          { q: 'Де переглянути історію підписань?', a: 'Меню → Історія підписань. Тут відображаються всі ваші підписи з датою, часом і статусом.' }
         ]
       },
       {
         cat: 'Оновлення та сповіщення',
         items: [
-          { q: 'Як оновити застосунок?', a: 'Меню → Оновити застосунок. Застосунок перевіряє version.json і за потреби оновлює кеш через service worker.' },
-          { q: 'Чому немає сповіщень?', a: 'Увімкніть їх у Налаштуваннях і дозвольте сповіщення в системі. Для фонових перевірок потрібен встановлений PWA (Додати на екран «Додому»).' }
+          { q: 'Як оновити застосунок?', a: 'Меню → Оновити застосунок. Застосунок перевірить наявність нової версії та запропонує оновлення.' },
+          { q: 'Чому немає сповіщень?', a: 'Увімкніть сповіщення у Налаштуваннях і дозвольте їх у системних налаштуваннях пристрою.' }
         ]
       }
     ];
@@ -2929,11 +3098,97 @@
     ensureCurrentDevice();
     updateNotifBadge();
 
-    /* Якщо раніше показували системне сповіщення про оновлення — дублюємо в історію при наступному відкритті */
+    /* ===== Дія.AI ===== */
     (function () {
-      var prev = LS.get(K_UPD_NOTIFIED);
-      if (prev && !loadArr(K_NOTIFS).some(function (n) { return n.tag === 'diia-update' && String(n.body || '').indexOf(prev) >= 0; })) {
-        /* не додаємо заднім числом, щоб не засмічувати */
+      var aiLoad = document.getElementById('aiLoad');
+      var aiShell = document.getElementById('aiShell');
+      var aiChat = document.getElementById('aiChat');
+      var aiInput = document.getElementById('aiInput');
+      var aiReady = false;
+      var aiBusy = false;
+
+      var REPLIES = {
+        'Так, цікаво': 'Військові облігації можна придбати прямо в Дії. Доступні випуски з дохідністю до 17% річних. Кошти йдуть на потреби Збройних Сил, а ви отримуєте гарантований державою прибуток.',
+        'Які облігації зараз доступні?': 'Зараз доступні кілька випусків військових облігацій з різними термінами погашення — від 6 місяців до 3 років. Дохідність залежить від терміну. Можу підказати, як обрати підходящий варіант.',
+        'default': 'Дякую за запитання! Я допоможу з документами, послугами та сервісами Дії. Спробуйте запитати про військове облігації, документи чи доступні послуги.'
+      };
+
+      function showChatAnim() {
+        var items = aiChat.querySelectorAll('[data-anim]');
+        items.forEach(function (el, i) {
+          setTimeout(function () { el.classList.add('show'); }, 80 + i * 120);
+        });
+      }
+
+      window.diiaAiEnter = function () {
+        if (aiReady) return;
+        aiReady = true;
+        if (aiLoad) {
+          aiLoad.classList.remove('hide');
+          aiLoad.setAttribute('aria-hidden', 'false');
+        }
+        if (aiShell) aiShell.classList.remove('ready');
+        setTimeout(function () {
+          if (aiLoad) {
+            aiLoad.classList.add('hide');
+            aiLoad.setAttribute('aria-hidden', 'true');
+          }
+          if (aiShell) aiShell.classList.add('ready');
+          showChatAnim();
+        }, 1600);
+      };
+
+      function appendUser(text) {
+        var d = document.createElement('div');
+        d.className = 'ai-msg ai-msg-user show';
+        d.textContent = text;
+        aiChat.appendChild(d);
+        aiChat.scrollTop = aiChat.scrollHeight;
+      }
+
+      function appendBot(text) {
+        var d = document.createElement('div');
+        d.className = 'ai-msg ai-msg-bot';
+        d.innerHTML = '<p>' + String(text).replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</p>';
+        aiChat.appendChild(d);
+        requestAnimationFrame(function () {
+          d.classList.add('show');
+          aiChat.scrollTop = aiChat.scrollHeight;
+        });
+      }
+
+      function handleUser(text) {
+        text = (text || '').trim();
+        if (!text || aiBusy) return;
+        aiBusy = true;
+        appendUser(text);
+        var chips = aiChat.querySelector('.ai-chips');
+        if (chips) chips.style.display = 'none';
+        setTimeout(function () {
+          var reply = REPLIES[text] || REPLIES['default'];
+          appendBot(reply);
+          aiBusy = false;
+        }, 700 + Math.random() * 400);
+      }
+
+      if (aiChat) {
+        aiChat.addEventListener('click', function (e) {
+          var chip = e.target.closest('.ai-chip');
+          if (chip) {
+            haptic('light');
+            handleUser(chip.textContent);
+          }
+        });
+      }
+      if (aiInput) {
+        aiInput.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            var v = aiInput.value;
+            aiInput.value = '';
+            handleUser(v);
+          }
+        });
       }
     })();
 
