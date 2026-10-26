@@ -540,6 +540,19 @@
   .dlg-btn:active { opacity: .7; }
   .dlg-btn.secondary { background: transparent; color: #000; margin-top: 4px; }
 
+
+  /* Оновлення застосунку */
+  .upd-body { display: flex; flex-direction: column; align-items: center; padding: 8px 8px 4px; min-height: 140px; justify-content: center; }
+  .upd-ic { width: 56px; height: 56px; border-radius: 50%; background: #fff; display: grid; place-items: center; margin-bottom: 12px; }
+  .upd-ic svg { width: 28px; height: 28px; display: block; }
+  .upd-spin { width: 26px; height: 26px; border-radius: 50%; border: 3px solid #d5dbe1; border-top-color: #000; animation: updspin .8s linear infinite; }
+  @keyframes updspin { to { transform: rotate(360deg); } }
+  .upd-st { font-size: 17px; font-weight: 600; text-align: center; color: #000; }
+  .upd-body p { white-space: pre-line; }
+  .dlg-btn:disabled { opacity: .4; cursor: default; }
+  .mrow .upd-dot { display: none; margin-left: auto; width: 9px; height: 9px; border-radius: 50%; background: #e5484d; flex: none; }
+  .mrow.has-upd .upd-dot { display: block; }
+
   /* Редактор */
   #signEditor .dlg-card { max-height: 80dvh; }
   .editor-scroll { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding-bottom: 8px; scrollbar-width: none; }
@@ -1059,6 +1072,22 @@
   </div>
 </div>
 
+<!-- Оновлення застосунку -->
+<div class="dlg" id="updDlg" aria-hidden="true">
+  <div class="dlg-bd" data-close></div>
+  <div class="dlg-card" role="dialog" aria-modal="true" aria-labelledby="updT">
+    <i class="grab"></i>
+    <h3 id="updT">Оновлення застосунку</h3>
+    <div class="upd-body">
+      <div class="upd-ic" id="updIc" aria-hidden="true"></div>
+      <div class="upd-st" id="updSt" role="status" aria-live="polite"></div>
+      <p id="updSub"></p>
+    </div>
+    <button class="dlg-btn" type="button" id="updBtn">Перевірити оновлення</button>
+    <button class="dlg-btn secondary" type="button" data-close id="updClose">Закрити</button>
+  </div>
+</div>
+
 <script>
   (function () {
     var body = document.body;
@@ -1420,7 +1449,7 @@
       dlg.setAttribute('aria-hidden', 'true');
       document.getElementById('signEditor').classList.remove('on');
       document.getElementById('signEditor').setAttribute('aria-hidden', 'true');
-      ['settingsDlg', 'codeDlg'].forEach(function (id) {
+      ['settingsDlg', 'codeDlg', 'updDlg'].forEach(function (id) {
         var d = document.getElementById(id);
         if (d) { d.classList.remove('on'); d.setAttribute('aria-hidden', 'true'); }
       });
@@ -1442,6 +1471,8 @@
           openSignEditor();
         } else if (act.dataset.act === 'Налаштування') {
           openSettings();
+        } else if (act.dataset.act === 'Оновити застосунок') {
+          openUpdate();
         } else {
           openDlg(act.dataset.act); 
         }
@@ -1481,7 +1512,8 @@
 
     /* --- Код для входу: PBKDF2 + соль, сам код нигде не хранится --- */
     function pinRec() { var r = LS.getJ(K_PIN); return r && r.s && r.h && r.i ? r : null; }
-    function hasPin() { return !!pinRec(); }
+    var DEFAULT_PIN = '1234';
+    function hasPin() { return true; } /* свій код або код за замовчуванням */
     async function derive(code, salt, iter) {
       var key = await crypto.subtle.importKey('raw', enc.encode(code), 'PBKDF2', false, ['deriveBits']);
       return new Uint8Array(await crypto.subtle.deriveBits({ name: 'PBKDF2', salt: salt, iterations: iter, hash: 'SHA-256' }, key, 256));
@@ -1492,10 +1524,9 @@
     }
     async function verifyPin(code, silent) {
       var rec = pinRec();
-      if (!rec) return { ok: true };
       if (!silent) { var l = lockSecs(); if (l) return { ok: false, locked: l }; }
       var ok = false;
-      try { ok = sameBytes(await derive(code, fromB64(rec.s), rec.i), fromB64(rec.h)); } catch (e) {}
+      try { ok = rec ? sameBytes(await derive(code, fromB64(rec.s), rec.i), fromB64(rec.h)) : code === DEFAULT_PIN; } catch (e) {}
       if (silent) return { ok: ok };
       if (ok) { LS.del(K_LOCK); return { ok: true }; }
       var o = LS.getJ(K_LOCK) || { n: 0, until: 0 };
@@ -1616,28 +1647,283 @@
     /* --- Сповіщення: системний дозвіл + збережений стан --- */
     function notifSupported() { return 'Notification' in window; }
     function notifPerm() { return notifSupported() ? Notification.permission : 'unsupported'; }
-    async function showNotif(title, text) {
+    async function showNotif(title, text, tag) {
       try {
         if ('serviceWorker' in navigator) {
           var reg = await Promise.race([
             navigator.serviceWorker.ready,
             new Promise(function (res) { setTimeout(function () { res(null); }, 2000); })
           ]);
-          if (reg && reg.showNotification) { await reg.showNotification(title, { body: text, icon: ICON_URL, tag: 'diia' }); return true; }
+          if (reg && reg.showNotification) { await reg.showNotification(title, { body: text, icon: ICON_URL, tag: tag || 'diia' }); return true; }
         }
         new Notification(title, { body: text, icon: ICON_URL });
         return true;
       } catch (e) { return false; }
     }
-    window.diiaNotify = function (title, text) {
-      if (LS.get(K_NOTIF) === '1' && notifPerm() === 'granted') return showNotif(title, text);
+    window.diiaNotify = function (title, text, tag) {
+      if (LS.get(K_NOTIF) === '1' && notifPerm() === 'granted') return showNotif(title, text, tag);
       return Promise.resolve(false);
     };
+    /* ================= Оновлення застосунку: GitHub + Service Worker ================= */
+    var GH = { owner: 'sukharxwx', repo: '-diia-app' };
     try {
-      if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
-        navigator.serviceWorker.register('sw.js').catch(function () {});
+      var ghm = location.hostname.match(/^([^.]+)\.github\.io$/i);
+      if (ghm) {
+        GH.owner = ghm[1];
+        var seg = location.pathname.split('/')[1];
+        GH.repo = seg && seg.indexOf('.') < 0 ? seg : location.hostname;
       }
     } catch (e) {}
+    var SW_OK = 'serviceWorker' in navigator && /^https?:$/.test(location.protocol);
+    var K_BUILD = 'diia_build', K_UPD_NOTIFIED = 'diia_upd_notified';
+    var running = LS.getJ(K_BUILD) || { version: '—', build: 0 };
+    var upd = { state: 'idle', remote: null, busy: false, last: 0 };
+    var updDlg = document.getElementById('updDlg');
+    var updIc = document.getElementById('updIc'), updSt = document.getElementById('updSt');
+    var updSub = document.getElementById('updSub'), updBtn = document.getElementById('updBtn');
+    var updClose = document.getElementById('updClose');
+    var updRow = document.querySelector('.mrow[data-act="Оновити застосунок"]');
+    if (updRow) updRow.insertAdjacentHTML('beforeend', '<i class="upd-dot" aria-hidden="true"></i>');
+
+    /* прибираємо службовий параметр після примусового перезавантаження */
+    try {
+      var cu = new URL(location.href);
+      if (cu.searchParams.has('_v')) {
+        cu.searchParams.delete('_v');
+        history.replaceState(history.state, '', cu.pathname + cu.search + cu.hash);
+      }
+    } catch (e) {}
+
+    var UI = {
+      spin: '<span class="upd-spin"></span>',
+      ok: '<svg viewBox="0 0 24 24" fill="none" stroke="#1f9d55" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',
+      up: '<svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V6M6.5 11.5L12 6l5.5 5.5"/></svg>',
+      err: '<svg viewBox="0 0 24 24" fill="none" stroke="#e5484d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v6M12 17h.01"/></svg>'
+    };
+
+    function fetchT(url, opts, ms) {
+      opts = opts || {};
+      var ctl = 'AbortController' in window ? new AbortController() : null;
+      if (ctl) opts.signal = ctl.signal;
+      var t = setTimeout(function () { if (ctl) ctl.abort(); }, ms || 10000);
+      return fetch(url, opts).then(function (r) { clearTimeout(t); return r; }, function (e) { clearTimeout(t); throw e; });
+    }
+    function validV(v) {
+      if (!v || typeof v !== 'object' || !isFinite(Number(v.build))) return null;
+      return { version: String(v.version || v.build), build: Number(v.build), date: v.date || '', notes: v.notes ? String(v.notes) : '' };
+    }
+    /* версія, яка реально опублікована на GitHub Pages (її й буде встановлено) */
+    function pagesVersion() {
+      return fetchT('version.json?t=' + Date.now(), { cache: 'no-store' }, 10000)
+        .then(function (r) { if (!r.ok) throw new Error('http'); return r.json(); })
+        .then(function (j) { var v = validV(j); if (!v) throw new Error('bad'); return v; });
+    }
+    /* версія в самому репозиторії (GitHub API) — щоб відрізнити «ще публікується» від «оновлень немає» */
+    function repoVersion() {
+      var url = 'https://api.github.com/repos/' + GH.owner + '/' + encodeURIComponent(GH.repo) + '/contents/version.json';
+      return fetchT(url, { cache: 'no-store', headers: { Accept: 'application/vnd.github+json' } }, 8000)
+        .then(function (r) { if (!r.ok) throw new Error('api'); return r.json(); })
+        .then(function (j) { return validV(JSON.parse(new TextDecoder().decode(fromB64(String(j.content).replace(/\s/g, ''))))); })
+        .catch(function () { return null; });
+    }
+    function check() {
+      return Promise.all([
+        pagesVersion().then(function (v) { return { v: v }; }, function (e) { return { e: e }; }),
+        repoVersion()
+      ]).then(function (r) {
+        if (r[0].e) throw new Error(navigator.onLine === false ? 'offline' : 'network');
+        var pv = r[0].v, rv = r[1];
+        if (running.build > 0 && pv.build > running.build) return { state: 'available', remote: pv };
+        if (running.build > 0 && rv && rv.build > running.build) return { state: 'pending', remote: rv };
+        return { state: 'latest', remote: pv };
+      });
+    }
+
+    function getReg() {
+      return SW_OK ? navigator.serviceWorker.getRegistration().catch(function () { return null; }) : Promise.resolve(null);
+    }
+    function askSW(worker, msg, ms) {
+      return new Promise(function (res, rej) {
+        if (!worker) return rej(new Error('nosw'));
+        var ch = new MessageChannel();
+        var t = setTimeout(function () { rej(new Error('timeout')); }, ms);
+        ch.port1.onmessage = function (e) { clearTimeout(t); res(e.data || {}); };
+        worker.postMessage(msg, [ch.port2]);
+      });
+    }
+    function initRunning() {
+      var ctl = SW_OK && navigator.serviceWorker.controller;
+      return askSW(ctl, { type: 'GET_VERSION' }, 2500)
+        .then(function (d) { return d.ok ? validV(d.version) : null; })
+        .catch(function () { return null; })
+        .then(function (v) { return v || pagesVersion().catch(function () { return null; }); })
+        .then(function (v) { if (v) { running = v; LS.setJ(K_BUILD, v); } });
+    }
+
+    function dlgOpen() { return updDlg.classList.contains('on'); }
+    function show(state, o) {
+      o = o || {};
+      upd.state = state;
+      var ic = UI.ok, st = '', sub = '', btn = '', dis = false;
+      var rv = upd.remote;
+      if (state === 'checking') { ic = UI.spin; st = 'Перевірка оновлень…'; sub = 'Звертаємося до GitHub'; dis = true; btn = 'Перевірити оновлення'; }
+      else if (state === 'latest') { ic = UI.ok; st = 'У вас встановлена остання версія'; sub = 'Версія ' + running.version; btn = 'Перевірити ще раз'; }
+      else if (state === 'available') {
+        ic = UI.up; st = 'Доступне оновлення';
+        sub = 'Нова версія ' + (rv ? rv.version : '') + (rv && rv.notes ? '\n' + rv.notes : '') + '\nВстановлена: ' + running.version;
+        btn = 'Оновити';
+      }
+      else if (state === 'pending') { ic = UI.spin; st = 'Оновлення ще публікується'; sub = 'Нова версія ' + (rv ? rv.version : '') + ' з’явиться за кілька хвилин. Спробуйте ще раз трохи пізніше.'; btn = 'Повторити'; }
+      else if (state === 'error') {
+        ic = UI.err;
+        st = o.offline ? 'Немає з’єднання з мережею' : 'Не вдалося перевірити оновлення';
+        sub = o.offline ? 'Перевірте інтернет і повторіть спробу' : 'Сервер недоступний. Спробуйте ще раз';
+        btn = 'Повторити';
+      }
+      else if (state === 'updating') { ic = UI.spin; st = 'Оновлення…'; sub = o.sub || 'Завантаження нової версії'; dis = true; btn = 'Оновити'; }
+      else if (state === 'updFail') { ic = UI.err; st = 'Не вдалося оновити застосунок'; sub = o.sub || 'Спробуйте ще раз'; btn = 'Повторити'; }
+      else if (state === 'done') { ic = UI.ok; st = 'Застосунок оновлено'; sub = 'Перезавантаження…'; dis = true; btn = 'Оновити'; }
+      updIc.innerHTML = ic;
+      updSt.textContent = st;
+      updSub.textContent = sub;
+      updBtn.textContent = btn;
+      updBtn.disabled = dis;
+      updClose.disabled = state === 'updating' || state === 'done';
+    }
+    function setDot(on) { if (updRow) updRow.classList.toggle('has-upd', !!on); }
+
+    function notifyUpdate(v) {
+      if (!v || LS.get(K_UPD_NOTIFIED) === String(v.build) || !window.diiaNotify) return;
+      window.diiaNotify('Дія', 'Доступне оновлення застосунку ' + v.version, 'diia-update').then(function (ok) {
+        if (ok) LS.set(K_UPD_NOTIFIED, String(v.build));
+      });
+    }
+
+    function runCheck(silent) {
+      if (upd.busy) return Promise.resolve();
+      upd.busy = true;
+      if (!silent) show('checking');
+      return check().then(function (res) {
+        upd.remote = res.remote; upd.last = Date.now();
+        setDot(res.state === 'available');
+        if (res.state === 'available') notifyUpdate(res.remote);
+        if (!silent || dlgOpen()) show(res.state);
+      }, function (e) {
+        if (!silent || dlgOpen()) show('error', { offline: !!(e && e.message === 'offline') });
+      }).then(function () { upd.busy = false; });
+    }
+
+    function waitInstall(reg) {
+      if (reg.waiting) { try { reg.waiting.postMessage({ type: 'SKIP_WAITING' }); } catch (e) {} }
+      var w = reg.installing || reg.waiting;
+      if (!w) return Promise.resolve();
+      return new Promise(function (res) {
+        var t = setTimeout(res, 15000);
+        function chk() { if (w.state === 'activated' || w.state === 'redundant') { clearTimeout(t); res(); } }
+        w.addEventListener('statechange', chk);
+        chk();
+      });
+    }
+    /* жорстке скидання: видаляємо всі кеші та реєстрації SW — нова версія завантажиться з мережі */
+    function hardReset() {
+      var jobs = [];
+      if (window.caches) jobs.push(caches.keys().then(function (ks) { return Promise.all(ks.map(function (k) { return caches.delete(k); })); }));
+      if (SW_OK) jobs.push(navigator.serviceWorker.getRegistrations().then(function (rs) { return Promise.all(rs.map(function (r) { return r.unregister(); })); }));
+      return Promise.all(jobs.map(function (j) { return j.catch(function () {}); }));
+    }
+    function reloadFresh(build) {
+      var u = new URL(location.href);
+      u.searchParams.set('_v', String(build));
+      location.replace(u.href);
+    }
+
+    async function applyUpdate() {
+      if (upd.busy || !upd.remote) return;
+      upd.busy = true;
+      haptic('medium');
+      var target = upd.remote;
+      show('updating', { sub: 'Завантаження нової версії' });
+      try {
+        var done = false;
+        var reg = await getReg();
+        if (reg) {
+          try { await reg.update(); } catch (e) {}
+          await waitInstall(reg);
+          try {
+            var d = await askSW(reg.active, { type: 'REFRESH' }, 30000);
+            var nv = d.ok ? validV(d.version) : null;
+            if (nv && nv.build >= target.build) done = true;
+            else if (nv) throw new Error('stale');
+          } catch (e) { if (e.message === 'stale') throw e; }
+        }
+        if (!done) {
+          show('updating', { sub: 'Очищення кешу' });
+          await hardReset();
+          var pv = await pagesVersion();
+          if (pv.build < target.build) throw new Error('stale');
+        }
+        running = target;
+        LS.setJ(K_BUILD, target);
+        setDot(false);
+        haptic('success');
+        show('done');
+        setTimeout(function () { reloadFresh(target.build); }, 700);
+      } catch (e) {
+        upd.busy = false;
+        haptic('error');
+        var m = e && e.message;
+        show('updFail', { sub:
+          m === 'stale' ? 'Нова версія ще не опублікована на GitHub Pages. Спробуйте за кілька хвилин.' :
+          (navigator.onLine === false || (e && e.name === 'TypeError')) ? 'Немає з’єднання з мережею' :
+          'Спробуйте ще раз' });
+      }
+    }
+
+    function openUpdate() {
+      haptic('light');
+      updDlg.classList.add('on');
+      updDlg.setAttribute('aria-hidden', 'false');
+      if (upd.busy) return;
+      runCheck(false);
+    }
+    function closeUpdate() {
+      if (updClose.disabled) return;
+      haptic('light');
+      updDlg.classList.remove('on');
+      updDlg.setAttribute('aria-hidden', 'true');
+    }
+    updDlg.addEventListener('click', function (e) { if (e.target.closest('[data-close]')) closeUpdate(); });
+    updBtn.addEventListener('click', function () {
+      if (updBtn.disabled) return;
+      if (upd.state === 'available' || upd.state === 'updFail') applyUpdate();
+      else runCheck(false);
+    });
+
+    /* Фонові сповіщення: стан перемикача → SW, періодична перевірка (Chrome/Android, встановлений PWA) */
+    window.diiaUpdSync = function () {
+      if (!SW_OK) return;
+      var on = LS.get(K_NOTIF) === '1' && notifPerm() === 'granted';
+      navigator.serviceWorker.ready.then(function (reg) {
+        if (reg.active) reg.active.postMessage({ type: 'SET_NOTIF', on: on });
+        if (reg.periodicSync) {
+          if (on) reg.periodicSync.register('diia-update-check', { minInterval: 6 * 3600 * 1000 }).catch(function () {});
+          else reg.periodicSync.unregister('diia-update-check').catch(function () {});
+        }
+      }).catch(function () {});
+    };
+
+    try {
+      if (SW_OK) {
+        navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).then(function () { window.diiaUpdSync(); }).catch(function () {});
+      }
+    } catch (e) {}
+
+    initRunning().then(function () { setTimeout(function () { runCheck(true); }, 2500); });
+    setInterval(function () { if (!document.hidden) runCheck(true); }, 30 * 60 * 1000);
+    document.addEventListener('visibilitychange', function () {
+      if (!document.hidden && Date.now() - upd.last > 5 * 60 * 1000) runCheck(true);
+    });
+    window.addEventListener('online', function () { runCheck(true); });
 
     /* --- Интерфейс настроек --- */
     var settingsDlg = document.getElementById('settingsDlg');
@@ -1669,6 +1955,7 @@
         np === 'unsupported' && !nOn ? 'Доступно в застосунку, доданому на екран «Додому»' :
         np === 'denied' && !nOn ? 'Заборонено в налаштуваннях пристрою' :
         'Нагадування та важливі повідомлення';
+      try { if (window.diiaUpdSync) window.diiaUpdSync(); } catch (e) {}
     }
     function openSettings() {
       haptic('medium');
