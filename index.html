@@ -559,6 +559,91 @@
   .ord-row svg { flex: none; width: 22px; height: 22px; display: block; }
   .ord-row.drag { z-index: 2; background: rgba(255, 255, 255, .85); box-shadow: 0 8px 22px rgba(30, 60, 90, .22); transform: scale(1.02); cursor: grabbing; }
 
+  /* Повноекранні екрани меню */
+  .fs {
+    position: fixed; inset: 0; z-index: 70; display: flex; flex-direction: column;
+    padding: calc(var(--sat) + 12px) calc(var(--sar) + 16px) calc(var(--sab) + 16px) calc(var(--sal) + 16px);
+    background: linear-gradient(180deg, #abc8e2 0%, #bfd9ee 30%, #d2e5e9 55%, #d3e8dc 80%, #c7e1d6 100%);
+    visibility: hidden; opacity: 0; transform: translateX(24px);
+    transition: opacity .22s, transform .22s, visibility 0s linear .22s;
+    overflow: hidden;
+  }
+  .fs.on { visibility: visible; opacity: 1; transform: none; transition-delay: 0s; }
+  .fs-head { flex: none; display: flex; align-items: center; gap: 8px; }
+  .fs-head .back { flex: none; }
+  .fs-head h1 { flex: 1; font-size: 22px; font-weight: 600; letter-spacing: -.01em; margin: 0; }
+  .fs-body { flex: 1; min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; margin-top: 16px; padding-bottom: 8px; scrollbar-width: none; }
+  .fs-body::-webkit-scrollbar { display: none; }
+  .fs-empty { text-align: center; padding: 40px 20px; color: #5b6773; font-size: 14.5px; line-height: 1.4; }
+  .fs-list { display: flex; flex-direction: column; gap: 10px; }
+  .fs-item {
+    background: rgba(255,255,255,.55); border-radius: 20px; padding: 14px 16px;
+    text-align: left; border: 0; width: 100%; font: inherit; color: #000; cursor: pointer;
+    transition: background .15s, transform .12s;
+  }
+  .fs-item:active { background: rgba(255,255,255,.75); transform: scale(.985); }
+  .fs-item.unread { background: rgba(255,255,255,.78); box-shadow: 0 2px 10px rgba(30,60,90,.08); }
+  .fs-item-title { font-size: 15.5px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+  .fs-item-title .dot { width: 8px; height: 8px; border-radius: 50%; background: #e5484d; flex: none; }
+  .fs-item-meta { margin-top: 4px; font-size: 12.5px; color: #5b6773; }
+  .fs-item-body { margin-top: 8px; font-size: 14px; line-height: 1.35; color: #222; }
+  .fs-item-status { display: inline-block; margin-top: 8px; padding: 3px 10px; border-radius: 10px; font-size: 12px; font-weight: 500; }
+  .fs-item-status.ok { background: #d4edda; color: #1e7e34; }
+  .fs-item-status.pending { background: #fff3cd; color: #856404; }
+  .fs-item-status.err { background: #f8d7da; color: #721c24; }
+  .fs-item-actions { margin-top: 10px; display: flex; gap: 8px; }
+  .fs-item-actions button {
+    flex: 1; height: 36px; border-radius: 12px; border: 0; font: inherit; font-size: 13.5px; font-weight: 500; cursor: pointer;
+  }
+  .fs-item-actions .primary { background: #000; color: #fff; }
+  .fs-item-actions .danger { background: #fff; color: #e5484d; border: 1.5px solid #e5484d; }
+  .fs-item-actions .ghost { background: transparent; color: #000; border: 1.5px solid #000; }
+
+  /* FAQ */
+  .faq-cat { margin-bottom: 14px; }
+  .faq-cat-title { font-size: 13px; font-weight: 600; color: #5b6773; text-transform: uppercase; letter-spacing: .04em; margin-bottom: 8px; padding-left: 4px; }
+  .faq-item { background: rgba(255,255,255,.55); border-radius: 16px; margin-bottom: 8px; overflow: hidden; }
+  .faq-q {
+    width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 14px 16px; border: 0; background: none; font: inherit; font-size: 15px; font-weight: 500;
+    text-align: left; color: #000; cursor: pointer;
+  }
+  .faq-q svg { flex: none; width: 18px; height: 18px; transition: transform .2s; }
+  .faq-item.open .faq-q svg { transform: rotate(180deg); }
+  .faq-a { max-height: 0; overflow: hidden; transition: max-height .25s ease; }
+  .faq-item.open .faq-a { max-height: 400px; }
+  .faq-a-inner { padding: 0 16px 14px; font-size: 14px; line-height: 1.45; color: #333; }
+
+  /* Форма підтримки */
+  .sup-form { background: rgba(255,255,255,.6); border-radius: 20px; padding: 16px; margin-bottom: 16px; }
+  .sup-form label { display: block; font-size: 13px; font-weight: 500; color: #5b6773; margin-bottom: 6px; }
+  .sup-form textarea {
+    width: 100%; min-height: 110px; border: 0; border-radius: 14px; padding: 12px 14px;
+    font: inherit; font-size: 15px; background: #fff; resize: vertical; outline: none;
+    -webkit-appearance: none;
+  }
+  .sup-form .dlg-btn { margin-top: 12px; }
+  .sup-note { font-size: 12.5px; color: #5b6773; line-height: 1.35; margin-top: 10px; }
+
+  /* Toast */
+  .toast {
+    position: fixed; left: 50%; bottom: calc(var(--sab) + 90px); z-index: 100;
+    transform: translateX(-50%) translateY(20px); opacity: 0;
+    background: #111; color: #fff; padding: 12px 20px; border-radius: 16px;
+    font-size: 14.5px; font-weight: 500; pointer-events: none;
+    transition: opacity .25s, transform .25s; max-width: 90%; text-align: center;
+    box-shadow: 0 8px 24px rgba(0,0,0,.25);
+  }
+  .toast.on { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* Бейдж непрочитаних */
+  .mrow .badge {
+    margin-left: auto; min-width: 18px; height: 18px; padding: 0 5px;
+    border-radius: 9px; background: #e5484d; color: #fff;
+    font-size: 11px; font-weight: 600; display: none; align-items: center; justify-content: center;
+  }
+  .mrow.has-badge .badge { display: flex; }
+
   /* Диалоги (BottomSheet) */
   .dlg { position: fixed; inset: 0; z-index: 60; visibility: hidden; opacity: 0; transition: opacity .25s, visibility 0s linear .25s; display: flex; flex-direction: column; justify-content: flex-end; }
   .dlg.on { visibility: visible; opacity: 1; transition-delay: 0s; }
@@ -995,7 +1080,7 @@
       <p class="mver">Версія Дії: 4.34.3.2702</p>
       <div class="mlist">
         <div class="mgroup">
-          <button class="mrow" type="button" data-act="Повідомлення"><svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5.5" width="18" height="13" rx="3"/><path d="M3.5 8l8.5 6 8.5-6"/></svg><span>Повідомлення</span></button>
+          <button class="mrow" type="button" data-act="Повідомлення"><svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5.5" width="18" height="13" rx="3"/><path d="M3.5 8l8.5 6 8.5-6"/></svg><span>Повідомлення</span><i class="badge" aria-hidden="true">0</i></button>
         </div>
         <div class="mgroup">
           <button class="mrow" type="button" data-act="Дія.Підпис"><svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="7.5" cy="12" r="3.2"/><path d="M10.7 12H21M17.5 12v2.5"/></svg><span>Дія.Підпис</span></button>
@@ -1152,6 +1237,63 @@
     <button class="dlg-btn secondary" type="button" data-close id="updClose">Закрити</button>
   </div>
 </div>
+
+<!-- Повідомлення -->
+<div class="fs" id="fsNotif" aria-hidden="true">
+  <div class="fs-head">
+    <button class="back" type="button" data-fs-close aria-label="Назад">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <h1>Повідомлення</h1>
+  </div>
+  <div class="fs-body" id="notifBody"></div>
+</div>
+
+<!-- Історія підписань -->
+<div class="fs" id="fsSignHist" aria-hidden="true">
+  <div class="fs-head">
+    <button class="back" type="button" data-fs-close aria-label="Назад">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <h1>Історія підписань</h1>
+  </div>
+  <div class="fs-body" id="signHistBody"></div>
+</div>
+
+<!-- Підключені пристрої -->
+<div class="fs" id="fsDevices" aria-hidden="true">
+  <div class="fs-head">
+    <button class="back" type="button" data-fs-close aria-label="Назад">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <h1>Підключені пристрої</h1>
+  </div>
+  <div class="fs-body" id="devicesBody"></div>
+</div>
+
+<!-- Служба підтримки -->
+<div class="fs" id="fsSupport" aria-hidden="true">
+  <div class="fs-head">
+    <button class="back" type="button" data-fs-close aria-label="Назад">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <h1>Служба підтримки</h1>
+  </div>
+  <div class="fs-body" id="supportBody"></div>
+</div>
+
+<!-- Питання та відповіді -->
+<div class="fs" id="fsFaq" aria-hidden="true">
+  <div class="fs-head">
+    <button class="back" type="button" data-fs-close aria-label="Назад">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <h1>Питання та відповіді</h1>
+  </div>
+  <div class="fs-body" id="faqBody"></div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
   (function () {
@@ -1605,10 +1747,25 @@
         var d = document.getElementById(id);
         if (d) { d.classList.remove('on'); d.setAttribute('aria-hidden', 'true'); }
       });
+      closeAllFs();
       if (document.activeElement) document.activeElement.blur();
     }
+    function closeAllFs() {
+      document.querySelectorAll('.fs.on').forEach(function (el) {
+        el.classList.remove('on');
+        el.setAttribute('aria-hidden', 'true');
+      });
+    }
     dlg.addEventListener('click', function (e) { if (e.target.closest('[data-close]')) closeDlg(); });
-    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeDlg(); });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') {
+        if (document.querySelector('.fs.on')) { haptic('light'); closeAllFs(); }
+        else closeDlg();
+      }
+    });
+    document.querySelectorAll('[data-fs-close]').forEach(function (btn) {
+      btn.addEventListener('click', function () { haptic('light'); closeAllFs(); });
+    });
 
     document.querySelector('.home').addEventListener('click', function (e) {
       var nv = e.target.closest('.nav-i');
@@ -1619,17 +1776,18 @@
       }
       var act = e.target.closest('[data-act]');
       if (act) { 
-        if (act.dataset.act === 'Дія.Підпис') {
-          openSignEditor();
-        } else if (act.dataset.act === 'Налаштування') {
-          openSettings();
-        } else if (act.dataset.act === 'Оновити застосунок') {
-          openUpdate();
-        } else if (act.dataset.act === 'Змінити порядок документів') {
-          openOrder();
-        } else {
-          openDlg(act.dataset.act); 
-        }
+        var a = act.dataset.act;
+        if (a === 'Дія.Підпис') openSignEditor();
+        else if (a === 'Налаштування') openSettings();
+        else if (a === 'Оновити застосунок') openUpdate();
+        else if (a === 'Змінити порядок документів') openOrder();
+        else if (a === 'Повідомлення') openNotif();
+        else if (a === 'Історія підписань') openSignHist();
+        else if (a === 'Підключені пристрої') openDevices();
+        else if (a === 'Служба підтримки') openSupport();
+        else if (a === 'Копіювати номер пристрою') copyDeviceId();
+        else if (a === 'Питання та відповіді') openFaq();
+        else openDlg(a);
       }
     });
 
@@ -1815,6 +1973,7 @@
       } catch (e) { return false; }
     }
     window.diiaNotify = function (title, text, tag) {
+      if (window.diiaLocalNotif) window.diiaLocalNotif(title, text, tag);
       if (LS.get(K_NOTIF) === '1' && notifPerm() === 'granted') return showNotif(title, text, tag);
       return Promise.resolve(false);
     };
@@ -1950,7 +2109,9 @@
     function setDot(on) { if (updRow) updRow.classList.toggle('has-upd', !!on); }
 
     function notifyUpdate(v) {
-      if (!v || LS.get(K_UPD_NOTIFIED) === String(v.build) || !window.diiaNotify) return;
+      if (!v || LS.get(K_UPD_NOTIFIED) === String(v.build)) return;
+      if (window.diiaLocalNotif) window.diiaLocalNotif('Дія', 'Доступне оновлення застосунку ' + (v.version || ''), 'diia-update');
+      if (!window.diiaNotify) { LS.set(K_UPD_NOTIFIED, String(v.build)); return; }
       window.diiaNotify('Дія', 'Доступне оновлення застосунку ' + v.version, 'diia-update').then(function (ok) {
         if (ok) LS.set(K_UPD_NOTIFIED, String(v.build));
       });
@@ -2392,8 +2553,389 @@
         }));
       } catch(err) {}
 
+      /* Локальний запис у історію підписань (для повноцінної історії з сервером потрібен backend) */
+      if (window.diiaAddSign) {
+        window.diiaAddSign('Оновлення персональних даних', 'Підписано');
+      }
+
       closeDlg();
     });
+
+    /* ===================== Меню: Повідомлення, Історія, Пристрої, Підтримка, FAQ, Device ID ===================== */
+    var K_NOTIFS = 'diia_notifs', K_SIGNS = 'diia_signs', K_DEVICES = 'diia_devices', K_TICKETS = 'diia_tickets', K_DEVICE_ID = 'diia_device_id';
+    var toastEl = document.getElementById('toast');
+    var toastTimer = null;
+
+    function showToast(msg) {
+      if (!toastEl) return;
+      toastEl.textContent = msg;
+      toastEl.classList.add('on');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(function () { toastEl.classList.remove('on'); }, 2400);
+    }
+
+    function uid() {
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        var r = Math.random() * 16 | 0;
+        return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+      });
+    }
+
+    function loadArr(key) {
+      try {
+        var j = LS.get(key);
+        if (!j) return [];
+        var a = JSON.parse(j);
+        return Array.isArray(a) ? a : [];
+      } catch (e) { return []; }
+    }
+    function saveArr(key, arr) {
+      try { LS.set(key, JSON.stringify(arr)); } catch (e) {}
+    }
+
+    function fmtDt(ts) {
+      var d = new Date(ts);
+      var pad = function (n) { return n < 10 ? '0' + n : '' + n; };
+      return pad(d.getDate()) + '.' + pad(d.getMonth() + 1) + '.' + d.getFullYear() + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+    }
+
+    /* --- Device ID --- */
+    function getDeviceId() {
+      var id = LS.get(K_DEVICE_ID);
+      if (id && id.length > 8) return id;
+      id = uid();
+      LS.set(K_DEVICE_ID, id);
+      return id;
+    }
+
+    function deviceName() {
+      var ua = navigator.userAgent || '';
+      if (/iPhone|iPad|iPod/i.test(ua)) return 'iPhone / iPad';
+      if (/Android/i.test(ua)) return 'Android';
+      if (/Windows/i.test(ua)) return 'Windows';
+      if (/Mac/i.test(ua)) return 'Mac';
+      return 'Пристрій';
+    }
+
+    function ensureCurrentDevice() {
+      var list = loadArr(K_DEVICES);
+      var id = getDeviceId();
+      var found = list.some(function (d) { return d.id === id; });
+      if (!found) {
+        list.unshift({
+          id: id,
+          name: deviceName(),
+          model: (navigator.platform || '') + (screen.width ? ' · ' + screen.width + '×' + screen.height : ''),
+          connectedAt: Date.now(),
+          current: true
+        });
+        saveArr(K_DEVICES, list);
+      } else {
+        list.forEach(function (d) { d.current = d.id === id; });
+        saveArr(K_DEVICES, list);
+      }
+      return list;
+    }
+
+    function copyDeviceId() {
+      haptic('medium');
+      var id = getDeviceId();
+      function ok() {
+        showToast('Номер пристрою скопійовано');
+        haptic('success');
+      }
+      function fail() {
+        /* fallback: prompt */
+        try {
+          var ta = document.createElement('textarea');
+          ta.value = id;
+          ta.style.cssText = 'position:fixed;left:-9999px';
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+          ok();
+        } catch (e) {
+          showToast(id);
+        }
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(id).then(ok).catch(fail);
+      } else fail();
+    }
+
+    /* --- Notifications --- */
+    function addNotif(title, body, tag) {
+      var list = loadArr(K_NOTIFS);
+      var id = uid();
+      list.unshift({ id: id, title: title || 'Дія', body: body || '', ts: Date.now(), read: false, tag: tag || '' });
+      if (list.length > 100) list = list.slice(0, 100);
+      saveArr(K_NOTIFS, list);
+      updateNotifBadge();
+      return id;
+    }
+
+    function updateNotifBadge() {
+      var list = loadArr(K_NOTIFS);
+      var n = list.filter(function (x) { return !x.read; }).length;
+      var row = document.querySelector('.mrow[data-act="Повідомлення"]');
+      if (!row) return;
+      var b = row.querySelector('.badge');
+      if (n > 0) {
+        row.classList.add('has-badge');
+        if (b) b.textContent = n > 99 ? '99+' : String(n);
+      } else {
+        row.classList.remove('has-badge');
+      }
+    }
+
+    function openNotif() {
+      haptic('medium');
+      var bodyEl = document.getElementById('notifBody');
+      var list = loadArr(K_NOTIFS);
+      if (!list.length) {
+        bodyEl.innerHTML = '<div class="fs-empty">Повідомлень ще немає.<br>Тут з’являться сповіщення застосунку.</div>';
+      } else {
+        var html = '<div class="fs-list">';
+        list.forEach(function (n) {
+          html += '<div class="fs-item' + (n.read ? '' : ' unread') + '" data-nid="' + n.id + '">';
+          html += '<div class="fs-item-title">' + (n.read ? '' : '<span class="dot"></span>') + esc(n.title) + '</div>';
+          html += '<div class="fs-item-meta">' + fmtDt(n.ts) + '</div>';
+          if (n.body) html += '<div class="fs-item-body">' + esc(n.body) + '</div>';
+          if (!n.read) html += '<div class="fs-item-actions"><button type="button" class="ghost" data-mark="' + n.id + '">Позначити прочитаним</button></div>';
+          html += '</div>';
+        });
+        html += '</div>';
+        html += '<div style="margin-top:16px;text-align:center"><button type="button" class="dlg-btn secondary" id="notifMarkAll" style="max-width:220px;margin:0 auto">Позначити всі прочитаними</button></div>';
+        bodyEl.innerHTML = html;
+        bodyEl.querySelectorAll('[data-mark]').forEach(function (btn) {
+          btn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            markRead(btn.getAttribute('data-mark'));
+            openNotif();
+          });
+        });
+        var all = document.getElementById('notifMarkAll');
+        if (all) all.addEventListener('click', function () {
+          var arr = loadArr(K_NOTIFS);
+          arr.forEach(function (x) { x.read = true; });
+          saveArr(K_NOTIFS, arr);
+          updateNotifBadge();
+          openNotif();
+          haptic('success');
+        });
+        bodyEl.querySelectorAll('.fs-item').forEach(function (el) {
+          el.addEventListener('click', function () {
+            var id = el.getAttribute('data-nid');
+            markRead(id);
+            el.classList.remove('unread');
+            var d = el.querySelector('.dot'); if (d) d.remove();
+            var act = el.querySelector('.fs-item-actions'); if (act) act.remove();
+            updateNotifBadge();
+          });
+        });
+      }
+      document.getElementById('fsNotif').classList.add('on');
+      document.getElementById('fsNotif').setAttribute('aria-hidden', 'false');
+    }
+
+    function markRead(id) {
+      var arr = loadArr(K_NOTIFS);
+      arr.forEach(function (x) { if (x.id === id) x.read = true; });
+      saveArr(K_NOTIFS, arr);
+      updateNotifBadge();
+    }
+
+    function esc(s) {
+      return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    /* --- Signing history --- */
+    window.diiaAddSign = function (docName, status) {
+      var list = loadArr(K_SIGNS);
+      list.unshift({ id: uid(), doc: docName || 'Документ', status: status || 'Підписано', ts: Date.now() });
+      if (list.length > 50) list = list.slice(0, 50);
+      saveArr(K_SIGNS, list);
+    };
+
+    function openSignHist() {
+      haptic('medium');
+      var bodyEl = document.getElementById('signHistBody');
+      var list = loadArr(K_SIGNS);
+      if (!list.length) {
+        bodyEl.innerHTML = '<div class="fs-empty">Історія підписань порожня.<br><br>Записи з’являться після підписання документів у застосунку.<br><span style="font-size:12.5px;opacity:.85">Повна історія з усіх пристроїв потребує серверної синхронізації.</span></div>';
+      } else {
+        var html = '<div class="fs-list">';
+        list.forEach(function (s) {
+          var stClass = s.status === 'Підписано' || s.status === 'Успішно' ? 'ok' : (s.status === 'Помилка' ? 'err' : 'pending');
+          html += '<div class="fs-item">';
+          html += '<div class="fs-item-title">' + esc(s.doc) + '</div>';
+          html += '<div class="fs-item-meta">' + fmtDt(s.ts) + '</div>';
+          html += '<span class="fs-item-status ' + stClass + '">' + esc(s.status) + '</span>';
+          html += '</div>';
+        });
+        html += '</div>';
+        bodyEl.innerHTML = html;
+      }
+      document.getElementById('fsSignHist').classList.add('on');
+      document.getElementById('fsSignHist').setAttribute('aria-hidden', 'false');
+    }
+
+    /* --- Devices --- */
+    function openDevices() {
+      haptic('medium');
+      var bodyEl = document.getElementById('devicesBody');
+      var list = ensureCurrentDevice();
+      var html = '<div class="fs-list">';
+      list.forEach(function (d) {
+        html += '<div class="fs-item">';
+        html += '<div class="fs-item-title">' + esc(d.name) + (d.current ? ' · цей пристрій' : '') + '</div>';
+        html += '<div class="fs-item-meta">' + esc(d.model || '') + '</div>';
+        html += '<div class="fs-item-meta">Підключено: ' + fmtDt(d.connectedAt) + '</div>';
+        html += '<div class="fs-item-meta" style="font-size:11.5px;word-break:break-all">ID: ' + esc(d.id) + '</div>';
+        if (!d.current) {
+          html += '<div class="fs-item-actions"><button type="button" class="danger" data-dev="' + d.id + '">Відключити</button></div>';
+        }
+        html += '</div>';
+      });
+      html += '</div>';
+      html += '<p class="sup-note" style="margin-top:14px">Керування пристроями зберігається локально на цьому пристрої. Для синхронізації сесій між пристроями потрібен серверний backend.</p>';
+      bodyEl.innerHTML = html;
+      bodyEl.querySelectorAll('[data-dev]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          haptic('medium');
+          var id = btn.getAttribute('data-dev');
+          var arr = loadArr(K_DEVICES).filter(function (x) { return x.id !== id; });
+          saveArr(K_DEVICES, arr);
+          showToast('Пристрій відключено');
+          openDevices();
+        });
+      });
+      document.getElementById('fsDevices').classList.add('on');
+      document.getElementById('fsDevices').setAttribute('aria-hidden', 'false');
+    }
+
+    /* --- Support --- */
+    function openSupport() {
+      haptic('medium');
+      var bodyEl = document.getElementById('supportBody');
+      var tickets = loadArr(K_TICKETS);
+      var html = '<div class="sup-form">';
+      html += '<label for="supMsg">Ваше звернення</label>';
+      html += '<textarea id="supMsg" placeholder="Опишіть проблему або запитання…" maxlength="2000"></textarea>';
+      html += '<button type="button" class="dlg-btn" id="supSend">Надіслати</button>';
+      html += '<p class="sup-note">Звернення зберігаються локально на пристрої. Для реальної відправки в службу підтримки потрібен серверний API (endpoint прийому звернень).</p>';
+      html += '</div>';
+      if (tickets.length) {
+        html += '<div class="sect" style="margin-top:8px;font-size:16px">Попередні звернення</div>';
+        html += '<div class="fs-list" style="margin-top:10px">';
+        tickets.forEach(function (t) {
+          html += '<div class="fs-item">';
+          html += '<div class="fs-item-meta">' + fmtDt(t.ts) + '</div>';
+          html += '<div class="fs-item-body">' + esc(t.message) + '</div>';
+          html += '<span class="fs-item-status pending">' + esc(t.status || 'Збережено локально') + '</span>';
+          html += '</div>';
+        });
+        html += '</div>';
+      }
+      bodyEl.innerHTML = html;
+      document.getElementById('supSend').addEventListener('click', function () {
+        var ta = document.getElementById('supMsg');
+        var msg = (ta.value || '').trim();
+        if (!msg) { haptic('error'); showToast('Введіть текст звернення'); return; }
+        var list = loadArr(K_TICKETS);
+        list.unshift({ id: uid(), message: msg, ts: Date.now(), status: 'Збережено локально' });
+        if (list.length > 30) list = list.slice(0, 30);
+        saveArr(K_TICKETS, list);
+        addNotif('Служба підтримки', 'Ваше звернення збережено. Очікуйте відповіді після підключення backend.', 'support');
+        haptic('success');
+        showToast('Звернення збережено');
+        openSupport();
+      });
+      document.getElementById('fsSupport').classList.add('on');
+      document.getElementById('fsSupport').setAttribute('aria-hidden', 'false');
+    }
+
+    /* --- FAQ --- */
+    var FAQ = [
+      {
+        cat: 'Загальні',
+        items: [
+          { q: 'Що таке цей застосунок?', a: 'Це клієнтський прототип інтерфейсу Дії з локальним зберіганням даних. Він демонструє роботу з документами, PIN-кодом, сповіщеннями та оновленнями без серверної частини.' },
+          { q: 'Чи безпечні мої дані?', a: 'Дані (документи, PIN, історія) зберігаються лише у localStorage вашого браузера/пристрою і не передаються на сервер, поки не буде підключено backend.' }
+        ]
+      },
+      {
+        cat: 'Вхід і безпека',
+        items: [
+          { q: 'Як змінити код для входу?', a: 'Відкрийте Меню → Налаштування → Код для входу. Введіть поточний код (якщо є), потім новий і підтвердіть його.' },
+          { q: 'Що робити, якщо забув код?', a: 'На екрані введення коду натисніть «Не пам’ятаю код». Це скине локальний вхід і поверне вас до екрана авторизації.' },
+          { q: 'Чи працює Face ID?', a: 'Так, якщо пристрій і браузер підтримують WebAuthn / Face ID. Увімкніть у Налаштуваннях.' }
+        ]
+      },
+      {
+        cat: 'Документи та підпис',
+        items: [
+          { q: 'Як змінити дані документа?', a: 'У вкладці Документи або через Дія.Підпис у меню відкрийте редактор і збережіть зміни. Вони залишаться на пристрої.' },
+          { q: 'Де історія підписань?', a: 'Меню → Історія підписань. Зараз зберігаються лише локальні дії. Для повної історії з усіх пристроїв потрібен сервер.' }
+        ]
+      },
+      {
+        cat: 'Оновлення та сповіщення',
+        items: [
+          { q: 'Як оновити застосунок?', a: 'Меню → Оновити застосунок. Застосунок перевіряє version.json і за потреби оновлює кеш через service worker.' },
+          { q: 'Чому немає сповіщень?', a: 'Увімкніть їх у Налаштуваннях і дозвольте сповіщення в системі. Для фонових перевірок потрібен встановлений PWA (Додати на екран «Додому»).' }
+        ]
+      }
+    ];
+
+    function openFaq() {
+      haptic('medium');
+      var bodyEl = document.getElementById('faqBody');
+      var html = '';
+      FAQ.forEach(function (c) {
+        html += '<div class="faq-cat"><div class="faq-cat-title">' + esc(c.cat) + '</div>';
+        c.items.forEach(function (it) {
+          html += '<div class="faq-item">';
+          html += '<button type="button" class="faq-q">' + esc(it.q) + '<svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg></button>';
+          html += '<div class="faq-a"><div class="faq-a-inner">' + esc(it.a) + '</div></div>';
+          html += '</div>';
+        });
+        html += '</div>';
+      });
+      bodyEl.innerHTML = html;
+      bodyEl.querySelectorAll('.faq-q').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var item = btn.closest('.faq-item');
+          var open = item.classList.contains('open');
+          bodyEl.querySelectorAll('.faq-item.open').forEach(function (x) { x.classList.remove('open'); });
+          if (!open) item.classList.add('open');
+          haptic('light');
+        });
+      });
+      document.getElementById('fsFaq').classList.add('on');
+      document.getElementById('fsFaq').setAttribute('aria-hidden', 'false');
+    }
+
+    /* Інтеграція зі сповіщеннями оновлень */
+    var _origNotifyUpdate = typeof notifyUpdate === 'function' ? notifyUpdate : null;
+    /* Hook after notifyUpdate is defined — call from visibility / init */
+    function onAppNotif(title, body, tag) {
+      addNotif(title, body, tag);
+    }
+    window.diiaLocalNotif = onAppNotif;
+
+    /* Ініціалізація */
+    ensureCurrentDevice();
+    updateNotifBadge();
+
+    /* Якщо раніше показували системне сповіщення про оновлення — дублюємо в історію при наступному відкритті */
+    (function () {
+      var prev = LS.get(K_UPD_NOTIFIED);
+      if (prev && !loadArr(K_NOTIFS).some(function (n) { return n.tag === 'diia-update' && String(n.body || '').indexOf(prev) >= 0; })) {
+        /* не додаємо заднім числом, щоб не засмічувати */
+      }
+    })();
 
     window.addEventListener('error', function (e) { e.preventDefault(); });
     window.addEventListener('unhandledrejection', function (e) { e.preventDefault(); });
