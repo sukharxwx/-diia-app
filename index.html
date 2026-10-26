@@ -24,7 +24,7 @@
     --sar: env(safe-area-inset-right, 0px);
     --sab: env(safe-area-inset-bottom, 0px);
     --sal: env(safe-area-inset-left, 0px);
-    --nav-height: 56px;
+    --nav-height: 64px;
   }
 
   *, *::before, *::after {
@@ -310,15 +310,15 @@
 
 
   /* Головна: картки */
-  .ncard { position: relative; margin-top: 18px; padding: 18px 16px 16px; min-height: 0; }
-  .ncard h2 { font-size: 24px; font-weight: 500; letter-spacing: -.01em; color: #000; }
-  .ncard p { margin-top: 12px; font-size: 14px; line-height: 1.2; color: #000; }
-  .ncard .go { position: absolute; right: 16px; bottom: 16px; width: 36px; height: 36px; border-radius: 50%; background: #000; display: grid; place-items: center; }
-  .ncard .go svg { width: 16px; height: 16px; }
-  .nico { display: flex; margin-top: 16px; }
-  .nc { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; }
+  .ncard { position: relative; margin-top: 16px; padding: 14px 14px 12px; min-height: 0; }
+  .ncard h2 { font-size: 20px; font-weight: 500; letter-spacing: -.01em; color: #000; }
+  .ncard p { margin-top: 8px; font-size: 12.5px; line-height: 1.2; color: #000; }
+  .ncard .go { position: absolute; right: 14px; bottom: 12px; width: 32px; height: 32px; border-radius: 50%; background: #000; display: grid; place-items: center; }
+  .ncard .go svg { width: 14px; height: 14px; }
+  .nico { display: flex; margin-top: 12px; }
+  .nc { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; }
   .nc + .nc { margin-left: -5px; }
-  .nc svg { width: 16px; height: 16px; display: block; }
+  .nc svg { width: 14px; height: 14px; display: block; }
   .nc.y { background: #f1cc47; } .nc.b { background: #2f5fe3; } .nc.g { background: #3b7a4a; }
   .ncard.cash { margin-top: 12px; }
   .ncard.cash h2 { font-size: 26px; }
@@ -326,7 +326,7 @@
   .bars { display: block; width: 56px; height: auto; margin-top: 14px; }
   .banner-img { display: block; width: 100%; margin-top: 16px; padding: 0; border-radius: 24px; overflow: hidden; background: none; transition: transform .12s; }
   .banner-img:active { transform: scale(.985); }
-  .banner-img img { display: block; width: 100%; height: auto; }
+  .banner-img img { display: block; width: 100%; height: auto; object-fit: fill; }
 
   .banner {
     position: relative; display: block; width: 100%; margin-top: 16px;
@@ -372,21 +372,24 @@
     z-index: 10;
     height: calc(var(--nav-height) + var(--sab));
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    padding-top: 6px;
+    grid-template-columns: repeat(5, 1fr);
+    padding-top: 8px;
     padding-bottom: var(--sab);
     padding-left: var(--sal);
     padding-right: var(--sar);
     background: #000;
   }
-  .nav-i { display: flex; flex-direction: column; align-items: center; gap: 2px; height: 42px; color: rgba(255, 255, 255, .62); }
-  .nav-i .ico { display: grid; place-items: center; width: 48px; height: 26px; border-radius: 13px; transition: background .2s, transform .12s; }
-  .nav-i svg { width: 20px; height: 20px; display: block; }
-  .nav-i .lbl { font-size: 11px; letter-spacing: .02em; }
-  .nav-i.on { color: #fff; }
-  .nav-i.on .ico { background: rgba(255, 255, 255, .17); }
-  .nav-i.on .lbl { font-weight: 600; }
-  .nav-i:active .ico { transform: scale(.92); background: rgba(255, 255, 255, .26); }
+  .nav-i { display: flex; flex-direction: column; align-items: center; gap: 3px; height: 50px; color: #fff; }
+  .nav-i .ico { display: grid; place-items: center; width: 44px; height: 30px; transition: transform .12s; }
+  .nav-i svg { width: 27px; height: 27px; display: block; overflow: visible; }
+  .nav-i svg .sh, .nav-i svg .dt { fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; transition: fill .18s, stroke .18s; }
+  .nav-i svg .sp { fill: currentColor; stroke: currentColor; stroke-width: 1.2; stroke-linejoin: round; transition: fill .18s, stroke .18s; }
+  .nav-i svg .sp.o { fill: none; stroke-width: 1.7; }
+  .nav-i.on svg .sh { fill: #fff; }
+  .nav-i.on svg .dt { stroke: #000; }
+  .nav-i.on svg .sp { fill: #000; stroke: #000; }
+  .nav-i .lbl { font-size: 11.5px; letter-spacing: .01em; }
+  .nav-i:active .ico { transform: scale(.9); }
 
   /* Вкладки */
   .tab { opacity: 0; visibility: hidden; transform: translateY(8px); transition: opacity .22s ease, transform .22s ease, visibility 0s linear .22s; }
@@ -530,11 +533,16 @@
 
   /* Меню */
   #tab-menu { padding-top: calc(var(--sat) + 20px); }
-  .mver { margin-top: 4px; font-size: 13px; color: #5f7381; }
-  .mlist { margin-top: 14px; display: flex; flex-direction: column; gap: 8px; }
-  .mrow { display: flex; align-items: center; gap: 12px; width: 100%; height: 46px; padding: 0 16px; border-radius: 20px; background: #fff; text-align: left; font-size: 14.5px; font-weight: 400; box-shadow: 0 1px 2px rgba(0,0,0,0.02); }
-  .mrow:active { transform: scale(.985); background: #f0f4f8; }
-  .mrow svg { flex: none; width: 18px; height: 18px; display: block; }
+  #tab-menu .ptitle { font-size: 32px; font-weight: 600; }
+  .mver { margin-top: 6px; font-size: 13.5px; font-weight: 500; color: #6b7c8a; }
+  .mlist { margin-top: 18px; display: flex; flex-direction: column; gap: 12px; }
+  .mgroup { background: #fff; border-radius: 22px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,.04); }
+  .mrow { display: flex; align-items: center; gap: 16px; width: 100%; height: 54px; padding: 0 18px; border-radius: 0; background: none; text-align: left; font-size: 15.5px; font-weight: 500; position: relative; }
+  .mrow + .mrow::before { content: ""; position: absolute; top: 0; left: 18px; right: 18px; height: 1px; background: #e8ecf0; }
+  .mrow:active { background: #f0f4f8; transform: none; }
+  .mrow svg { flex: none; width: 21px; height: 21px; display: block; }
+  .logout { display: block; width: 164px; height: 50px; margin: 22px auto 0; border: 0; border-radius: 25px; background: #000; color: #fff; font: inherit; font-size: 17px; font-weight: 600; cursor: pointer; }
+  .logout:active { opacity: .75; }
 
   /* Диалоги (BottomSheet) */
   .dlg { position: fixed; inset: 0; z-index: 60; visibility: hidden; opacity: 0; transition: opacity .25s, visibility 0s linear .25s; display: flex; flex-direction: column; justify-content: flex-end; }
@@ -823,22 +831,6 @@
         <i class="go"><svg viewBox="0 0 20 20" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10h13M11 4.5L16.5 10 11 15.5"/></svg></i>
       </section>
 
-      <section class="promo">
-        <div class="promo-top">
-          <div class="promo-in">
-            <p>Не можете подзвонити або<br>скористатись мобільним інтернетом?<br>Повідомте про це, і Дія передасть<br>інформацію регулятору зв’язку (НКЕК).</p>
-            <div class="promo-btns">
-              <button class="pill line" type="button" data-act="До укриттів">До укриттів</button>
-              <button class="pill fill" type="button" data-act="Повідомити про відсутній зв’язок">Повідомити</button>
-            </div>
-          </div>
-        </div>
-        <div class="promo-bot">
-          <p class="promo-date">Сьогодні, 16:40</p>
-          <p class="promo-title">Повідомляйте про відсутній<br>зв’язок у Дії</p>
-        </div>
-      </section>
-
       <h2 class="sect">Популярні послуги</h2>
       <div class="services">
         <button class="svc" type="button" data-act="Реєстрація пошкодженого майна"><span>Реєстрація пошкодженого<br>майна</span><i><svg viewBox="0 0 20 20" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10h13M11 4.5L16.5 10 11 15.5"/></svg></i></button>
@@ -975,37 +967,58 @@
       <div class="sgrid" id="svcGrid"></div>
     </section>
 
+    <section class="home-scroll tab" id="tab-ai" data-tab="ai" aria-hidden="true">
+      <h1 class="ptitle">Дія.AI</h1>
+      <section class="card-light ncard" style="margin-top:14px">
+        <h2>Асистент Дії</h2>
+        <p style="margin-top:8px">Скоро тут можна буде ставити запитання та швидко знаходити потрібні послуги.</p>
+      </section>
+    </section>
+
     <section class="home-scroll tab" id="tab-menu" data-tab="menu" aria-hidden="true">
       <h1 class="ptitle">Меню</h1>
-      <p class="mver">Версія Дії: 4.38.3.2975</p>
+      <p class="mver">Версія Дії: 4.34.3.2702</p>
       <div class="mlist">
-        <button class="mrow" type="button" data-act="Повідомлення"><svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5.5" width="18" height="13" rx="3"/><path d="M3.5 8l8.5 6 8.5-6"/></svg><span>Повідомлення</span></button>
-        <button class="mrow" type="button" data-act="Дія.Підпис"><svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="15" cy="9" r="5"/><path d="M11.5 12.5L4 20l1.5 1.5L7 20l1.5 1 1-1.5-1-1.5 2.5-2.5"/></svg><span>Дія.Підпис</span></button>
-        <button class="mrow" type="button" data-act="Історія підписань"><svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.5-5.8M4 4v4h4"/><path d="M12 8v4.5l3 1.5"/></svg><span>Історія підписань</span></button>
-        <button class="mrow" type="button" data-act="Налаштування"><svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2.8l1.6 2.2 2.7-.7.9 2.6 2.6.9-.7 2.7 2.2 1.6-2.2 1.6.7 2.7-2.6.9-.9 2.6-2.7-.7L12 21.2l-1.6-2.2-2.7.7-.9-2.6-2.6-.9.7-2.7L2.7 12l2.2-1.6-.7-2.7 2.6-.9.9-2.6 2.7.7z"/></svg><span>Налаштування</span></button>
-        <button class="mrow" type="button" data-act="Оновити застосунок"><svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 0 0-14.3-4M4 4v4h4M4 13a8 8 0 0 0 14.3 4M20 20v-4h-4"/></svg><span>Оновити застосунок</span></button>
-        <button class="mrow" type="button" data-act="Підключені пристрої"><svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M12 18h.01"/></svg><span>Підключені пристрої</span></button>
-        <button class="mrow" type="button" data-act="Служба підтримки"><svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 15v-3a8 8 0 0 1 16 0v3"/><rect x="3.5" y="14" width="4" height="6" rx="2"/><rect x="16.5" y="14" width="4" height="6" rx="2"/></svg><span>Служба підтримки</span></button>
-        <button class="mrow" type="button" data-act="Копіювати номер пристрою"><svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8.5" y="8.5" width="12" height="12" rx="2.5"/><path d="M15.5 8.5V6a2.5 2.5 0 0 0-2.5-2.5H6A2.5 2.5 0 0 0 3.5 6v7A2.5 2.5 0 0 0 6 15.5h2.5"/></svg><span>Копіювати номер пристрою</span></button>
-        <button class="mrow" type="button" data-act="Питання та відповіді"><svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7M12 17h.01"/></svg><span>Питання та відповіді</span></button>
+        <div class="mgroup">
+          <button class="mrow" type="button" data-act="Повідомлення"><svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5.5" width="18" height="13" rx="3"/><path d="M3.5 8l8.5 6 8.5-6"/></svg><span>Повідомлення</span></button>
+        </div>
+        <div class="mgroup">
+          <button class="mrow" type="button" data-act="Дія.Підпис"><svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="7.5" cy="12" r="3.2"/><path d="M10.7 12H21M17.5 12v2.5"/></svg><span>Дія.Підпис</span></button>
+          <button class="mrow" type="button" data-act="Історія підписань"><svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6.500V5a2 2 0 0 1 2-2h5.500L20 7.500V15a2 2 0 0 1-2 2h-1.5"/><path d="M15 3v5h5"/><rect x="4" y="7.5" width="11" height="13.5" rx="2"/></svg><span>Історія підписань</span></button>
+        </div>
+        <div class="mgroup">
+          <button class="mrow" type="button" data-act="Налаштування"><svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2.8l1.6 2.2 2.7-.7.9 2.6 2.6.9-.7 2.7 2.2 1.6-2.2 1.6.7 2.7-2.6.9-.9 2.6-2.7-.7L12 21.2l-1.6-2.2-2.7.7-.9-2.6-2.6-.9.7-2.7L2.7 12l2.2-1.6-.7-2.7 2.6-.9.9-2.6 2.7.7z"/></svg><span>Налаштування</span></button>
+          <button class="mrow" type="button" data-act="Оновити застосунок"><svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 0 0-14.3-4M4 4v4h4M4 13a8 8 0 0 0 14.3 4M20 20v-4h-4"/></svg><span>Оновити застосунок</span></button>
+          <button class="mrow" type="button" data-act="Підключені пристрої"><svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M12 18h.01"/></svg><span>Підключені пристрої</span></button>
+        </div>
+        <div class="mgroup">
+          <button class="mrow" type="button" data-act="Служба підтримки"><svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4.500h14a1.5 1.5 0 0 1 1.5 1.500v8.500a1.5 1.5 0 0 1-1.5 1.500h-7.500L7.5 20v-4H5A1.5 1.5 0 0 1 3.5 14.500V6A1.5 1.5 0 0 1 5 4.500z"/><path d="M7.5 8.500h9M7.5 12h6"/></svg><span>Служба підтримки</span></button>
+          <button class="mrow" type="button" data-act="Копіювати номер пристрою"><svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="10" height="10" rx="2"/><rect x="10.5" y="10.5" width="10" height="10" rx="2" fill="#fff"/></svg><span>Копіювати номер пристрою</span></button>
+          <button class="mrow" type="button" data-act="Питання та відповіді"><svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7M12 17h.01"/></svg><span>Питання та відповіді</span></button>
+        </div>
       </div>
+      <button class="logout" type="button" id="logoutBtn">Вийти</button>
     </section>
 
     <nav class="nav" aria-label="Навігація">
       <button class="nav-i on" type="button" data-tab="feed" aria-current="page">
-        <span class="ico"><svg viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M3 7h20M3 13h20M3 19h12"/></svg></span>
+        <span class="ico"><svg viewBox="0 0 28 28" aria-hidden="true"><path class="sh" d="M7 5h13a2.5 2.5 0 0 1 2.500 2.500V10h1.300a1.700 1.700 0 0 1 1.700 1.700V20a3 3 0 0 1-3 3H8a4.500 4.500 0 0 1-4.500-4.500V8.500A3.500 3.500 0 0 1 7 5z"/><rect class="dt" x="8" y="9" width="9" height="6" rx="1.600"/><path class="dt" d="M8 19h9"/></svg></span>
         <span class="lbl">Стрічка</span>
       </button>
       <button class="nav-i" type="button" data-tab="docs">
-        <span class="ico"><svg viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="2.5" width="17" height="21" rx="3.5"/><path d="M9 9h8M9 13h8M9 17h5"/></svg></span>
+        <span class="ico"><svg viewBox="0 0 28 28" aria-hidden="true"><rect class="sh" x="4.500" y="3.500" width="19" height="21" rx="4"/><rect class="dt" x="9" y="8" width="5.500" height="4.500" rx="1"/><path class="dt" d="M9 16.500h10M9 20h6"/></svg></span>
         <span class="lbl">Документи</span>
       </button>
+      <button class="nav-i" type="button" data-tab="ai">
+        <span class="ico"><svg viewBox="0 0 28 28" aria-hidden="true"><rect class="sh" x="3.500" y="3.500" width="21" height="21" rx="5.500"/><path class="sp" d="M14 7.500l1.900 5.600 5.600 1.900-5.600 1.900-1.900 5.600-1.900-5.600-5.600-1.900 5.600-1.900z"/></svg></span>
+        <span class="lbl">Дія.AI</span>
+      </button>
       <button class="nav-i" type="button" data-tab="services">
-        <span class="ico"><svg viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2.5L5 14.5h7.5L11 23.5l10-12.5h-7.5z"/></svg></span>
+        <span class="ico"><svg viewBox="0 0 28 28" aria-hidden="true"><rect class="sh" x="3.500" y="3.500" width="21" height="21" rx="5.500"/><path class="sp o" d="M15.500 7L9.500 15h4.500l-1.500 6 6-8.500h-4.500z"/></svg></span>
         <span class="lbl">Сервіси</span>
       </button>
       <button class="nav-i" type="button" data-tab="menu">
-        <span class="ico"><svg viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="13" cy="8" r="4.6"/><path d="M4 23v-1.5A6.5 6.5 0 0 1 10.5 15h5a6.5 6.5 0 0 1 6.5 6.5V23"/></svg></span>
+        <span class="ico"><svg viewBox="0 0 28 28" aria-hidden="true"><circle class="sh" cx="14" cy="14" r="11"/><circle class="dt" cx="14" cy="11.500" r="3.700"/><path class="dt" d="M7 21c1.300-3.200 4-4.800 7-4.800s5.700 1.600 7 4.800"/></svg></span>
         <span class="lbl">Меню</span>
       </button>
     </nav>
@@ -1952,6 +1965,26 @@
       if (!document.hidden && Date.now() - upd.last > 5 * 60 * 1000) runCheck(true);
     });
     window.addEventListener('online', function () { runCheck(true); });
+
+    /* Вийти: забываем сохранённый вход — при следующем запуске снова экран авторизации */
+    document.getElementById('logoutBtn').addEventListener('click', function () {
+      haptic('medium');
+      try { localStorage.removeItem('diia_logged'); } catch (e) {}
+      location.reload();
+    });
+
+    /* Баннер «Зимова єПідтримка»: чуть выше по вертикали */
+    (function () {
+      var img = document.querySelector('.banner-img img');
+      if (!img) return;
+      function fit() {
+        if (!img.naturalWidth || !img.clientWidth) return;
+        img.style.height = Math.round(img.clientWidth * img.naturalHeight / img.naturalWidth * 1.14) + 'px';
+      }
+      img.addEventListener('load', fit);
+      window.addEventListener('resize', fit);
+      if (img.complete) fit();
+    })();
 
     /* --- Интерфейс настроек --- */
     var settingsDlg = document.getElementById('settingsDlg');
