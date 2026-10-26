@@ -1,0 +1,1958 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Дія">
+<meta name="format-detection" content="telephone=no">
+<meta name="theme-color" content="#abc8e2">
+
+<!-- Иконка приложения (включая добавление на экран Домой) -->
+<link rel="icon" type="image/jpeg" href="https://i.postimg.cc/J0NbVkQK/IMG-0269.jpg">
+<link rel="apple-touch-icon" href="https://i.postimg.cc/J0NbVkQK/IMG-0269.jpg">
+<link rel="apple-touch-icon-precomposed" href="https://i.postimg.cc/J0NbVkQK/IMG-0269.jpg">
+
+<title>Дія</title>
+<!-- Библиотека для генерации реального QR-кода -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+  :root {
+    --sat: env(safe-area-inset-top, 0px);
+    --sar: env(safe-area-inset-right, 0px);
+    --sab: env(safe-area-inset-bottom, 0px);
+    --sal: env(safe-area-inset-left, 0px);
+    --nav-height: 56px;
+  }
+
+  *, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html, body {
+    width: 100%;
+    height: 100%;
+    height: 100dvh;
+    overflow: hidden;
+    overscroll-behavior: none;
+    touch-action: manipulation;
+    -webkit-text-size-adjust: 100%;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+    background: #abc8e2;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Inter", sans-serif;
+    color: #000;
+    -webkit-font-smoothing: antialiased;
+    background:
+      radial-gradient(70% 28% at 100% 100%, #e9f2d3 0%, transparent 100%),
+      radial-gradient(80% 26% at 0% 34%, #c6dff3 0%, transparent 100%),
+      linear-gradient(180deg, #abc8e2 0%, #bfd9ee 30%, #d2e5e9 55%, #d3e8dc 80%, #c7e1d6 100%);
+  }
+
+  input, textarea {
+    -webkit-user-select: text;
+    user-select: text;
+    font-size: 16px !important;
+  }
+
+  /* Обертка приложения на весь экран без пустых пространств снизу */
+  .app-viewport {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    max-width: 480px;
+    height: 100%;
+    height: 100dvh;
+    margin: 0 auto;
+    overflow: hidden;
+    background: inherit;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Экраны */
+  .screen {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s linear 0.4s;
+    will-change: transform, opacity;
+  }
+
+  .sub {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(30px);
+    pointer-events: none;
+  }
+
+  body.v-banks .banks-screen,
+  body.v-pin .pin,
+  body.v-home .home {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    pointer-events: auto;
+    transition-delay: 0s, 0s, 0s;
+  }
+
+  body.v-banks .auth,
+  body.v-pin .auth,
+  body.v-home .auth {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(-30px);
+    pointer-events: none;
+  }
+
+  /* Авторизация */
+  .auth .page {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding-top: calc(var(--sat) + 16px);
+    padding-bottom: calc(var(--sab) + 16px);
+    padding-left: calc(var(--sal) + 20px);
+    padding-right: calc(var(--sar) + 20px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .auth .page::-webkit-scrollbar { display: none; }
+
+  h1 { font-size: 26px; line-height: 1.2; font-weight: 600; letter-spacing: -.01em; }
+  .version { margin-top: 4px; font-size: 13px; color: #627380; }
+  .lead { margin-top: 20px; font-size: 14px; line-height: 1.4; color: #111; }
+  .consent-text { margin-top: 16px; font-size: 13px; line-height: 1.4; color: #444; }
+  .consent-text a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+
+  .consent {
+    margin-top: 14px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 14px;
+    border: 1.5px solid rgba(255, 255, 255, 0.85);
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.2);
+    cursor: pointer;
+  }
+  .consent input { position: absolute; opacity: 0; pointer-events: none; }
+  .consent-label { font-size: 13px; line-height: 1.35; color: #000; }
+
+  .box {
+    flex: none; width: 20px; height: 20px; border-radius: 6px;
+    background: #000; display: grid; place-items: center; transition: background .15s, box-shadow .15s;
+  }
+  .box svg { width: 60%; height: 60%; }
+  .consent input:not(:checked) + .box { background: transparent; box-shadow: inset 0 0 0 1.5px #000; }
+  .consent input:not(:checked) + .box svg { opacity: 0; }
+
+  .spacer { flex: 1; min-height: 16px; }
+
+  .sheet {
+    background: #fff;
+    border-radius: 24px;
+    padding: 4px 16px 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+  }
+  .sheet-title { height: 44px; display: flex; align-items: center; font-size: 14px; font-weight: 500; border-bottom: 1px solid #e3edf5; color: #627380; }
+
+  .opt {
+    width: 100%; height: 56px; display: flex; align-items: center; gap: 14px;
+    background: none; border: 0; border-bottom: 1px solid #e3edf5; font: inherit; font-size: 16px; font-weight: 500;
+    color: #000; text-align: left; cursor: pointer; transition: opacity .15s;
+  }
+  .opt:last-child { border-bottom: 0; }
+  .opt:active { opacity: .55; }
+  .opt svg { flex: none; width: 32px; height: 32px; display: block; }
+  .sheet.locked .opt { filter: grayscale(1); opacity: .4; pointer-events: none; }
+  
+  .shake { animation: shake .3s; }
+  @keyframes shake { 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+
+  .rise { animation: riseIn .5s cubic-bezier(.2, .7, .2, 1) both; animation-delay: calc(var(--i, 0) * .06s); }
+  @keyframes riseIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+  /* Выбор банка */
+  .banks-screen { display: flex; flex-direction: column; }
+  .banks-head {
+    flex: none;
+    padding-top: calc(var(--sat) + 12px);
+    padding-left: calc(var(--sal) + 20px);
+    padding-right: calc(var(--sar) + 20px);
+  }
+  .back { display: block; padding: 6px; margin: -6px; background: none; border: 0; color: #000; cursor: pointer; }
+  .back svg { display: block; width: 26px; height: 26px; }
+  .back:active { opacity: .5; }
+  .banks-head h1 { margin-top: 10px; }
+  .picker-desc { margin-top: 10px; font-size: 13.5px; line-height: 1.35; color: #444; }
+
+  .search {
+    margin-top: 14px; height: 40px; display: flex; align-items: center; gap: 10px;
+    padding: 0 14px; background: #fff; border-radius: 18px;
+  }
+  .search svg { flex: none; width: 16px; height: 16px; }
+  .search input {
+    flex: 1; min-width: 0; height: 100%; border: 0; outline: 0; background: none; font: inherit;
+    font-weight: 500; color: #000; -webkit-appearance: none;
+  }
+  .search input::placeholder { color: #8e959c; opacity: 1; }
+
+  .banks-card {
+    flex: 1; min-height: 0;
+    margin-top: 14px;
+    margin-left: calc(var(--sal) + 20px);
+    margin-right: calc(var(--sar) + 20px);
+    background: #fff; border-radius: 24px 24px 0 0; overflow: hidden; display: flex;
+  }
+  .banks-scroll {
+    flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; touch-action: pan-y; overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    padding: 0 16px calc(var(--sab) + 16px);
+  }
+  .banks-scroll::-webkit-scrollbar { display: none; }
+
+  .bank {
+    width: 100%; height: 50px; display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    background: none; border: 0; border-bottom: 1px solid #e3edf5; font: inherit; font-size: 15px; font-weight: 500;
+    color: #000; text-align: left; cursor: pointer; transition: opacity .15s;
+  }
+  .bank:last-child { border-bottom: 0; }
+  .bank:active { opacity: .55; }
+  .bank svg { flex: none; width: 20px; height: 20px; }
+  .empty { padding-top: 20px; font-size: 13.5px; color: #8e959c; text-align: center; }
+
+  /* ПИН-код */
+  .pin {
+    display: flex; flex-direction: column; align-items: center; justify-content: space-between;
+    background: linear-gradient(180deg, #b9d8ea 0%, #bedbe6 30%, #cde2e0 58%, #d6e7da 80%, #dce9d6 100%);
+    padding-top: calc(var(--sat) + 24px);
+    padding-bottom: calc(var(--sab) + 16px);
+    padding-left: calc(var(--sal) + 20px);
+    padding-right: calc(var(--sar) + 20px);
+  }
+  .pin-title { font-size: 24px; font-weight: 500; letter-spacing: -.01em; margin-top: 10px; }
+  .dots { margin-top: 24px; display: flex; gap: 16px; }
+  .dot { width: 14px; height: 14px; border-radius: 50%; background: #cdd3df; transition: background .15s, transform .15s; }
+  .dot.on { background: #0f1115; transform: scale(1.05); }
+
+  .keypad {
+    display: grid;
+    grid-template-columns: repeat(3, 72px);
+    gap: 16px 24px;
+    margin: auto 0;
+  }
+  .key {
+    width: 72px; height: 72px; display: grid; place-items: center; border: 0; border-radius: 50%;
+    background: rgba(255, 255, 255, .75); font: inherit; font-size: 28px; font-weight: 400; color: #000;
+    cursor: pointer; transition: transform .12s, background .12s;
+  }
+  .key:active { background: rgba(255, 255, 255, .95); transform: scale(.93); }
+  .key svg { width: 18px; height: 18px; display: block; }
+
+  .forgot { padding: 10px; background: none; border: 0; font: inherit; font-size: 15px; color: #4f5e6d; cursor: pointer; }
+  .forgot:active { opacity: .55; }
+
+  /* Главная */
+  .home {
+    background: linear-gradient(180deg, #8fc9c6 0%, #a3ccd4 20%, #b4d2e4 45%, #bfcbe6 65%, #c2bde1 100%);
+  }
+  .home::before {
+    content: ""; position: absolute; left: 0; right: 0; top: 0; z-index: 3;
+    height: calc(var(--sat) + 12px);
+    background: linear-gradient(180deg, rgba(255, 255, 255, .9), rgba(255, 255, 255, 0)); pointer-events: none;
+  }
+  .home-scroll {
+    position: absolute; inset: 0; overflow-y: auto; overflow-x: hidden; touch-action: pan-y; overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch; scrollbar-width: none;
+    padding-top: calc(var(--sat) + 20px);
+    padding-left: calc(var(--sal) + 16px);
+    padding-right: calc(var(--sar) + 16px);
+    padding-bottom: calc(var(--nav-height) + var(--sab) + 20px);
+  }
+  .home-scroll::-webkit-scrollbar { display: none; }
+  :where(.home button) { font: inherit; color: inherit; border: 0; background: none; cursor: pointer; }
+
+  .greet { display: flex; align-items: center; gap: 8px; font-size: 24px; font-weight: 700; letter-spacing: -.015em; }
+  .greet .wave { font-size: 22px; }
+
+  .card-light { background: rgba(255, 255, 255, .82); border-radius: 22px; }
+  .unbreak { margin-top: 18px; padding: 16px; }
+  .unbreak h2 { font-size: 18px; font-weight: 700; }
+  .unbreak p { margin-top: 6px; font-size: 13.5px; color: #5b6773; }
+  .pins { margin-top: 12px; display: flex; gap: 8px; }
+  .pin-dot { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; }
+  .pin-dot.blue { background: #5088ee; }
+  .pin-dot.yellow { background: #f1cc47; }
+  .pin-dot i { display: block; }
+  .pin-dot.blue i { width: 10px; height: 10px; border-radius: 50%; background: #fff; }
+  .pin-dot.yellow i { width: 10px; height: 10px; background: #000; transform: rotate(45deg); }
+
+  .tiles { margin-top: 16px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .tile { display: block; text-align: center; }
+  .tile-ico { display: grid; place-items: center; aspect-ratio: 1; background: #000; border-radius: 20px; transition: transform .12s; }
+  .tile:active .tile-ico { transform: scale(.96); }
+  .tile-ico svg { display: block; }
+  .tile-label { display: block; margin-top: 6px; font-size: 12px; line-height: 1.25; font-weight: 500; }
+
+  .banner {
+    position: relative; display: block; width: 100%; margin-top: 16px;
+    padding: 18px 16px; border-radius: 24px; text-align: left;
+    color: #fff; background: linear-gradient(90deg, #0d0814 0%, #1c0f3a 25%, #4a1f7e 50%, #a24e56 75%, #e8793a 100%); transition: transform .12s;
+  }
+  .banner:active { transform: scale(.985); }
+  .banner b { display: block; font-size: 28px; font-weight: 500; }
+  .banner span { display: block; font-size: 17px; }
+  .banner b + span { margin-top: 6px; }
+  .banner span + span { margin-top: 6px; }
+  .banner .go { position: absolute; right: 16px; bottom: 16px; width: 36px; height: 36px; border-radius: 50%; background: #fff; display: grid; place-items: center; }
+  .banner .go svg { width: 16px; height: 16px; }
+
+  .promo { margin-top: 16px; border-radius: 22px; overflow: hidden; background: rgba(246, 252, 253, .96); }
+  .promo-top { padding: 12px; background: linear-gradient(180deg, #bef7e6 0%, #cdf6f3 100%); }
+  .promo-in { padding: 12px; border-radius: 16px; background: #f5fbfb; }
+  .promo-in p { font-size: 13.5px; line-height: 1.35; }
+  .promo-btns { margin-top: 12px; display: flex; gap: 8px; }
+  .pill { flex: 1; height: 36px; border-radius: 18px; font-size: 13px; font-weight: 500; transition: opacity .15s; }
+  .pill:active { opacity: .6; }
+  .pill.line { border: 1.5px solid #000; background: transparent; color: #000; }
+  .pill.fill { background: #000; color: #fff; }
+  .promo-bot { padding: 14px 12px; }
+  .promo-date { font-size: 12px; color: #6c7885; }
+  .promo-title { margin-top: 4px; font-size: 16px; line-height: 1.3; font-weight: 400; }
+
+  .sect { margin-top: 20px; font-size: 18px; font-weight: 600; letter-spacing: -.01em; }
+  .services { margin-top: 12px; border-radius: 20px; background: rgba(246, 248, 252, .9); overflow: hidden; }
+  .svc { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 14px; text-align: left; border-bottom: 1px solid #e3e7ef; }
+  .svc:last-child { border-bottom: 0; }
+  .svc:active { background: rgba(0, 0, 0, .04); }
+  .svc span { font-size: 15px; font-weight: 400; }
+  .svc i { flex: none; width: 32px; height: 32px; border-radius: 50%; background: #000; display: grid; place-items: center; }
+  .svc i svg { width: 14px; height: 14px; display: block; }
+
+  /* Навигация (строго внизу, без просветов) */
+  .nav {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10;
+    height: calc(var(--nav-height) + var(--sab));
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    padding-top: 6px;
+    padding-bottom: var(--sab);
+    padding-left: var(--sal);
+    padding-right: var(--sar);
+    background: #000;
+  }
+  .nav-i { display: flex; flex-direction: column; align-items: center; gap: 2px; height: 42px; color: rgba(255, 255, 255, .62); }
+  .nav-i .ico { display: grid; place-items: center; width: 48px; height: 26px; border-radius: 13px; transition: background .2s, transform .12s; }
+  .nav-i svg { width: 20px; height: 20px; display: block; }
+  .nav-i .lbl { font-size: 11px; letter-spacing: .02em; }
+  .nav-i.on { color: #fff; }
+  .nav-i.on .ico { background: rgba(255, 255, 255, .17); }
+  .nav-i.on .lbl { font-weight: 600; }
+  .nav-i:active .ico { transform: scale(.92); background: rgba(255, 255, 255, .26); }
+
+  /* Вкладки */
+  .tab { opacity: 0; visibility: hidden; transform: translateY(8px); transition: opacity .22s ease, transform .22s ease, visibility 0s linear .22s; }
+  .tab.on { opacity: 1; visibility: inherit; transform: none; transition-delay: 0s; }
+  [data-act] { cursor: pointer; }
+
+  .ptitle { font-size: 24px; font-weight: 700; letter-spacing: -.015em; }
+
+  /* Документы и увеличенные карточки */
+  .docs-tab { position: absolute; inset: 0; overflow: hidden; }
+  .pager {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: calc(var(--sat) + 50px);
+    bottom: calc(var(--nav-height) + var(--sab) + 36px);
+    display: flex;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    overscroll-behavior: contain;
+    touch-action: pan-x;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .pager::-webkit-scrollbar { display: none; }
+  .pg { flex: 0 0 100%; width: 100%; padding: 0 16px; scroll-snap-align: center; scroll-snap-stop: always; overflow: hidden; perspective: 1000px; }
+
+  /* 3D FLIP CARD (Увеличенный крупный формат карточек) */
+  .flip-card {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    max-height: 520px;
+    transform-style: preserve-3d;
+    transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+    cursor: pointer;
+  }
+  .flip-card.flipped { transform: rotateY(180deg); }
+
+  .dcard, .acard, .card-back {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    border-radius: 26px;
+  }
+
+  .dcard {
+    background: rgba(255, 255, 255, .28);
+    display: flex; flex-direction: column;
+    padding: 22px 20px;
+    overflow: hidden;
+    z-index: 2;
+  }
+
+  .card-back {
+    background: rgba(255, 255, 255, .32);
+    transform: rotateY(180deg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    z-index: 1;
+  }
+
+  .qr-container {
+    background: #fff;
+    border-radius: 22px;
+    padding: 20px 18px 18px;
+    width: 100%;
+    max-width: 290px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  }
+
+  .qr-img-wrap {
+    width: 190px;
+    height: 190px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+  }
+  .qr-img-wrap img, .qr-img-wrap canvas {
+    width: 100% !important;
+    height: 100% !important;
+    display: block;
+  }
+
+  .qr-switches { display: flex; gap: 16px; margin-top: 16px; }
+  .qr-switch-btn { display: flex; flex-direction: column; align-items: center; gap: 5px; border: 0; background: none; cursor: pointer; }
+  .qr-icon-box { width: 40px; height: 40px; background: #000; border-radius: 12px; display: grid; place-items: center; color: #fff; }
+  .qr-switch-btn span { font-size: 12px; font-weight: 500; color: #000; }
+
+  /* Крупные шрифты и фото в документах как в оригинале */
+  .dtitle { font-size: 21px; line-height: 1.25; font-weight: 600; }
+  .dbody { display: flex; gap: 16px; margin-top: 18px; margin-bottom: 18px; }
+  .dphoto { flex: none; width: 130px; height: 170px; border-radius: 20px; background: rgba(255, 255, 255, .4) center / cover no-repeat; display: grid; place-items: center; overflow: hidden; }
+  .dphoto svg { width: 46%; opacity: .35; }
+  .dphoto.has svg { display: none; }
+  .dinfo { font-size: 14.5px; line-height: 1.55; }
+  .dinfo p, .dinfo b { display: block; font-weight: 400; }
+  .dinfo b { font-size: 15.5px; margin-top: 2px; margin-bottom: 10px; overflow-wrap: anywhere; font-weight: 500; }
+
+  .ticker { margin: auto -20px 0; height: 28px; overflow: hidden; background: linear-gradient(90deg, #9cf08f 0%, #87d1e8 100%); }
+  .track { display: flex; width: max-content; animation: tick 22s linear infinite; }
+  .track span { flex: none; padding-right: 50px; font-size: 14px; line-height: 28px; white-space: nowrap; font-weight: 500; }
+  @keyframes tick { to { transform: translateX(-50%); } }
+
+  .dname { margin-top: 12px; font-size: 23px; line-height: 1.25; font-weight: 600; padding-right: 30px; overflow-wrap: anywhere; }
+  .dname span { display: block; }
+  .dname.sm { margin-top: 8px; font-size: 16px; font-weight: 400; }
+  .dlab { margin-top: 18px; font-size: 15px; color: #333; font-weight: 500; }
+  .dcap { margin-top: 10px; font-size: 15px; }
+  .dcap b { display: block; font-weight: 500; font-size: 16px; margin-top: 2px; }
+  .dnum { margin-top: 22px; font-size: 24px; font-weight: 600; letter-spacing: .02em; }
+
+  .pg-add { display: flex; flex-direction: column; gap: 14px; }
+  .acard { position: relative; flex: 1; min-height: 180px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; text-align: center; font-size: 17px; font-weight: 500; background: rgba(255, 255, 255, .25); border-radius: 26px; }
+  .acard:active { transform: scale(.98); background: rgba(255, 255, 255, .35); }
+  .acard svg { width: 40px; height: 40px; display: block; }
+
+  .dpg { position: absolute; left: 0; right: 0; bottom: calc(var(--nav-height) + var(--sab) + 14px); display: flex; justify-content: center; gap: 7px; pointer-events: none; }
+  .dpg i { width: 7px; height: 7px; border-radius: 50%; background: rgba(255, 255, 255, .5); transition: background .2s, transform .2s; }
+  .dpg i.on { background: #fff; transform: scale(1.2); }
+
+  /* Сервисы */
+  .tab .search { margin-top: 16px; height: 40px; padding: 0 12px; gap: 8px; border-radius: 18px; background: rgba(255, 255, 255, .9); }
+  .tab .search svg { width: 15px; height: 15px; }
+  .sgrid { margin-top: 14px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .scard { display: flex; flex-direction: column; align-items: flex-start; justify-content: space-between; height: 90px; padding: 12px; border-radius: 16px; background: rgba(255, 255, 255, .5); text-align: left; }
+  .scard:active { transform: scale(.97); background: rgba(255, 255, 255, .65); }
+  .sic { width: 28px; height: 28px; border-radius: 50%; background: #000; display: grid; place-items: center; flex: none; }
+  .sic svg { width: 14px; height: 14px; display: block; }
+  .sl { display: block; text-align: center; font-size: 12.5px; line-height: 1.25; font-weight: 500; }
+  .sgrid .empty { grid-column: 1 / -1; }
+
+  /* Меню */
+  #tab-menu { padding-top: calc(var(--sat) + 20px); }
+  .mver { margin-top: 4px; font-size: 13px; color: #5f7381; }
+  .mlist { margin-top: 14px; display: flex; flex-direction: column; gap: 8px; }
+  .mrow { display: flex; align-items: center; gap: 12px; width: 100%; height: 46px; padding: 0 16px; border-radius: 20px; background: #fff; text-align: left; font-size: 14.5px; font-weight: 400; box-shadow: 0 1px 2px rgba(0,0,0,0.02); }
+  .mrow:active { transform: scale(.985); background: #f0f4f8; }
+  .mrow svg { flex: none; width: 18px; height: 18px; display: block; }
+
+  /* Диалоги (BottomSheet) */
+  .dlg { position: fixed; inset: 0; z-index: 60; visibility: hidden; opacity: 0; transition: opacity .25s, visibility 0s linear .25s; display: flex; flex-direction: column; justify-content: flex-end; }
+  .dlg.on { visibility: visible; opacity: 1; transition-delay: 0s; }
+  .dlg-bd { position: absolute; inset: 0; background: rgba(10, 14, 20, .38); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+  
+  .dlg-card {
+    position: relative; width: 100%; max-width: 480px; margin: 0 auto;
+    background: #f2f4f7;
+    border-radius: 24px 24px 0 0;
+    transform: translateY(100%); transition: transform .3s cubic-bezier(.2, .8, .2, 1);
+    display: flex; flex-direction: column;
+    max-height: 85dvh;
+    padding: 10px 14px calc(var(--sab) + 16px);
+  }
+  .dlg.on .dlg-card { transform: none; }
+  
+  .grab { display: block; width: 36px; height: 4px; margin: 0 auto 10px; border-radius: 2px; background: #c4c4c8; flex: none; }
+  
+  .dlg h3 { font-size: 18px; font-weight: 600; text-align: center; color: #000; margin-bottom: 8px; flex: none; }
+  .dlg p { margin-top: 4px; font-size: 14px; line-height: 1.35; color: #5b6773; text-align: center; }
+  
+  .dlg-btn { width: 100%; height: 44px; margin-top: 12px; border: 0; border-radius: 12px; background: #000; color: #fff; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer; flex: none; }
+  .dlg-btn:active { opacity: .7; }
+  .dlg-btn.secondary { background: transparent; color: #000; margin-top: 4px; }
+
+  /* Редактор */
+  #signEditor .dlg-card { max-height: 80dvh; }
+  .editor-scroll { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding-bottom: 8px; scrollbar-width: none; }
+  .editor-scroll::-webkit-scrollbar { display: none; }
+  
+  .ios-group { background: #fff; border-radius: 14px; overflow: hidden; margin-bottom: 10px; padding: 0 12px; }
+  .ios-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f0f2f5; }
+  .ios-row:last-child { border-bottom: 0; }
+  .ios-row label { font-size: 14px; color: #627380; flex: none; width: 100px; }
+  .ios-row input { flex: 1; border: 0; background: transparent; text-align: right; font-family: inherit; color: #000; outline: none; padding: 0; min-width: 0; }
+  
+  .file-upload { display: flex; align-items: center; justify-content: space-between; padding: 12px; background: #fff; border-radius: 14px; margin-bottom: 10px; position: relative; }
+  .file-upload span { font-size: 14px; color: #000; font-weight: 500; }
+  .file-upload input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+  .photo-thumb { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; display: none; }
+
+  /* === Фикс безопасной зоны в режиме "На экран Домой" === */
+  /* Высоту задаёт JS (--app-h) = реальная высота экрана, включая нижнюю зону */
+  html, body {
+    height: var(--app-h, 100%) !important;
+    min-height: var(--app-h, 100%);
+  }
+  .app-viewport {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: auto;
+    height: var(--app-h, 100%) !important;
+    max-height: none;
+  }
+  .screen { height: 100%; }
+  .nav { position: absolute; bottom: 0; }
+
+  /* Страховка: если iOS всё же оставит полосу под приложением — она будет чёрной, как меню */
+  html:has(body.v-home) {
+    background: linear-gradient(180deg, #c2bde1 0, #c2bde1 calc(100% - 200px), #000 calc(100% - 200px), #000 100%);
+  }
+
+  /* Карточки документов чуть ниже по высоте */
+  .pg { display: flex; align-items: center; padding-top: 0; }
+  .flip-card { height: 430px; max-height: 100%; }
+
+  /* Последняя страница: «Додати документ» / «Змінити порядок» — на всю ширину */
+  .pg.pg-add {
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
+    gap: 14px;
+  }
+  .pg.pg-add .acard {
+    position: relative;
+    inset: auto;
+    flex: none;
+    width: 100%;
+    height: 208px;
+    min-height: 0;
+  }
+
+  /* === Фикс разъехавшихся элементов на экране авторизации === */
+  .auth .page { justify-content: flex-start; }
+  .auth .page > * { flex: none; }
+  .auth .page > .spacer { flex: 1 1 auto; min-height: 16px; }
+  .lead { margin-top: 16px; }
+  .consent-text { margin-top: 12px; }
+  .consent { margin-top: 12px; }
+
+  /* === Налаштування === */
+  .set-group { background: #fff; border-radius: 14px; overflow: hidden; margin-top: 6px; }
+  .set-row {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    width: 100%; min-height: 58px; padding: 8px 14px;
+    border: 0; border-bottom: 1px solid #f0f2f5; background: none;
+    font: inherit; color: #000; text-align: left; cursor: pointer; transition: background .15s, opacity .15s;
+  }
+  .set-row:last-child { border-bottom: 0; }
+  .set-row:active { background: #f0f4f8; }
+  .set-row:disabled { opacity: .45; cursor: default; }
+  .set-row:disabled:active { background: none; }
+  .set-txt { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .set-t { font-size: 15px; font-weight: 500; }
+  .set-s { font-size: 12.5px; line-height: 1.3; color: #627380; }
+  .set-row svg { flex: none; display: block; }
+  .sw { flex: none; position: relative; width: 46px; height: 28px; border-radius: 14px; background: #d4dae1; transition: background .2s; }
+  .sw i { position: absolute; top: 2px; left: 2px; width: 24px; height: 24px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.25); transition: transform .2s; }
+  .set-row[aria-checked="true"] .sw { background: #000; }
+  .set-row[aria-checked="true"] .sw i { transform: translateX(18px); }
+
+  .code-step { margin-top: 6px; text-align: center; font-size: 15px; color: #000; }
+  .code-dots { display: flex; justify-content: center; gap: 16px; margin-top: 16px; }
+  .code-dots i { width: 14px; height: 14px; border-radius: 50%; background: #cdd3df; transition: background .15s, transform .15s; }
+  .code-dots i.on { background: #0f1115; transform: scale(1.05); }
+  .code-msg { min-height: 18px; margin-top: 10px; text-align: center; font-size: 13px; color: #d03a3a; }
+  .code-msg.ok { color: #2a8a4a; }
+  .code-pad { display: grid; grid-template-columns: repeat(3, 64px); gap: 12px 22px; justify-content: center; margin-top: 10px; }
+  .code-pad .key { width: 64px; height: 64px; font-size: 26px; background: #fff; }
+  .code-pad .key:active { background: #e8edf2; }
+
+  .key-face { visibility: hidden; }
+  .key-face.show { visibility: visible; }
+  .key-face svg { width: 30px; height: 30px; }
+</style>
+</head>
+<body>
+
+<div class="app-viewport">
+  <!-- Авторизация -->
+  <main class="screen auth" aria-label="Авторизація">
+    <div class="page">
+      <header class="rise" style="--i:0">
+        <h1>Авторизація</h1>
+        <p class="version">Версія Дії: 4.38.3.2975</p>
+      </header>
+
+      <p class="lead rise" style="--i:1">Увійдіть за допомогою BankID Національного<br>банку України, використовуючи свій інтернет-<br>банкінг, або за допомогою NFC-чипу<br>у біометричних документах.</p>
+
+      <p class="consent-text rise" style="--i:2">
+        Для авторизації ознайомтесь зі змістом.<br>
+        <a href="https://diia.gov.ua/app_policy" target="_blank" rel="noopener noreferrer">Повідомлення про обробку персональних даних</a>
+      </p>
+
+      <label class="consent rise" id="consent" style="--i:3">
+        <input type="checkbox" id="agree" checked>
+        <span class="box" aria-hidden="true">
+          <svg viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg>
+        </span>
+        <span class="consent-label">Я ознайомився зі змістом Повідомлення<br>про обробку персональних даних.</span>
+      </label>
+
+      <div class="spacer"></div>
+
+      <section class="sheet rise" id="sheet" style="--i:4" aria-label="Авторизуватись через">
+        <p class="sheet-title">Авторизуватись через:</p>
+
+        <button class="opt" data-method="bankid" type="button">
+          <svg viewBox="0 0 44 44" aria-hidden="true">
+            <rect width="44" height="44" rx="11" fill="#84c441"/>
+            <g fill="#fff" stroke="#fff" stroke-width="1.2" stroke-linejoin="round">
+              <rect x="9" y="11" width="5.5" height="5.5" rx="1"/>
+              <rect x="9" y="19.5" width="5.5" height="14.5" rx="1"/>
+              <path fill-rule="evenodd" d="M18.5 19.5H29V10H34.5V34H18.5ZM24 25H29V29H24Z"/>
+            </g>
+          </svg>
+          <span>BankID НБУ</span>
+        </button>
+
+        <button class="opt" data-method="monobank" type="button">
+          <svg viewBox="0 0 44 44" aria-hidden="true">
+            <defs><linearGradient id="mg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3b3b40"/><stop offset="1" stop-color="#111114"/></linearGradient></defs>
+            <rect width="44" height="44" rx="11" fill="url(#mg)"/>
+            <text x="22" y="26" text-anchor="middle" font-family="-apple-system, Inter, Arial, sans-serif" font-size="12" font-weight="700" fill="#fff" letter-spacing="-.2">mono</text>
+          </svg>
+          <span>monobank</span>
+        </button>
+
+        <button class="opt" data-method="nfc" type="button">
+          <svg viewBox="0 0 44 44" aria-hidden="true" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="2" width="40" height="40" rx="11" stroke-width="2.6"/>
+            <path d="M10.5 29V15L19.5 29V15" stroke-width="3"/>
+            <path d="M23.5 18a5.5 5.5 0 0 1 0 8M27.5 15a10 10 0 0 1 0 14M31.5 12.5a14 14 0 0 1 0 19" stroke-width="2.4"/>
+          </svg>
+          <span>NFC</span>
+        </button>
+      </section>
+    </div>
+  </main>
+
+  <!-- Выбор банка -->
+  <main class="screen sub banks-screen" aria-label="Оберіть свій банк">
+    <div class="banks-head">
+      <button class="back" id="back" type="button" aria-label="Назад">
+        <svg viewBox="0 0 28 28" fill="none" stroke="#000" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M23 14H5M12.5 6.5L5 14l7.5 7.5"/></svg>
+      </button>
+      <h1>Оберіть свій банк</h1>
+      <p class="picker-desc">Для авторизації за допомогою BankID, оберіть<br>свій банк та увійдіть до системи інтернет-<br>банкінгу. Авторизація не передбачає жодного<br>доступу до фінансової інформації.</p>
+      <label class="search">
+        <svg viewBox="0 0 16 16" fill="none" stroke="#b3bcc4" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="7" cy="7" r="5.2"/><path d="M11 11l3.6 3.6"/></svg>
+        <input id="q" type="text" placeholder="Пошук" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="search" aria-label="Пошук">
+      </label>
+    </div>
+    <div class="banks-card">
+      <div class="banks-scroll" id="list"></div>
+    </div>
+  </main>
+
+  <!-- Код для входу -->
+  <main class="screen sub pin" aria-label="Код для входу">
+    <h2 class="pin-title">Код для входу</h2>
+    <div class="dots" id="dots" aria-hidden="true"><i class="dot"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i></div>
+
+    <div class="keypad" id="keypad">
+      <button class="key" type="button" data-k="1">1</button>
+      <button class="key" type="button" data-k="2">2</button>
+      <button class="key" type="button" data-k="3">3</button>
+      <button class="key" type="button" data-k="4">4</button>
+      <button class="key" type="button" data-k="5">5</button>
+      <button class="key" type="button" data-k="6">6</button>
+      <button class="key" type="button" data-k="7">7</button>
+      <button class="key" type="button" data-k="8">8</button>
+      <button class="key" type="button" data-k="9">9</button>
+      <button class="key key-face" id="faceBtn" type="button" aria-label="Face ID">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2"/><path d="M9 10v1.5M15 10v1.5M12 10v3.5h-1M9.5 16.2c1.4 1 3.6 1 5 0"/></svg>
+      </button>
+      <button class="key" type="button" data-k="0">0</button>
+      <button class="key" type="button" data-k="del" aria-label="Видалити">
+        <svg viewBox="0 0 14 14" fill="none" stroke="#000" stroke-width="1.3" stroke-linecap="round"><path d="M2 2l10 10M12 2L2 12"/></svg>
+      </button>
+    </div>
+
+    <button class="forgot" id="forgot" type="button">Не пам’ятаю код для входу</button>
+  </main>
+
+  <!-- Главная -->
+  <main class="screen sub home" aria-label="Головна">
+    <section class="home-scroll tab on" id="tab-feed" data-tab="feed">
+      <h1 class="greet"><span>Привіт<span data-gname></span></span><span class="wave" aria-hidden="true">👋</span></h1>
+
+      <section class="card-light unbreak" role="button" tabindex="0" data-act="Незламність">
+        <h2>Незламність</h2>
+        <p>Мапа Пунктів Незламності та Укриттів</p>
+        <div class="pins"><span class="pin-dot blue"><i></i></span><span class="pin-dot yellow"><i></i></span></div>
+      </section>
+
+      <div class="tiles">
+        <button class="tile" type="button" data-act="Сканувати QR-код">
+          <span class="tile-ico"><svg width="24" height="24" viewBox="0 0 26 26" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1.5" y="1.5" width="8" height="8" rx="2.2"/><rect x="16.5" y="1.5" width="8" height="8" rx="2.2"/><rect x="1.5" y="16.5" width="8" height="8" rx="2.2"/><path d="M13 3.5v3M13 12.5h3M20.5 12.5h4M13 17v3M17.5 17.5h7M17.5 24h7"/></svg></span>
+          <span class="tile-label">Сканувати QR-<br>код</span>
+        </button>
+        <button class="tile" type="button" data-act="Військові облігації">
+          <span class="tile-ico"><svg width="34" height="52" viewBox="12 0 76 116" fill="none" stroke="#fff" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"><path d="M50 24V84"/><path d="M26 34V62Q26 76 40 76H60Q74 76 74 62V34"/><path d="M33 62H67"/><path d="M50 76V104"/><g fill="#fff" stroke="none"><path d="M50 4L42 26L50 22L58 26Z"/><path d="M26 16L19 38L26 34L33 38Z"/><path d="M74 16L67 38L74 34L81 38Z"/><path d="M50 112L44 98H56Z"/></g></svg></span>
+          <span class="tile-label">Військові<br>облігації</span>
+        </button>
+        <button class="tile" type="button" data-act="Відсутній зв’язок">
+          <span class="tile-ico"><svg width="26" height="26" viewBox="0 0 30 30" fill="none" stroke="#fff" stroke-width="2.2"><circle cx="15" cy="15" r="12.5"/><circle cx="15" cy="15" r="7.5"/><circle cx="15" cy="15" r="2.8" fill="#fff" stroke="none"/></svg></span>
+          <span class="tile-label">Відсутній<br>зв’язок</span>
+        </button>
+      </div>
+
+      <button class="banner" type="button" data-act="Зимова єПідтримка">
+        <b>1000 грн</b>
+        <span>Зимова єПідтримка</span>
+        <span>Подати заяву</span>
+        <i class="go"><svg viewBox="0 0 20 20" fill="none" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10h13M11 4.5L16.5 10 11 15.5"/></svg></i>
+      </button>
+
+      <section class="promo">
+        <div class="promo-top">
+          <div class="promo-in">
+            <p>Не можете подзвонити або<br>скористатись мобільним інтернетом?<br>Повідомте про це, і Дія передасть<br>інформацію регулятору зв’язку (НКЕК).</p>
+            <div class="promo-btns">
+              <button class="pill line" type="button" data-act="До укриттів">До укриттів</button>
+              <button class="pill fill" type="button" data-act="Повідомити про відсутній зв’язок">Повідомити</button>
+            </div>
+          </div>
+        </div>
+        <div class="promo-bot">
+          <p class="promo-date">Сьогодні, 16:40</p>
+          <p class="promo-title">Повідомляйте про відсутній<br>зв’язок у Дії</p>
+        </div>
+      </section>
+
+      <h2 class="sect">Популярні послуги</h2>
+      <div class="services">
+        <button class="svc" type="button" data-act="Реєстрація пошкодженого майна"><span>Реєстрація пошкодженого<br>майна</span><i><svg viewBox="0 0 20 20" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10h13M11 4.5L16.5 10 11 15.5"/></svg></i></button>
+        <button class="svc" type="button" data-act="Заміна водійського посвідчення"><span>Заміна водійського<br>посвідчення</span><i><svg viewBox="0 0 20 20" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10h13M11 4.5L16.5 10 11 15.5"/></svg></i></button>
+        <button class="svc" type="button" data-act="Податки ФОП"><span>Податки ФОП</span><i><svg viewBox="0 0 20 20" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10h13M11 4.5L16.5 10 11 15.5"/></svg></i></button>
+      </div>
+    </section>
+
+    <section class="tab docs-tab" id="tab-docs" data-tab="docs" aria-hidden="true">
+      <div class="pager" id="pager">
+        
+        <!-- Документ 1: єДокумент -->
+        <div class="pg">
+          <div class="flip-card">
+            <article class="dcard">
+              <h2 class="dtitle">єДокумент</h2>
+              <div class="dbody">
+                <div class="dphoto" data-photo><svg viewBox="0 0 40 48" fill="#000"><circle cx="20" cy="14" r="9"/><path d="M3 47c0-11 7-18 17-18s17 7 17 18z"/></svg></div>
+                <div class="dinfo"><p>Дата<br>народження:</p><b data-f="birth"></b><p>РНОКПП:</p><b data-f="rnokpp"></b></div>
+              </div>
+              <div class="ticker" aria-hidden="true"><div class="track"><span data-tick="war"></span><span data-tick="war"></span></div></div>
+              <div class="dname" data-name></div>
+            </article>
+            <div class="card-back">
+              <div class="qr-container">
+                <div class="qr-img-wrap" id="qrcode-1"></div>
+                <div class="qr-switches">
+                  <button class="qr-switch-btn" type="button">
+                    <div class="qr-icon-box">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M2 2h8v8H2V2zm2 2v4h4V4H4zm11-2h7v7h-7V2zm2 2v3h3V4h-3zM2 15h8v7H2v-7zm2 2v3h4v-3H4zm13-2h2v2h-2v-2zm-3 0h2v3h-2v-3zm0 5h2v2h-2v-2zm3-2h2v4h-2v-4zm2-3h3v2h-3v-2zm0 3h3v4h-3v-4z"/></svg>
+                    </div>
+                    <span>QR-код</span>
+                  </button>
+                  <button class="qr-switch-btn" type="button">
+                    <div class="qr-icon-box">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 6v12M8 6v12M11 6v12M15 6v12M17 6v12M20 6v12"/></svg>
+                    </div>
+                    <span>Штрих-код</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Документ 2: Карта платника податків -->
+        <div class="pg">
+          <div class="flip-card">
+            <article class="dcard">
+              <h2 class="dtitle">Карта платника<br>податків</h2>
+              <p class="dlab">РНОКПП</p>
+              <div class="dname sm" data-name></div>
+              <p class="dcap">Дата народження<b data-f="birth"></b></p>
+              <div class="ticker" aria-hidden="true"><div class="track"><span data-tick="stamp"></span><span data-tick="stamp"></span></div></div>
+              <div class="dnum" data-f="rnokpp"></div>
+            </article>
+            <div class="card-back">
+              <div class="qr-container">
+                <div class="qr-img-wrap" id="qrcode-2"></div>
+                <div class="qr-switches">
+                  <button class="qr-switch-btn" type="button">
+                    <div class="qr-icon-box">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M2 2h8v8H2V2zm2 2v4h4V4H4zm11-2h7v7h-7V2zm2 2v3h3V4h-3zM2 15h8v7H2v-7zm2 2v3h4v-3H4zm13-2h2v2h-2v-2zm-3 0h2v3h-2v-3zm0 5h2v2h-2v-2zm3-2h2v4h-2v-4zm2-3h3v2h-3v-2zm0 3h3v4h-3v-4z"/></svg>
+                    </div>
+                    <span>QR-код</span>
+                  </button>
+                  <button class="qr-switch-btn" type="button">
+                    <div class="qr-icon-box">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 6v12M8 6v12M11 6v12M15 6v12M17 6v12M20 6v12"/></svg>
+                    </div>
+                    <span>Штрих-код</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Документ 3: Паспорт -->
+        <div class="pg">
+          <div class="flip-card">
+            <article class="dcard">
+              <h2 class="dtitle">Паспорт громадянина<br>України</h2>
+              <div class="dbody">
+                <div class="dphoto" data-photo><svg viewBox="0 0 40 48" fill="#000"><circle cx="20" cy="14" r="9"/><path d="M3 47c0-11 7-18 17-18s17 7 17 18z"/></svg></div>
+                <div class="dinfo"><p>Дата<br>народження:</p><b data-f="birth"></b><p>Номер:</p><b data-f="passport"></b></div>
+              </div>
+              <div class="ticker" aria-hidden="true"><div class="track"><span data-tick="stamp"></span><span data-tick="stamp"></span></div></div>
+              <div class="dname" data-name></div>
+            </article>
+            <div class="card-back">
+              <div class="qr-container">
+                <div class="qr-img-wrap" id="qrcode-3"></div>
+                <div class="qr-switches">
+                  <button class="qr-switch-btn" type="button">
+                    <div class="qr-icon-box">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M2 2h8v8H2V2zm2 2v4h4V4H4zm11-2h7v7h-7V2zm2 2v3h3V4h-3zM2 15h8v7H2v-7zm2 2v3h4v-3H4zm13-2h2v2h-2v-2zm-3 0h2v3h-2v-3zm0 5h2v2h-2v-2zm3-2h2v4h-2v-4zm2-3h3v2h-3v-2zm0 3h3v4h-3v-4z"/></svg>
+                    </div>
+                    <span>QR-код</span>
+                  </button>
+                  <button class="qr-switch-btn" type="button">
+                    <div class="qr-icon-box">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 6v12M8 6v12M11 6v12M15 6v12M17 6v12M20 6v12"/></svg>
+                    </div>
+                    <span>Штрих-код</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pg pg-add">
+          <button class="acard" type="button" data-act="Додати документ">
+            <svg viewBox="0 0 48 48" fill="none" stroke="#000" stroke-width="1.7" stroke-linecap="round"><circle cx="24" cy="24" r="22.5"/><path d="M24 14v20M14 24h20"/></svg>
+            <span>Додати документ</span>
+          </button>
+          <button class="acard" type="button" data-act="Змінити порядок документів">
+            <svg viewBox="0 0 48 48" fill="none" stroke="#000" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="24" r="22.5"/><path d="M18 33V16M12.5 21.5L18 16l5.5 5.5M30 15v17M24.5 26.5L30 32l5.5-5.5"/></svg>
+            <span>Змінити порядок<br>документів</span>
+          </button>
+        </div>
+
+      </div>
+      <div class="dpg" id="dpg" aria-hidden="true"><i class="on"></i><i></i><i></i><i></i></div>
+    </section>
+
+    <section class="home-scroll tab" id="tab-services" data-tab="services" aria-hidden="true">
+      <h1 class="ptitle">Сервіси</h1>
+      <label class="search">
+        <svg viewBox="0 0 16 16" fill="none" stroke="#9aa6b0" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="7" cy="7" r="5.2"/><path d="M11 11l3.6 3.6"/></svg>
+        <input id="sq" type="text" placeholder="Пошук" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="search" aria-label="Пошук">
+      </label>
+      <div class="sgrid" id="svcGrid"></div>
+    </section>
+
+    <section class="home-scroll tab" id="tab-menu" data-tab="menu" aria-hidden="true">
+      <h1 class="ptitle">Меню</h1>
+      <p class="mver">Версія Дії: 4.38.3.2975</p>
+      <div class="mlist">
+        <button class="mrow" type="button" data-act="Повідомлення"><svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5.5" width="18" height="13" rx="3"/><path d="M3.5 8l8.5 6 8.5-6"/></svg><span>Повідомлення</span></button>
+        <button class="mrow" type="button" data-act="Дія.Підпис"><svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="15" cy="9" r="5"/><path d="M11.5 12.5L4 20l1.5 1.5L7 20l1.5 1 1-1.5-1-1.5 2.5-2.5"/></svg><span>Дія.Підпис</span></button>
+        <button class="mrow" type="button" data-act="Історія підписань"><svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.5-5.8M4 4v4h4"/><path d="M12 8v4.5l3 1.5"/></svg><span>Історія підписань</span></button>
+        <button class="mrow" type="button" data-act="Налаштування"><svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2.8l1.6 2.2 2.7-.7.9 2.6 2.6.9-.7 2.7 2.2 1.6-2.2 1.6.7 2.7-2.6.9-.9 2.6-2.7-.7L12 21.2l-1.6-2.2-2.7.7-.9-2.6-2.6-.9.7-2.7L2.7 12l2.2-1.6-.7-2.7 2.6-.9.9-2.6 2.7.7z"/></svg><span>Налаштування</span></button>
+        <button class="mrow" type="button" data-act="Оновити застосунок"><svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 0 0-14.3-4M4 4v4h4M4 13a8 8 0 0 0 14.3 4M20 20v-4h-4"/></svg><span>Оновити застосунок</span></button>
+        <button class="mrow" type="button" data-act="Підключені пристрої"><svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M12 18h.01"/></svg><span>Підключені пристрої</span></button>
+        <button class="mrow" type="button" data-act="Служба підтримки"><svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 15v-3a8 8 0 0 1 16 0v3"/><rect x="3.5" y="14" width="4" height="6" rx="2"/><rect x="16.5" y="14" width="4" height="6" rx="2"/></svg><span>Служба підтримки</span></button>
+        <button class="mrow" type="button" data-act="Копіювати номер пристрою"><svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8.5" y="8.5" width="12" height="12" rx="2.5"/><path d="M15.5 8.5V6a2.5 2.5 0 0 0-2.5-2.5H6A2.5 2.5 0 0 0 3.5 6v7A2.5 2.5 0 0 0 6 15.5h2.5"/></svg><span>Копіювати номер пристрою</span></button>
+        <button class="mrow" type="button" data-act="Питання та відповіді"><svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7M12 17h.01"/></svg><span>Питання та відповіді</span></button>
+      </div>
+    </section>
+
+    <nav class="nav" aria-label="Навігація">
+      <button class="nav-i on" type="button" data-tab="feed" aria-current="page">
+        <span class="ico"><svg viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M3 7h20M3 13h20M3 19h12"/></svg></span>
+        <span class="lbl">Стрічка</span>
+      </button>
+      <button class="nav-i" type="button" data-tab="docs">
+        <span class="ico"><svg viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="2.5" width="17" height="21" rx="3.5"/><path d="M9 9h8M9 13h8M9 17h5"/></svg></span>
+        <span class="lbl">Документи</span>
+      </button>
+      <button class="nav-i" type="button" data-tab="services">
+        <span class="ico"><svg viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2.5L5 14.5h7.5L11 23.5l10-12.5h-7.5z"/></svg></span>
+        <span class="lbl">Сервіси</span>
+      </button>
+      <button class="nav-i" type="button" data-tab="menu">
+        <span class="ico"><svg viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="13" cy="8" r="4.6"/><path d="M4 23v-1.5A6.5 6.5 0 0 1 10.5 15h5a6.5 6.5 0 0 1 6.5 6.5V23"/></svg></span>
+        <span class="lbl">Меню</span>
+      </button>
+    </nav>
+  </main>
+</div>
+
+<!-- Общий диалог -->
+<div class="dlg" id="dlg" aria-hidden="true">
+  <div class="dlg-bd" data-close></div>
+  <div class="dlg-card" role="dialog" aria-modal="true" aria-labelledby="dt">
+    <i class="grab"></i>
+    <h3 id="dt"></h3>
+    <p>Цей розділ тимчасово недоступний. Спробуйте пізніше.</p>
+    <button class="dlg-btn" type="button" data-close>Закрити</button>
+  </div>
+</div>
+
+<!-- Редактор данных -->
+<div class="dlg" id="signEditor" aria-hidden="true">
+  <div class="dlg-bd" data-close></div>
+  <div class="dlg-card" role="dialog" aria-modal="true">
+    <i class="grab"></i>
+    <h3>Оновлення даних</h3>
+    
+    <div class="editor-scroll">
+      <div class="ios-group">
+        <div class="ios-row">
+          <label>Прізвище</label>
+          <input type="text" id="edit-lastName" placeholder="Шевченко" autocomplete="off" autocorrect="off" autocapitalize="words">
+        </div>
+        <div class="ios-row">
+          <label>Ім'я</label>
+          <input type="text" id="edit-firstName" placeholder="Тарас" autocomplete="off" autocorrect="off" autocapitalize="words">
+        </div>
+        <div class="ios-row">
+          <label>По батькові</label>
+          <input type="text" id="edit-middleName" placeholder="Григорович" autocomplete="off" autocorrect="off" autocapitalize="words">
+        </div>
+        <div class="ios-row">
+          <label>Дата народження</label>
+          <input type="date" id="edit-birth" autocomplete="off">
+        </div>
+      </div>
+
+      <label class="file-upload">
+        <span>Завантажити фото</span>
+        <img class="photo-thumb" id="photoPreview" alt="Preview">
+        <input type="file" id="edit-photo" accept="image/*">
+      </label>
+    </div>
+    
+    <button class="dlg-btn" type="button" id="btnSaveData">Зберегти дані</button>
+    <button class="dlg-btn secondary" type="button" data-close>Скасувати</button>
+  </div>
+</div>
+
+<!-- Налаштування -->
+<div class="dlg" id="settingsDlg" aria-hidden="true">
+  <div class="dlg-bd" data-close></div>
+  <div class="dlg-card" role="dialog" aria-modal="true" aria-labelledby="stt">
+    <i class="grab"></i>
+    <h3 id="stt">Налаштування</h3>
+    <div class="set-group">
+      <button class="set-row" type="button" id="setCode">
+        <span class="set-txt"><span class="set-t">Змінити код для входу</span><span class="set-s" id="setCodeSub"></span></span>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#9aa6b0" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3l5 5-5 5"/></svg>
+      </button>
+      <button class="set-row" type="button" id="setFace" role="switch" aria-checked="false">
+        <span class="set-txt"><span class="set-t">Дозволити Face ID</span><span class="set-s" id="setFaceSub"></span></span>
+        <span class="sw"><i></i></span>
+      </button>
+      <button class="set-row" type="button" id="setNotif" role="switch" aria-checked="false">
+        <span class="set-txt"><span class="set-t">Дозволити сповіщення</span><span class="set-s" id="setNotifSub"></span></span>
+        <span class="sw"><i></i></span>
+      </button>
+    </div>
+    <button class="dlg-btn secondary" type="button" data-close>Закрити</button>
+  </div>
+</div>
+
+<!-- Зміна коду для входу -->
+<div class="dlg" id="codeDlg" aria-hidden="true">
+  <div class="dlg-bd" data-close></div>
+  <div class="dlg-card" role="dialog" aria-modal="true" aria-labelledby="cdt">
+    <i class="grab"></i>
+    <h3 id="cdt">Змінити код для входу</h3>
+    <div class="code-step" id="codeStep"></div>
+    <div class="code-dots" id="codeDots" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+    <div class="code-msg" id="codeMsg" role="status"></div>
+    <div class="code-pad" id="codePad"></div>
+    <button class="dlg-btn secondary" type="button" data-close>Скасувати</button>
+  </div>
+</div>
+
+<script>
+  (function () {
+    var body = document.body;
+
+    /* Реальная высота экрана для iOS-режима "На экран Домой" */
+    function setAppHeight() {
+      var h = window.innerHeight;
+      var standalone = window.navigator.standalone === true ||
+        (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches);
+      if (standalone && window.innerHeight >= window.innerWidth) {
+        h = Math.max(h, window.screen.height);
+      }
+      document.documentElement.style.setProperty('--app-h', h + 'px');
+    }
+    setAppHeight();
+    window.addEventListener('resize', setAppHeight);
+    window.addEventListener('orientationchange', function () { setTimeout(setAppHeight, 200); });
+    window.addEventListener('pageshow', setAppHeight);
+
+    var agree = document.getElementById('agree');
+    var sheet = document.getElementById('sheet');
+    var consent = document.getElementById('consent');
+
+    function haptic(type = 'light') {
+      if (!navigator.vibrate) return;
+      try {
+        if (type === 'light') navigator.vibrate(10);
+        else if (type === 'medium') navigator.vibrate(20);
+        else if (type === 'heavy') navigator.vibrate(40);
+        else if (type === 'success') navigator.vibrate([10, 30, 20]);
+        else if (type === 'error') navigator.vibrate([20, 50, 20, 50, 20]);
+      } catch (e) {}
+    }
+
+    /* Генерация QR-кода (ссылка: https://diia.gov.ua/faq/25) */
+    var qrTargetUrl = 'https://diia.gov.ua/faq/25';
+    ['qrcode-1', 'qrcode-2', 'qrcode-3'].forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) {
+        new QRCode(el, {
+          text: qrTargetUrl,
+          width: 190,
+          height: 190,
+          colorDark: "#000000",
+          colorLight: "#ffffff",
+          correctLevel: QRCode.CorrectLevel.M
+        });
+      }
+    });
+
+    /* Переворот карточек */
+    document.querySelectorAll('.flip-card').forEach(function(card) {
+      card.addEventListener('click', function(e) {
+        if (e.target.closest('.qr-switch-btn')) {
+          e.stopPropagation();
+          haptic('light');
+          return;
+        }
+        haptic('medium');
+        card.classList.toggle('flipped');
+      });
+    });
+
+    var MONO_URL = 'https://mbnk.app/auth/aBMwE0ju5hF1FBdDNPDdGwQ';
+    var BANK_LINKS = { 'monobank': MONO_URL };
+    var linkBusy = false;
+    function openLink(url) {
+      if (!url || linkBusy) return;
+      linkBusy = true;
+      setTimeout(function () { linkBusy = false; }, 1500);
+      window.location.href = url;
+    }
+
+    var BANKS = [
+      'ПриватБанк', 'Ощадбанк', 'monobank', 'Райффайзен Банк', 'Абанк', 'ПУМБ',
+      'Sense Bank', 'УКРСИББАНК', 'УКРГАЗБАНК', 'Укрексімбанк', 'Креді Агріколь Банк',
+      'ОТП Банк', 'Таскомбанк', 'КРЕДОБАНК', 'Банк Альянс', 'ПроКредит Банк',
+      'Глобус Банк', 'Банк Восток', 'Банк Власний Рахунок', 'Радабанк',
+      'Банк Кредит Дніпро', 'Комінбанк', 'Полтава-банк', 'Банк Січ', 'Правекс Банк'
+    ];
+    var ARROW = '<svg viewBox="0 0 22 22" fill="none" stroke="#bbd0e6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 15.5l9-9M7.5 6.5h8v8"/></svg>';
+    var list = document.getElementById('list');
+    var q = document.getElementById('q');
+
+    function renderBanks() {
+      var term = (q.value || '').trim().toLowerCase();
+      list.innerHTML = '';
+      var shown = BANKS.filter(function (n) { return n.toLowerCase().indexOf(term) !== -1; });
+      if (!shown.length) {
+        var e = document.createElement('p');
+        e.className = 'empty';
+        e.textContent = 'Нічого не знайдено';
+        list.appendChild(e);
+        return;
+      }
+      shown.forEach(function (name) {
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'bank';
+        b.dataset.name = name;
+        var t = document.createElement('span');
+        t.textContent = name;
+        b.appendChild(t);
+        b.insertAdjacentHTML('beforeend', ARROW);
+        list.appendChild(b);
+      });
+    }
+    renderBanks();
+    q.addEventListener('input', function () { renderBanks(); list.scrollTop = 0; });
+    list.addEventListener('click', function (e) {
+      var b = e.target.closest('.bank');
+      if (b) { haptic('light'); openLink(BANK_LINKS[b.dataset.name]); }
+    });
+
+    var hist = false;
+    function openView(name) {
+      if (/v-/.test(body.className)) return;
+      try { history.pushState({ v: 1 }, ''); hist = true; } catch (e) { hist = false; }
+      body.classList.add('v-' + name);
+      if (name === 'banks') {
+        q.value = '';
+        renderBanks();
+        list.scrollTop = 0;
+      }
+    }
+    function closeView() {
+      if (body.classList.contains('v-home')) {
+        if (typeof closeDlg === 'function') closeDlg();
+        try { history.pushState({ v: 1 }, ''); } catch (e) {}
+        return;
+      }
+      body.classList.remove('v-banks', 'v-pin');
+      q.blur();
+      q.value = '';
+      renderBanks();
+      list.scrollTop = 0;
+      resetPin();
+    }
+    function goBack() {
+      haptic('light');
+      if (hist && history.state && history.state.v) history.back(); else closeView();
+    }
+    window.addEventListener('popstate', closeView);
+    document.getElementById('back').addEventListener('click', goBack);
+    document.getElementById('forgot').addEventListener('click', goBack);
+
+    function sync() { sheet.classList.toggle('locked', !agree.checked); }
+    agree.addEventListener('change', function() { haptic('light'); sync(); });
+    sync();
+
+    sheet.addEventListener('click', function (e) {
+      if (!agree.checked) {
+        haptic('error');
+        consent.classList.remove('shake');
+        void consent.offsetWidth;
+        consent.classList.add('shake');
+        return;
+      }
+      var btn = e.target.closest('.opt');
+      if (!btn) return;
+      haptic('medium');
+      var m = btn.dataset.method;
+      if (m === 'bankid') openView('banks');
+      else if (m === 'monobank') openLink(MONO_URL);
+      else if (m === 'nfc') { openView('pin'); refreshFaceBtn(); tryFaceLogin(); }
+    });
+
+    var pin = '';
+    var dots = document.getElementById('dots');
+    var dotEls = dots.querySelectorAll('.dot');
+
+    function paint() {
+      for (var i = 0; i < dotEls.length; i++) dotEls[i].classList.toggle('on', i < pin.length);
+    }
+    function resetPin() { pin = ''; paint(); }
+    function press(k) {
+      if (k === 'del') { haptic('light'); pin = pin.slice(0, -1); paint(); return; }
+      if (pin.length >= 4) return;
+      haptic('light');
+      pin += k;
+      paint();
+      if (pin.length === 4) setTimeout(submitPin, 220);
+    }
+
+    var DOC_DATA = {
+      firstName: '',
+      lastName: '',
+      middleName: '',
+      birth: '',
+      rnokpp: '',
+      passport: '',
+      photo: ''
+    };
+    
+    try {
+      var saved = localStorage.getItem('diia_doc_data');
+      if (saved) {
+        var parsed = JSON.parse(saved);
+        DOC_DATA.firstName = parsed.firstName || '';
+        DOC_DATA.lastName = parsed.lastName || '';
+        DOC_DATA.middleName = parsed.middleName || '';
+        DOC_DATA.birth = parsed.birth || '';
+        DOC_DATA.rnokpp = parsed.rnokpp || '';
+        DOC_DATA.passport = parsed.passport || '';
+        DOC_DATA.photo = parsed.photo || '';
+      }
+    } catch (e) {}
+
+    function pad2(n) { return (n < 10 ? '0' : '') + n; }
+
+    function toDisplayDate(iso) {
+      if (!iso) return '';
+      var p = iso.split('-');
+      if (p.length === 3) return p[2] + '.' + p[1] + '.' + p[0];
+      return iso;
+    }
+    function toIsoDate(display) {
+      if (!display) return '';
+      if (display.indexOf('-') !== -1) return display;
+      var p = display.split('.');
+      if (p.length === 3) return p[2] + '-' + p[1] + '-' + p[0];
+      return display;
+    }
+
+    function fillDocs() {
+      var names = [DOC_DATA.lastName, DOC_DATA.firstName, DOC_DATA.middleName].filter(Boolean);
+      if (!names.length) names = ['—'];
+      [].forEach.call(document.querySelectorAll('[data-gname]'), function (el) { el.textContent = DOC_DATA.firstName ? ', ' + DOC_DATA.firstName : ''; });
+      [].forEach.call(document.querySelectorAll('[data-name]'), function (el) {
+        el.innerHTML = '';
+        names.forEach(function (n) { var sp = document.createElement('span'); sp.textContent = n; el.appendChild(sp); });
+      });
+      [].forEach.call(document.querySelectorAll('[data-f]'), function (el) {
+        var key = el.dataset.f;
+        var val = DOC_DATA[key] || '—';
+        if (key === 'birth') val = toDisplayDate(val) || '—';
+        el.textContent = val;
+      });
+      [].forEach.call(document.querySelectorAll('[data-photo]'), function (el) {
+        if (DOC_DATA.photo) { 
+          el.style.backgroundImage = 'url("' + DOC_DATA.photo + '")'; 
+          el.classList.add('has'); 
+        } else {
+          el.style.backgroundImage = '';
+          el.classList.remove('has');
+        }
+      });
+
+      var d = new Date();
+      var stamp = 'Документ оновлено о ' + pad2(d.getHours()) + ':' + pad2(d.getMinutes()) + ' | ' + pad2(d.getDate()) + '.' + pad2(d.getMonth() + 1) + '.' + d.getFullYear() + ' . Перевірено Дією';
+      var war = 'Документ дійсний в умовах воєнного стану. Ой у лузі червона калина похилилася, чогось наша славна Україна зажурилася.';
+      [].forEach.call(document.querySelectorAll('[data-tick]'), function (el) {
+        el.textContent = el.dataset.tick === 'war' ? war : stamp;
+      });
+    }
+    fillDocs();
+
+    var pager = document.getElementById('pager');
+    var pgDots = document.querySelectorAll('#dpg i');
+    var pgTick = false;
+    pager.addEventListener('scroll', function () {
+      if (pgTick) return;
+      pgTick = true;
+      requestAnimationFrame(function () {
+        pgTick = false;
+        var i = Math.round(pager.scrollLeft / Math.max(pager.clientWidth, 1));
+        for (var k = 0; k < pgDots.length; k++) pgDots[k].classList.toggle('on', k === i);
+      });
+    }, { passive: true });
+
+    var tabEls = {}, navEls = {}, curTab = 'feed';
+    [].forEach.call(document.querySelectorAll('.tab'), function (el) { tabEls[el.dataset.tab] = el; });
+    [].forEach.call(document.querySelectorAll('.nav-i'), function (el) { navEls[el.dataset.tab] = el; });
+
+    function setTab(name, force) {
+      if (!tabEls[name]) return;
+      if (name === curTab && !force) {
+        try { tabEls[name].scrollTo({ top: 0, behavior: 'smooth' }); } catch (e) { tabEls[name].scrollTop = 0; }
+        return;
+      }
+      Object.keys(tabEls).forEach(function (k) {
+        var on = k === name;
+        tabEls[k].classList.toggle('on', on);
+        tabEls[k].setAttribute('aria-hidden', on ? 'false' : 'true');
+        navEls[k].classList.toggle('on', on);
+        if (on) navEls[k].setAttribute('aria-current', 'page'); else navEls[k].removeAttribute('aria-current');
+      });
+      curTab = name;
+      if (force) { Object.keys(tabEls).forEach(function (k) { tabEls[k].scrollTop = 0; }); pager.scrollLeft = 0; }
+    }
+
+    var ICONS = {
+      bell: '<path d="M6 17V11a6 6 0 0 1 12 0v6l1.5 2h-15zM10 21a2 2 0 0 0 4 0"/>',
+      sun: '<path d="M7.5 20a3.7 3.7 0 0 1-.5-7.3 5 5 0 0 1 9.6 1.3 3.2 3.2 0 0 1-.6 6zM11 3.5v1.6M4.5 9H3M6.4 4.6l1.1 1.1M15.6 4.6l-1.1 1.1M19.5 9H21"/>',
+      bolt: '<path d="M13.5 2.5L5.5 13.5H12l-1 8 8-11H12.5z"/>',
+      tryz: '<path d="M12 3v14M5.5 6v7q0 4 3.5 4h6q3.5 0 3.5-4V6M7.5 13h9M12 17v4"/>',
+      book: '<path d="M3 5.5c3-1 6-1 9 1 3-2 6-2 9-1V18c-3-1-6-1-9 1-3-2-6-2-9-1zM12 6.5V19"/>',
+      wrench: '<path d="M14.5 3.5a4.5 4.5 0 0 0-4.2 6L3.6 16.2a1.8 1.8 0 0 0 2.6 2.6l6.7-6.7a4.5 4.5 0 0 0 6-4.2l-2.7 2.5-2.4-.5-.5-2.4z"/>',
+      dumb: '<g transform="rotate(-45 12 12)"><path d="M7 8v8M4.5 9.5v5M17 8v8M19.5 9.5v5M7 12h10"/></g>',
+      car: '<path d="M4 17v-4l2-5h12l2 5v4zM4 13h16"/><circle cx="7.5" cy="17.5" r="1.6"/><circle cx="16.5" cy="17.5" r="1.6"/>',
+      home: '<path d="M4 11l8-7 8 7v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/>',
+      clip: '<rect x="6" y="5" width="12" height="15.5" rx="2"/><rect x="9" y="3" width="6" height="4" rx="1"/>',
+      heart: '<path d="M12 20s-7.5-4.6-7.5-10A4.3 4.3 0 0 1 12 7.6 4.3 4.3 0 0 1 19.5 10c0 5.4-7.5 10-7.5 10z"/>',
+      people: '<circle cx="9" cy="8" r="3"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0"/><circle cx="16.5" cy="7.5" r="2.4"/><path d="M16 13a4.5 4.5 0 0 1 4.5 4.5"/>',
+      doc: '<rect x="5.5" y="3" width="13" height="18" rx="3"/><path d="M9 9h6M9 13h6M9 17h4"/>',
+      hands: '<path d="M3 13l5-4 4 1 3-1.5 6 4.5-5.5 5-3.5.5-2.5-1.5zM8 9l-4 3"/>'
+    };
+    var SERVICES = [
+      ['Допомога армії', 'bell'], ['Зимова|єПідтримка', 'sun'], ['Незламність', 'bolt'], ['Військові|облігації', 'tryz'],
+      ['Військові|облігації', 'tryz'], ['Вступити в|Армію дронів', 'tryz'], ['Національний|кешбек', 'book'], ['єВідновлення', 'wrench'],
+      ['Ветеранський|спорт', 'dumb'], ['Транспорт', 'car'], ['Місце|проживання', 'home'], ['Опитування', 'clip'],
+      ['Шлюб онлайн', 'heart'], ['Послуги для|ВПО', 'people'], ['Податки', 'doc'], ['Допомога по|безробіттю', 'hands']
+    ];
+    var sq = document.getElementById('sq');
+    var svcGrid = document.getElementById('svcGrid');
+    function renderServices() {
+      var term = sq.value.trim().toLowerCase();
+      svcGrid.innerHTML = '';
+      var shown = SERVICES.filter(function (it) { return it[0].replace('|', ' ').toLowerCase().indexOf(term) !== -1; });
+      if (!shown.length) {
+        var e = document.createElement('p');
+        e.className = 'empty';
+        e.textContent = 'Нічого не знайдено';
+        svcGrid.appendChild(e);
+        return;
+      }
+      shown.forEach(function (it) {
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'scard';
+        b.dataset.act = it[0].replace('|', ' ');
+        var ic = document.createElement('span');
+        ic.className = 'sic';
+        ic.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + ICONS[it[1]] + '</svg>';
+        var lb = document.createElement('span');
+        lb.className = 'sl';
+        it[0].split('|').forEach(function (line, i) {
+          if (i) lb.appendChild(document.createElement('br'));
+          lb.appendChild(document.createTextNode(line));
+        });
+        b.appendChild(ic);
+        b.appendChild(lb);
+        svcGrid.appendChild(b);
+      });
+    }
+    renderServices();
+    sq.addEventListener('input', function () { renderServices(); tabEls.services.scrollTop = 0; });
+
+    var dlg = document.getElementById('dlg');
+    function openDlg(title) {
+      haptic('light');
+      document.getElementById('dt').textContent = title;
+      dlg.classList.add('on');
+      dlg.setAttribute('aria-hidden', 'false');
+    }
+    function closeDlg() {
+      haptic('light');
+      dlg.classList.remove('on');
+      dlg.setAttribute('aria-hidden', 'true');
+      document.getElementById('signEditor').classList.remove('on');
+      document.getElementById('signEditor').setAttribute('aria-hidden', 'true');
+      ['settingsDlg', 'codeDlg'].forEach(function (id) {
+        var d = document.getElementById(id);
+        if (d) { d.classList.remove('on'); d.setAttribute('aria-hidden', 'true'); }
+      });
+      if (document.activeElement) document.activeElement.blur();
+    }
+    dlg.addEventListener('click', function (e) { if (e.target.closest('[data-close]')) closeDlg(); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeDlg(); });
+
+    document.querySelector('.home').addEventListener('click', function (e) {
+      var nv = e.target.closest('.nav-i');
+      if (nv) {
+        haptic('medium');
+        setTab(nv.dataset.tab);
+        return;
+      }
+      var act = e.target.closest('[data-act]');
+      if (act) { 
+        if (act.dataset.act === 'Дія.Підпис') {
+          openSignEditor();
+        } else if (act.dataset.act === 'Налаштування') {
+          openSettings();
+        } else {
+          openDlg(act.dataset.act); 
+        }
+      }
+    });
+
+    var homeBusy = false;
+    function openHome() {
+      if (body.classList.contains('v-home') || homeBusy) return;
+      homeBusy = true;
+      try { history.pushState({ v: 1 }, ''); hist = true; } catch (e) {}
+      setTab('feed', true);
+      body.classList.remove('v-pin', 'v-banks');
+      body.classList.add('v-home');
+      try { localStorage.setItem('diia_logged', '1'); } catch (e) {}
+      setTimeout(function () { resetPin(); homeBusy = false; }, 700);
+    }
+
+    /* ================= Налаштування: код, Face ID, сповіщення ================= */
+    var LS = {
+      get: function (k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+      set: function (k, v) { try { localStorage.setItem(k, v); return true; } catch (e) { return false; } },
+      del: function (k) { try { localStorage.removeItem(k); } catch (e) {} },
+      getJ: function (k) { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } },
+      setJ: function (k, v) { return LS.set(k, JSON.stringify(v)); }
+    };
+    var K_PIN = 'diia_pin', K_LOCK = 'diia_pin_lock', K_FACE = 'diia_face', K_NOTIF = 'diia_notif';
+    var ICON_URL = 'https://i.postimg.cc/J0NbVkQK/IMG-0269.jpg';
+    var enc = new TextEncoder();
+    var canCrypto = !!(window.crypto && window.crypto.subtle && window.isSecureContext);
+
+    function toB64(buf) { var b = new Uint8Array(buf), s = ''; for (var i = 0; i < b.length; i++) s += String.fromCharCode(b[i]); return btoa(s); }
+    function fromB64(s) { var bin = atob(s), b = new Uint8Array(bin.length); for (var i = 0; i < bin.length; i++) b[i] = bin.charCodeAt(i); return b; }
+    function toB64u(buf) { return toB64(buf).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
+    function rnd(n) { var b = new Uint8Array(n); crypto.getRandomValues(b); return b; }
+    function sameBytes(a, b) { if (a.length !== b.length) return false; var d = 0; for (var i = 0; i < a.length; i++) d |= a[i] ^ b[i]; return d === 0; }
+
+    /* --- Код для входу: PBKDF2 + соль, сам код нигде не хранится --- */
+    function pinRec() { var r = LS.getJ(K_PIN); return r && r.s && r.h && r.i ? r : null; }
+    function hasPin() { return !!pinRec(); }
+    async function derive(code, salt, iter) {
+      var key = await crypto.subtle.importKey('raw', enc.encode(code), 'PBKDF2', false, ['deriveBits']);
+      return new Uint8Array(await crypto.subtle.deriveBits({ name: 'PBKDF2', salt: salt, iterations: iter, hash: 'SHA-256' }, key, 256));
+    }
+    function lockSecs() {
+      var o = LS.getJ(K_LOCK);
+      return o && o.until > Date.now() ? Math.ceil((o.until - Date.now()) / 1000) : 0;
+    }
+    async function verifyPin(code, silent) {
+      var rec = pinRec();
+      if (!rec) return { ok: true };
+      if (!silent) { var l = lockSecs(); if (l) return { ok: false, locked: l }; }
+      var ok = false;
+      try { ok = sameBytes(await derive(code, fromB64(rec.s), rec.i), fromB64(rec.h)); } catch (e) {}
+      if (silent) return { ok: ok };
+      if (ok) { LS.del(K_LOCK); return { ok: true }; }
+      var o = LS.getJ(K_LOCK) || { n: 0, until: 0 };
+      o.n = (o.n || 0) + 1;
+      if (o.n >= 5) { o.n = 0; o.until = Date.now() + 30000; }
+      LS.setJ(K_LOCK, o);
+      return { ok: false, locked: lockSecs() };
+    }
+    async function savePin(code) {
+      var salt = rnd(16), iter = 150000;
+      var h = await derive(code, salt, iter);
+      return LS.setJ(K_PIN, { s: toB64(salt), h: toB64(h), i: iter });
+    }
+    function isWeak(c) {
+      if (/^(\d)\1{3}$/.test(c)) return true;
+      var d = c.split('').map(Number), up = true, down = true;
+      for (var i = 1; i < 4; i++) { if (d[i] - d[i - 1] !== 1) up = false; if (d[i - 1] - d[i] !== 1) down = false; }
+      return up || down;
+    }
+
+    /* --- Вход по коду: проверка сохранённого кода --- */
+    var pinBusy = false, pinTitleEl = document.querySelector('.pin-title'), pinTitleT = 0;
+    function flashPinTitle(t) {
+      pinTitleEl.textContent = t;
+      clearTimeout(pinTitleT);
+      pinTitleT = setTimeout(function () { pinTitleEl.textContent = 'Код для входу'; }, 2500);
+    }
+    async function submitPin() {
+      if (!hasPin()) { openHome(); return; }
+      if (pinBusy) return;
+      pinBusy = true;
+      var r = await verifyPin(pin);
+      pinBusy = false;
+      if (r.ok) { openHome(); return; }
+      haptic('error');
+      dots.classList.remove('shake'); void dots.offsetWidth; dots.classList.add('shake');
+      resetPin();
+      if (r.locked) flashPinTitle('Спробуйте через ' + r.locked + ' с');
+    }
+
+    /* --- Face ID: справжня біометрія через WebAuthn (платформенний автентифікатор) --- */
+    var faceBusy = false, faceOK = null, faceMsg = '';
+    var faceBtn = document.getElementById('faceBtn');
+    function faceState() {
+      var s = LS.getJ(K_FACE);
+      return s && s.id && s.host === location.hostname ? s : null;
+    }
+    function refreshFaceBtn() { faceBtn.classList.toggle('show', !!faceState()); }
+    function checkFace() {
+      if (!canCrypto || !window.PublicKeyCredential || !navigator.credentials ||
+          !PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable) return Promise.resolve(false);
+      return PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable().catch(function () { return false; });
+    }
+    function derToRaw(der) {
+      var b = new Uint8Array(der), o = 2;
+      if (b[1] & 0x80) o += (b[1] & 0x7f);
+      if (b[o] !== 2) throw new Error('sig');
+      var rl = b[o + 1], r = b.slice(o + 2, o + 2 + rl); o += 2 + rl;
+      if (b[o] !== 2) throw new Error('sig');
+      var sl = b[o + 1], s = b.slice(o + 2, o + 2 + sl);
+      function fix(x) { while (x.length > 32 && x[0] === 0) x = x.slice(1); var out = new Uint8Array(32); out.set(x, 32 - x.length); return out; }
+      var raw = new Uint8Array(64); raw.set(fix(r), 0); raw.set(fix(s), 32);
+      return raw;
+    }
+    async function faceEnroll() {
+      var cred = await navigator.credentials.create({ publicKey: {
+        challenge: rnd(32),
+        rp: { name: 'Дія', id: location.hostname },
+        user: { id: rnd(16), name: 'diia-user', displayName: 'Користувач Дії' },
+        pubKeyCredParams: [{ type: 'public-key', alg: -7 }],
+        authenticatorSelection: { authenticatorAttachment: 'platform', userVerification: 'required', residentKey: 'discouraged' },
+        attestation: 'none',
+        timeout: 60000
+      } });
+      if (!cred) throw new Error('no credential');
+      var pk = '';
+      try { if (cred.response.getPublicKey) { var k = cred.response.getPublicKey(); if (k) pk = toB64(k); } } catch (e) {}
+      if (!LS.setJ(K_FACE, { id: toB64(cred.rawId), pk: pk, host: location.hostname })) throw new Error('storage');
+    }
+    async function faceAuth() {
+      var st = faceState();
+      if (!st) return false;
+      var challenge = rnd(32);
+      var a = await navigator.credentials.get({ publicKey: {
+        challenge: challenge,
+        rpId: location.hostname,
+        allowCredentials: [{ type: 'public-key', id: fromB64(st.id), transports: ['internal'] }],
+        userVerification: 'required',
+        timeout: 60000
+      } });
+      if (!a) return false;
+      var cd = JSON.parse(new TextDecoder().decode(a.response.clientDataJSON));
+      if (cd.type !== 'webauthn.get' || cd.challenge !== toB64u(challenge)) return false;
+      var ad = new Uint8Array(a.response.authenticatorData);
+      if (!(ad[32] & 0x04)) return false;
+      var rp = new Uint8Array(await crypto.subtle.digest('SHA-256', enc.encode(location.hostname)));
+      if (!sameBytes(rp, ad.slice(0, 32))) return false;
+      if (st.pk) {
+        var h = new Uint8Array(await crypto.subtle.digest('SHA-256', a.response.clientDataJSON));
+        var msg = new Uint8Array(ad.length + 32); msg.set(ad, 0); msg.set(h, ad.length);
+        var key = await crypto.subtle.importKey('spki', fromB64(st.pk), { name: 'ECDSA', namedCurve: 'P-256' }, false, ['verify']);
+        return await crypto.subtle.verify({ name: 'ECDSA', hash: 'SHA-256' }, key, derToRaw(a.response.signature), msg);
+      }
+      return true;
+    }
+    async function tryFaceLogin() {
+      if (faceBusy || !faceState()) return;
+      faceBusy = true;
+      try {
+        var ok = await faceAuth();
+        if (ok && body.classList.contains('v-pin')) openHome();
+        else if (!ok) haptic('error');
+      } catch (e) {}
+      faceBusy = false;
+    }
+    faceBtn.addEventListener('click', function () { haptic('light'); tryFaceLogin(); });
+
+    /* --- Сповіщення: системний дозвіл + збережений стан --- */
+    function notifSupported() { return 'Notification' in window; }
+    function notifPerm() { return notifSupported() ? Notification.permission : 'unsupported'; }
+    async function showNotif(title, text) {
+      try {
+        if ('serviceWorker' in navigator) {
+          var reg = await Promise.race([
+            navigator.serviceWorker.ready,
+            new Promise(function (res) { setTimeout(function () { res(null); }, 2000); })
+          ]);
+          if (reg && reg.showNotification) { await reg.showNotification(title, { body: text, icon: ICON_URL, tag: 'diia' }); return true; }
+        }
+        new Notification(title, { body: text, icon: ICON_URL });
+        return true;
+      } catch (e) { return false; }
+    }
+    window.diiaNotify = function (title, text) {
+      if (LS.get(K_NOTIF) === '1' && notifPerm() === 'granted') return showNotif(title, text);
+      return Promise.resolve(false);
+    };
+    try {
+      if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
+        navigator.serviceWorker.register('sw.js').catch(function () {});
+      }
+    } catch (e) {}
+
+    /* --- Интерфейс настроек --- */
+    var settingsDlg = document.getElementById('settingsDlg');
+    var codeDlg = document.getElementById('codeDlg');
+    var setCodeBtn = document.getElementById('setCode');
+    var setFace = document.getElementById('setFace');
+    var setNotif = document.getElementById('setNotif');
+    var setCodeSub = document.getElementById('setCodeSub');
+    var setFaceSub = document.getElementById('setFaceSub');
+    var setNotifSub = document.getElementById('setNotifSub');
+
+    function setSwitch(btn, on) { btn.setAttribute('aria-checked', on ? 'true' : 'false'); }
+    function syncSettingsUI() {
+      var np = notifPerm();
+      /* если разрешение отозвали в настройках iOS — выключаем переключатель */
+      if (LS.get(K_NOTIF) === '1' && np !== 'granted') LS.set(K_NOTIF, '0');
+
+      setCodeSub.textContent = hasPin() ? 'Змінити поточний код' : 'Встановити власний код';
+
+      var fOn = !!faceState();
+      setSwitch(setFace, fOn);
+      setFace.disabled = faceOK === false && !fOn;
+      setFaceSub.textContent = faceMsg || (faceOK === false && !fOn ? 'Недоступно на цьому пристрої' : 'Вхід за допомогою Face ID');
+
+      var nOn = LS.get(K_NOTIF) === '1';
+      setSwitch(setNotif, nOn);
+      setNotif.disabled = !nOn && (np === 'unsupported' || np === 'denied');
+      setNotifSub.textContent =
+        np === 'unsupported' && !nOn ? 'Доступно в застосунку, доданому на екран «Додому»' :
+        np === 'denied' && !nOn ? 'Заборонено в налаштуваннях пристрою' :
+        'Нагадування та важливі повідомлення';
+    }
+    function openSettings() {
+      haptic('medium');
+      faceMsg = '';
+      syncSettingsUI();
+      settingsDlg.classList.add('on');
+      settingsDlg.setAttribute('aria-hidden', 'false');
+      checkFace().then(function (v) { faceOK = v; syncSettingsUI(); });
+    }
+    function closeSettings() {
+      haptic('light');
+      settingsDlg.classList.remove('on');
+      settingsDlg.setAttribute('aria-hidden', 'true');
+    }
+    settingsDlg.addEventListener('click', function (e) { if (e.target.closest('[data-close]')) closeSettings(); });
+
+    setFace.addEventListener('click', async function () {
+      if (setFace.disabled || faceBusy) return;
+      haptic('light');
+      faceMsg = '';
+      if (faceState()) { LS.del(K_FACE); refreshFaceBtn(); syncSettingsUI(); return; }
+      faceBusy = true;
+      try { await faceEnroll(); haptic('success'); }
+      catch (e) { faceMsg = e && e.name === 'NotAllowedError' ? 'Скасовано' : 'Не вдалося увімкнути Face ID'; }
+      faceBusy = false;
+      refreshFaceBtn();
+      syncSettingsUI();
+    });
+
+    function enableNotif() {
+      LS.set(K_NOTIF, '1');
+      syncSettingsUI();
+      haptic('success');
+      showNotif('Дія', 'Сповіщення увімкнено');
+    }
+    setNotif.addEventListener('click', function () {
+      if (setNotif.disabled) return;
+      haptic('light');
+      if (LS.get(K_NOTIF) === '1') { LS.set(K_NOTIF, '0'); syncSettingsUI(); return; }
+      var p = notifPerm();
+      if (p === 'granted') { enableNotif(); return; }
+      if (p !== 'default') { syncSettingsUI(); return; }
+      Promise.resolve(Notification.requestPermission())
+        .then(function (r) { if (r === 'granted') enableNotif(); else syncSettingsUI(); })
+        .catch(syncSettingsUI);
+    });
+    window.addEventListener('focus', syncSettingsUI);
+    document.addEventListener('visibilitychange', function () { if (!document.hidden) syncSettingsUI(); });
+    try {
+      if (navigator.permissions && navigator.permissions.query) {
+        navigator.permissions.query({ name: 'notifications' }).then(function (s) { s.onchange = syncSettingsUI; }).catch(function () {});
+      }
+    } catch (e) {}
+
+    /* --- Зміна коду для входу --- */
+    var codeStepEl = document.getElementById('codeStep');
+    var codeDotsEl = document.getElementById('codeDots').children;
+    var codeMsgEl = document.getElementById('codeMsg');
+    var codePad = document.getElementById('codePad');
+    var cs = { step: 'new', buf: '', first: '', busy: false };
+    var STEP_TEXT = { current: 'Введіть поточний код', 'new': 'Введіть новий код', confirm: 'Підтвердіть новий код' };
+
+    '123456789'.split('').concat(['', '0', 'del']).forEach(function (k) {
+      if (!k) { codePad.appendChild(document.createElement('span')); return; }
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'key';
+      b.dataset.k = k;
+      if (k === 'del') {
+        b.setAttribute('aria-label', 'Видалити');
+        b.innerHTML = '<svg viewBox="0 0 14 14" fill="none" stroke="#000" stroke-width="1.3" stroke-linecap="round"><path d="M2 2l10 10M12 2L2 12"/></svg>';
+      } else b.textContent = k;
+      codePad.appendChild(b);
+    });
+    function paintCode() {
+      for (var i = 0; i < 4; i++) codeDotsEl[i].classList.toggle('on', i < cs.buf.length);
+      codeStepEl.textContent = STEP_TEXT[cs.step];
+    }
+    function codeSay(t, ok) { codeMsgEl.textContent = t || ''; codeMsgEl.classList.toggle('ok', !!ok); }
+    function codeFail(t) {
+      haptic('error');
+      var d = document.getElementById('codeDots');
+      d.classList.remove('shake'); void d.offsetWidth; d.classList.add('shake');
+      cs.buf = '';
+      codeSay(t);
+      paintCode();
+    }
+    function openCode() {
+      if (!canCrypto) {
+        setCodeSub.textContent = 'Потрібне захищене з’єднання (HTTPS)';
+        return;
+      }
+      haptic('medium');
+      cs = { step: hasPin() ? 'current' : 'new', buf: '', first: '', busy: false };
+      codeSay('');
+      paintCode();
+      settingsDlg.classList.remove('on');
+      codeDlg.classList.add('on');
+      codeDlg.setAttribute('aria-hidden', 'false');
+    }
+    function closeCode(reopen) {
+      haptic('light');
+      codeDlg.classList.remove('on');
+      codeDlg.setAttribute('aria-hidden', 'true');
+      cs.buf = ''; cs.first = '';
+      if (reopen) { syncSettingsUI(); settingsDlg.classList.add('on'); }
+    }
+    async function codeSubmit() {
+      cs.busy = true;
+      var v = cs.buf;
+      try {
+        if (cs.step === 'current') {
+          var r = await verifyPin(v);
+          if (r.ok) { cs.step = 'new'; cs.buf = ''; codeSay(''); paintCode(); }
+          else codeFail(r.locked ? 'Забагато спроб. Спробуйте через ' + r.locked + ' с' : 'Невірний код');
+        } else if (cs.step === 'new') {
+          if (isWeak(v)) codeFail('Занадто простий код');
+          else if (hasPin() && (await verifyPin(v, true)).ok) codeFail('Новий код має відрізнятися від поточного');
+          else { cs.first = v; cs.step = 'confirm'; cs.buf = ''; codeSay(''); paintCode(); }
+        } else {
+          if (v !== cs.first) { cs.step = 'new'; cs.first = ''; codeFail('Коди не збігаються. Введіть новий код ще раз'); }
+          else if (await savePin(v)) {
+            LS.del(K_LOCK);
+            haptic('success');
+            codeSay('Код змінено', true);
+            cs.buf = ''; paintCode();
+            setTimeout(function () { if (codeDlg.classList.contains('on')) closeCode(true); }, 900);
+          } else codeFail('Не вдалося зберегти код');
+        }
+      } catch (e) { codeFail('Сталася помилка'); }
+      cs.busy = false;
+    }
+    function codeKey(k) {
+      if (cs.busy) return;
+      if (codeMsgEl.classList.contains('ok')) return;
+      haptic('light');
+      if (k === 'del') cs.buf = cs.buf.slice(0, -1);
+      else if (cs.buf.length < 4) cs.buf += k;
+      if (k !== 'del') codeSay('');
+      paintCode();
+      if (cs.buf.length === 4) setTimeout(codeSubmit, 150);
+    }
+    codePad.addEventListener('click', function (e) { var b = e.target.closest('.key'); if (b) codeKey(b.dataset.k); });
+    codeDlg.addEventListener('click', function (e) { if (e.target.closest('[data-close]')) closeCode(true); });
+    setCodeBtn.addEventListener('click', openCode);
+    document.addEventListener('keydown', function (e) {
+      if (!codeDlg.classList.contains('on')) return;
+      if (/^[0-9]$/.test(e.key)) codeKey(e.key);
+      else if (e.key === 'Backspace') codeKey('del');
+    });
+
+    /* "Не пам'ятаю код" — сбрасывает запомненный вход, снова будет экран авторизации */
+    document.getElementById('forgot').addEventListener('click', function () {
+      try { localStorage.removeItem('diia_logged'); } catch (e) {}
+    });
+
+    /* Просим iOS не удалять сохранённые данные */
+    try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch (e) {}
+
+    /* После первого входа при каждом запуске сразу показываем ввод кода */
+    try {
+      if (localStorage.getItem('diia_logged') === '1') {
+        body.classList.add('v-pin');
+        refreshFaceBtn();
+        tryFaceLogin();
+      }
+    } catch (e) {}
+
+    var signEditor = document.getElementById('signEditor');
+
+    function openSignEditor() {
+      haptic('medium');
+      document.getElementById('edit-lastName').value = DOC_DATA.lastName || '';
+      document.getElementById('edit-firstName').value = DOC_DATA.firstName || '';
+      document.getElementById('edit-middleName').value = DOC_DATA.middleName || '';
+      
+      var birthIso = toIsoDate(DOC_DATA.birth);
+      document.getElementById('edit-birth').value = birthIso || '';
+      
+      var photoPreview = document.getElementById('photoPreview');
+      if (DOC_DATA.photo) {
+        photoPreview.src = DOC_DATA.photo;
+        photoPreview.style.display = 'block';
+      } else {
+        photoPreview.style.display = 'none';
+      }
+
+      signEditor.classList.add('on');
+      signEditor.setAttribute('aria-hidden', 'false');
+    }
+
+    signEditor.addEventListener('click', function(e) {
+      if (e.target.closest('[data-close]')) closeDlg();
+    });
+
+    document.getElementById('edit-photo').addEventListener('change', function(e) {
+      var file = e.target.files[0];
+      if (!file) return;
+      var reader = new FileReader();
+      reader.onload = function(evt) {
+        var photoPreview = document.getElementById('photoPreview');
+        var img = new Image();
+        img.onload = function () {
+          /* Сжимаем фото, чтобы оно гарантированно поместилось в хранилище */
+          var max = 700, w = img.width, h = img.height;
+          var k = Math.min(1, max / Math.max(w, h));
+          var c = document.createElement('canvas');
+          c.width = Math.round(w * k);
+          c.height = Math.round(h * k);
+          c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+          photoPreview.src = c.toDataURL('image/jpeg', 0.85);
+          photoPreview.style.display = 'block';
+        };
+        img.onerror = function () {
+          photoPreview.src = evt.target.result;
+          photoPreview.style.display = 'block';
+        };
+        img.src = evt.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    document.getElementById('btnSaveData').addEventListener('click', function(e) {
+      e.preventDefault();
+      haptic('success');
+      
+      DOC_DATA.lastName = document.getElementById('edit-lastName').value.trim();
+      DOC_DATA.firstName = document.getElementById('edit-firstName').value.trim();
+      DOC_DATA.middleName = document.getElementById('edit-middleName').value.trim();
+      
+      var isoBirth = document.getElementById('edit-birth').value;
+      DOC_DATA.birth = toDisplayDate(isoBirth);
+      
+      if (!DOC_DATA.rnokpp) {
+        DOC_DATA.rnokpp = Math.floor(1000000000 + Math.random() * 9000000000).toString();
+      }
+      if (!DOC_DATA.passport) {
+        DOC_DATA.passport = Math.floor(100000000 + Math.random() * 900000000).toString();
+      }
+      
+      var photoPreview = document.getElementById('photoPreview');
+      if (photoPreview.style.display !== 'none' && photoPreview.src.indexOf('data:image') === 0) {
+        DOC_DATA.photo = photoPreview.src;
+      }
+
+      fillDocs();
+      
+      try {
+        localStorage.setItem('diia_doc_data', JSON.stringify({
+          firstName: DOC_DATA.firstName,
+          lastName: DOC_DATA.lastName,
+          middleName: DOC_DATA.middleName,
+          birth: DOC_DATA.birth,
+          rnokpp: DOC_DATA.rnokpp,
+          passport: DOC_DATA.passport,
+          photo: DOC_DATA.photo
+        }));
+      } catch(err) {}
+
+      closeDlg();
+    });
+
+    window.addEventListener('error', function (e) { e.preventDefault(); });
+    window.addEventListener('unhandledrejection', function (e) { e.preventDefault(); });
+    document.addEventListener('contextmenu', function (e) { if (!e.target.closest('input')) e.preventDefault(); });
+    document.addEventListener('dragstart', function (e) { e.preventDefault(); });
+    document.addEventListener('visibilitychange', function () { if (document.hidden) resetPin(); });
+
+    document.getElementById('keypad').addEventListener('click', function (e) {
+      var b = e.target.closest('.key');
+      if (b) press(b.dataset.k);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (!body.classList.contains('v-pin')) return;
+      if (/^[0-9]$/.test(e.key)) press(e.key);
+      else if (e.key === 'Backspace') press('del');
+    });
+
+    document.addEventListener('touchmove', function (e) {
+      if (e.touches.length > 1) {
+        e.preventDefault();
+      }
+    }, { passive: false });
+  })();
+</script>
+</body>
+</html>
