@@ -302,10 +302,31 @@
 
   .tiles { margin-top: 16px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
   .tile { display: block; text-align: center; }
-  .tile-ico { display: grid; place-items: center; aspect-ratio: 1; background: #000; border-radius: 20px; transition: transform .12s; }
+  .tile-ico { display: grid; place-items: center; aspect-ratio: 1; width: 76%; margin: 0 auto; background: #000; border-radius: 17px; transition: transform .12s; }
+  .tile-ico svg { transform: scale(.82); }
   .tile:active .tile-ico { transform: scale(.96); }
   .tile-ico svg { display: block; }
-  .tile-label { display: block; margin-top: 6px; font-size: 12px; line-height: 1.25; font-weight: 500; }
+  .tile-label { display: block; margin-top: 5px; font-size: 11.5px; line-height: 1.25; font-weight: 500; }
+
+
+  /* Головна: картки */
+  .ncard { position: relative; margin-top: 18px; padding: 18px 16px 16px; min-height: 0; }
+  .ncard h2 { font-size: 24px; font-weight: 500; letter-spacing: -.01em; color: #000; }
+  .ncard p { margin-top: 12px; font-size: 14px; line-height: 1.2; color: #000; }
+  .ncard .go { position: absolute; right: 16px; bottom: 16px; width: 36px; height: 36px; border-radius: 50%; background: #000; display: grid; place-items: center; }
+  .ncard .go svg { width: 16px; height: 16px; }
+  .nico { display: flex; margin-top: 16px; }
+  .nc { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; }
+  .nc + .nc { margin-left: -5px; }
+  .nc svg { width: 16px; height: 16px; display: block; }
+  .nc.y { background: #f1cc47; } .nc.b { background: #2f5fe3; } .nc.g { background: #3b7a4a; }
+  .ncard.cash { margin-top: 12px; }
+  .ncard.cash h2 { font-size: 26px; }
+  .ncard.cash p { margin-top: 14px; font-size: 15px; }
+  .bars { display: block; width: 56px; height: auto; margin-top: 14px; }
+  .banner-img { display: block; width: 100%; margin-top: 16px; padding: 0; border-radius: 24px; overflow: hidden; background: none; transition: transform .12s; }
+  .banner-img:active { transform: scale(.985); }
+  .banner-img img { display: block; width: 100%; height: auto; }
 
   .banner {
     position: relative; display: block; width: 100%; margin-top: 16px;
@@ -767,10 +788,15 @@
     <section class="home-scroll tab on" id="tab-feed" data-tab="feed">
       <h1 class="greet"><span>Привіт<span data-gname></span></span><span class="wave" aria-hidden="true">👋</span></h1>
 
-      <section class="card-light unbreak" role="button" tabindex="0" data-act="Незламність">
+      <section class="card-light ncard" role="button" tabindex="0" data-act="Незламність">
         <h2>Незламність</h2>
-        <p>Мапа Пунктів Незламності та Укриттів</p>
-        <div class="pins"><span class="pin-dot blue"><i></i></span><span class="pin-dot yellow"><i></i></span></div>
+        <p>Мапа укриттів, Пунктів незламності та<br>відділень Power Banking.<br>Заява про відсутній зв’язок.</p>
+        <div class="nico">
+          <span class="nc y"><svg viewBox="0 0 24 24" fill="#000"><path d="M13.5 3L6 13.5h5l-1 7.5 7.5-10.5h-5z"/></svg></span>
+          <span class="nc b"><svg viewBox="0 0 24 24" fill="#fff"><path d="M12 4l6 2.2v5.3c0 3.6-2.4 6.3-6 8.5-3.6-2.2-6-4.9-6-8.5V6.2z"/></svg></span>
+          <span class="nc g"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"><path d="M4 9.5L12 5l8 4.5zM6.5 11v6M10 11v6M14 11v6M17.5 11v6M4.5 19h15"/></svg></span>
+        </div>
+        <i class="go"><svg viewBox="0 0 20 20" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10h13M11 4.5L16.5 10 11 15.5"/></svg></i>
       </section>
 
       <div class="tiles">
@@ -788,12 +814,14 @@
         </button>
       </div>
 
-      <button class="banner" type="button" data-act="Зимова єПідтримка">
-        <b>1000 грн</b>
-        <span>Зимова єПідтримка</span>
-        <span>Подати заяву</span>
-        <i class="go"><svg viewBox="0 0 20 20" fill="none" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10h13M11 4.5L16.5 10 11 15.5"/></svg></i>
-      </button>
+      <button class="banner-img" type="button" data-act="Зимова єПідтримка"><img src="https://i.postimg.cc/dtKYJnpc/9BC17787-EEA0-46C8-8D5A-DC4C5F737A39.png" alt="Зимова єПідтримка" decoding="async"></button>
+
+      <section class="card-light ncard cash" role="button" tabindex="0" data-act="Національний кешбек">
+        <h2>21.15 грн</h2>
+        <p>Накопичено кешбеку за жовтень</p>
+        <svg class="bars" viewBox="0 0 188 70" aria-hidden="true"><rect x="0" y="0" width="27" height="70" fill="#1f4aa3"/><rect x="38" y="0" width="12" height="70" fill="#1f4aa3"/><rect x="62" y="0" width="26" height="70" fill="#1f4aa3"/><rect x="100" y="0" width="26" height="70" fill="#f1cf3f"/><rect x="137" y="0" width="12" height="70" fill="#f1cf3f"/><rect x="162" y="0" width="26" height="70" fill="#f1cf3f"/></svg>
+        <i class="go"><svg viewBox="0 0 20 20" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10h13M11 4.5L16.5 10 11 15.5"/></svg></i>
+      </section>
 
       <section class="promo">
         <div class="promo-top">
