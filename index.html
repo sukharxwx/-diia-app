@@ -544,6 +544,21 @@
   .logout { display: block; width: 164px; height: 50px; margin: 22px auto 0; border: 0; border-radius: 25px; background: #000; color: #fff; font: inherit; font-size: 17px; font-weight: 600; cursor: pointer; }
   .logout:active { opacity: .75; }
 
+
+  /* Змінити порядок документів */
+  .ord { position: fixed; inset: 0; z-index: 70; display: flex; flex-direction: column; overflow-y: auto; -webkit-overflow-scrolling: touch;
+    padding: calc(var(--sat) + 18px) calc(var(--sar) + 16px) calc(var(--sab) + 24px) calc(var(--sal) + 16px);
+    background: linear-gradient(180deg, #abc8e2 0%, #bfd9ee 30%, #d2e5e9 55%, #d3e8dc 80%, #c7e1d6 100%);
+    visibility: hidden; opacity: 0; transform: translateX(24px); transition: opacity .22s, transform .22s, visibility 0s linear .22s; }
+  .ord.on { visibility: visible; opacity: 1; transform: none; transition-delay: 0s; }
+  .ord .back { align-self: flex-start; }
+  .ord h1 { margin-top: 22px; font-size: 30px; font-weight: 600; letter-spacing: -.015em; }
+  .ord-list { margin-top: 22px; display: flex; flex-direction: column; gap: 8px; }
+  .ord-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 68px; padding: 0 20px 0 18px; border-radius: 26px;
+    background: rgba(255, 255, 255, .5); font-size: 16px; font-weight: 500; touch-action: none; user-select: none; -webkit-user-select: none; cursor: grab; position: relative; }
+  .ord-row svg { flex: none; width: 22px; height: 22px; display: block; }
+  .ord-row.drag { z-index: 2; background: rgba(255, 255, 255, .85); box-shadow: 0 8px 22px rgba(30, 60, 90, .22); transform: scale(1.02); cursor: grabbing; }
+
   /* Диалоги (BottomSheet) */
   .dlg { position: fixed; inset: 0; z-index: 60; visibility: hidden; opacity: 0; transition: opacity .25s, visibility 0s linear .25s; display: flex; flex-direction: column; justify-content: flex-end; }
   .dlg.on { visibility: visible; opacity: 1; transition-delay: 0s; }
@@ -843,7 +858,7 @@
       <div class="pager" id="pager">
         
         <!-- Документ 1: єДокумент -->
-        <div class="pg">
+        <div class="pg" data-doc="edoc">
           <div class="flip-card">
             <article class="dcard">
               <h2 class="dtitle">єДокумент</h2>
@@ -877,7 +892,7 @@
         </div>
 
         <!-- Документ 2: Карта платника податків -->
-        <div class="pg">
+        <div class="pg" data-doc="tax">
           <div class="flip-card">
             <article class="dcard">
               <h2 class="dtitle">Карта платника<br>податків</h2>
@@ -910,7 +925,7 @@
         </div>
 
         <!-- Документ 3: Паспорт -->
-        <div class="pg">
+        <div class="pg" data-doc="passport">
           <div class="flip-card">
             <article class="dcard">
               <h2 class="dtitle">Паспорт громадянина<br>України</h2>
@@ -1111,6 +1126,15 @@
     <div class="code-pad" id="codePad"></div>
     <button class="dlg-btn secondary" type="button" data-close>Скасувати</button>
   </div>
+</div>
+
+<!-- Змінити порядок документів -->
+<div class="ord" id="ordView" aria-hidden="true">
+  <button class="back" id="ordBack" type="button" aria-label="Назад">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12H4M10 6l-6 6 6 6"/></svg>
+  </button>
+  <h1>Змінити порядок</h1>
+  <div class="ord-list" id="ordList"></div>
 </div>
 
 <!-- Оновлення застосунку -->
@@ -1399,6 +1423,93 @@
       });
     }, { passive: true });
 
+
+    /* ===== Змінити порядок документів: перетягування + збереження ===== */
+    var K_ORDER = 'diia_doc_order';
+    var ordView = document.getElementById('ordView'), ordList = document.getElementById('ordList');
+    function docPages() { return [].slice.call(pager.querySelectorAll('.pg[data-doc]')); }
+    function docTitle(pg) { return pg.querySelector('.dtitle').innerHTML.replace(/<br\s*\/?>/gi, ' ').replace(/\s+/g, ' ').trim(); }
+    function applyDocOrder(ids) {
+      var addPg = pager.querySelector('.pg-add');
+      var map = {};
+      docPages().forEach(function (pg) { map[pg.dataset.doc] = pg; });
+      ids.forEach(function (id) { if (map[id]) { pager.insertBefore(map[id], addPg); delete map[id]; } });
+      Object.keys(map).forEach(function (id) { pager.insertBefore(map[id], addPg); });
+    }
+
+    function renderOrder() {
+      ordList.innerHTML = '';
+      docPages().forEach(function (pg) {
+        var r = document.createElement('div');
+        r.className = 'ord-row';
+        r.dataset.doc = pg.dataset.doc;
+        var t = document.createElement('span');
+        t.textContent = docTitle(pg);
+        r.appendChild(t);
+        r.insertAdjacentHTML('beforeend', '<svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>');
+        ordList.appendChild(r);
+      });
+    }
+    function saveOrder() {
+      var ids = [].map.call(ordList.children, function (r) { return r.dataset.doc; });
+      applyDocOrder(ids);
+      LS.setJ(K_ORDER, ids);
+      pager.scrollLeft = 0;
+      for (var k = 0; k < pgDots.length; k++) pgDots[k].classList.toggle('on', k === 0);
+    }
+    function openOrder() {
+      haptic('medium');
+      renderOrder();
+      ordView.classList.add('on');
+      ordView.setAttribute('aria-hidden', 'false');
+      ordView.scrollTop = 0;
+    }
+    function closeOrder() {
+      haptic('light');
+      ordView.classList.remove('on');
+      ordView.setAttribute('aria-hidden', 'true');
+    }
+    document.getElementById('ordBack').addEventListener('click', closeOrder);
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && ordView.classList.contains('on')) closeOrder(); });
+
+    var ordDrag = null;
+    ordList.addEventListener('pointerdown', function (e) {
+      var row = e.target.closest('.ord-row');
+      if (!row || ordDrag) return;
+      e.preventDefault();
+      ordDrag = { row: row, y0: e.clientY, id: e.pointerId, moved: false };
+      row.classList.add('drag');
+      haptic('light');
+    });
+    document.addEventListener('pointermove', function (e) {
+      var d = ordDrag;
+      if (!d || e.pointerId !== d.id) return;
+      d.row.style.transform = 'translateY(' + (e.clientY - d.y0) + 'px) scale(1.02)';
+      var r = d.row.getBoundingClientRect(), mid = r.top + r.height / 2;
+      var next = d.row.nextElementSibling, prev = d.row.previousElementSibling;
+      var before = d.row.offsetTop;
+      if (next) {
+        var nr = next.getBoundingClientRect();
+        if (mid > nr.top + nr.height / 2) { ordList.insertBefore(next, d.row); d.moved = true; haptic('light'); }
+      }
+      if (prev && d.row.offsetTop === before) {
+        var pr = prev.getBoundingClientRect();
+        if (mid < pr.top + pr.height / 2) { ordList.insertBefore(prev, d.row.nextSibling); d.moved = true; haptic('light'); }
+      }
+      var shift = d.row.offsetTop - before;
+      if (shift) { d.y0 += shift; d.row.style.transform = 'translateY(' + (e.clientY - d.y0) + 'px) scale(1.02)'; }
+    });
+    function endOrdDrag(e) {
+      var d = ordDrag;
+      if (!d || e.pointerId !== d.id) return;
+      ordDrag = null;
+      d.row.classList.remove('drag');
+      d.row.style.transform = '';
+      if (d.moved) { saveOrder(); haptic('success'); }
+    }
+    document.addEventListener('pointerup', endOrdDrag);
+    document.addEventListener('pointercancel', endOrdDrag);
+
     var tabEls = {}, navEls = {}, curTab = 'feed';
     [].forEach.call(document.querySelectorAll('.tab'), function (el) { tabEls[el.dataset.tab] = el; });
     [].forEach.call(document.querySelectorAll('.nav-i'), function (el) { navEls[el.dataset.tab] = el; });
@@ -1514,6 +1625,8 @@
           openSettings();
         } else if (act.dataset.act === 'Оновити застосунок') {
           openUpdate();
+        } else if (act.dataset.act === 'Змінити порядок документів') {
+          openOrder();
         } else {
           openDlg(act.dataset.act); 
         }
@@ -1705,6 +1818,9 @@
       if (LS.get(K_NOTIF) === '1' && notifPerm() === 'granted') return showNotif(title, text, tag);
       return Promise.resolve(false);
     };
+    /* збережений порядок документів (LS уже визначено) */
+    (function () { var o = LS.getJ(K_ORDER); if (o && o.length) applyDocOrder(o); })();
+
     /* ================= Оновлення застосунку: GitHub + Service Worker ================= */
     var GH = { owner: 'sukharxwx', repo: '-diia-app' };
     try {
