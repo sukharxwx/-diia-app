@@ -405,27 +405,10 @@
     display: flex; flex-direction: column;
     overflow: hidden;
   }
-  .ai-load {
-    position: absolute; inset: 0; z-index: 5;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    background: #000;
-    transition: opacity .5s ease, visibility .5s;
-  }
-  .ai-load.hide { opacity: 0; visibility: hidden; pointer-events: none; }
-  .ai-tryzub {
-    width: 88px; height: 110px;
-    animation: tryzubPulse 1.5s ease-in-out infinite;
-  }
-  .ai-tryzub svg { width: 100%; height: 100%; display: block; }
-  @keyframes tryzubPulse {
-    0%, 100% { transform: scale(1); opacity: 1; }
-    50% { transform: scale(1.06); opacity: .72; }
-  }
-  .ai-load-txt { display: none; }
   .ai-shell {
     flex: 1; min-height: 0; display: flex; flex-direction: column;
     opacity: 0; transform: translateY(12px);
-    transition: opacity .5s ease, transform .5s cubic-bezier(.2,.8,.2,1);
+    transition: opacity .45s ease, transform .45s cubic-bezier(.2,.8,.2,1);
   }
   .ai-shell.ready { opacity: 1; transform: none; }
   .ai-top {
@@ -535,6 +518,55 @@
     color: #111; outline: none; -webkit-appearance: none;
   }
   .ai-input::placeholder { color: #7a8a9a; }
+
+  /* Додати документ / шеринг */
+  .doc-pick-list { display: flex; flex-direction: column; gap: 8px; }
+  .doc-pick-row {
+    display: flex; align-items: center; gap: 14px; width: 100%;
+    min-height: 64px; padding: 12px 16px; border: 0; border-radius: 18px;
+    background: rgba(255,255,255,.55); font: inherit; font-size: 15.5px; font-weight: 500;
+    text-align: left; color: #000; cursor: pointer;
+  }
+  .doc-pick-row:active { background: rgba(255,255,255,.75); }
+  .doc-pick-row .ico {
+    flex: none; width: 40px; height: 40px; border-radius: 12px; background: #000;
+    display: grid; place-items: center; color: #fff;
+  }
+  .doc-pick-row .ico svg { width: 20px; height: 20px; }
+  .doc-pick-row .meta { flex: 1; min-width: 0; }
+  .doc-pick-row .meta small { display: block; margin-top: 2px; font-size: 12.5px; font-weight: 400; color: #5b6773; }
+  .share-ttl { display: flex; gap: 8px; margin: 12px 0; flex-wrap: wrap; }
+  .share-ttl button {
+    flex: 1; min-width: 70px; height: 36px; border-radius: 12px; border: 1.5px solid #000;
+    background: transparent; font: inherit; font-size: 13.5px; font-weight: 500; cursor: pointer;
+  }
+  .share-ttl button.on { background: #000; color: #fff; }
+  .share-qr { display: flex; justify-content: center; margin: 12px 0; }
+  .share-qr > div { background: #fff; padding: 12px; border-radius: 16px; }
+  .share-link {
+    word-break: break-all; font-size: 12.5px; color: #3a4a5a; background: #fff;
+    padding: 10px 12px; border-radius: 12px; margin-top: 8px; line-height: 1.35;
+  }
+  .share-timer { text-align: center; font-size: 14px; font-weight: 600; margin-top: 10px; color: #1a2a3a; }
+  .share-timer.exp { color: #e5484d; }
+  .dcard-actions {
+    position: absolute; right: 14px; top: 14px; display: flex; gap: 6px; z-index: 3;
+  }
+  .dcard-act {
+    width: 34px; height: 34px; border: 0; border-radius: 50%; background: rgba(0,0,0,.12);
+    display: grid; place-items: center; cursor: pointer; color: #000;
+  }
+  .dcard-act:active { background: rgba(0,0,0,.22); }
+  .dcard-act svg { width: 16px; height: 16px; }
+  .verify-result {
+    margin-top: 16px; padding: 16px; border-radius: 18px; background: rgba(255,255,255,.6);
+    text-align: center;
+  }
+  .verify-result.ok { background: rgba(212,237,218,.9); }
+  .verify-result.bad { background: rgba(248,215,218,.9); }
+  .verify-result h3 { font-size: 17px; font-weight: 600; margin-bottom: 6px; }
+  .verify-result p { font-size: 13.5px; color: #333; line-height: 1.4; }
+  .ios-row input[type="text"] { text-align: right; }
 
   /* Документы и увеличенные карточки */
   .docs-tab { position: absolute; inset: 0; overflow: hidden; }
@@ -1206,15 +1238,6 @@
     </section>
 
     <section class="tab ai-tab" id="tab-ai" data-tab="ai" aria-hidden="true">
-      <div class="ai-load" id="aiLoad" aria-hidden="true">
-        <div class="ai-tryzub" id="aiTryzub">
-          <svg viewBox="-70 10 140 210" fill="#fff" aria-hidden="true">
-            <path d="M5.99 78.82a104.08 104.08 0 0 0 14.05 56.02 55 55 0 0 1-13.22 70.64A20 20 0 0 0 0 212.5a20 20 0 0 0-6.82-7.02 55 55 0 0 1-13.22-70.64A104.08 104.08 0 0 0-5.99 78.82l-1.6-45.26A30.1 30.1 0 0 1 0 12.5a30.1 30.1 0 0 1 7.59 21.06zM5 193.62a45 45 0 0 0 6.4-53.75A114.08 114.08 0 0 1 0 112.73a114.08 114.08 0 0 1-11.4 27.14A45 45 0 0 0-5 193.62V162.5H5z"/>
-            <path d="M27.78 75.18A62.65 62.65 0 0 1 60 27.5v145H0l-5-10a22.5 22.5 0 0 1 17.56-21.95l14.63-3.29a10 10 0 1 0-4.43-19.5zm6 34.35a20 20 0 0 1-4.39 37.48l-14.63 3.29A12.5 12.5 0 0 0 5 162.5h45V48.27a52.65 52.65 0 0 0-12.28 28.04zM42 122.5h10v10H42z"/>
-            <path d="M-27.78 75.18A62.65 62.65 0 0 0-60 27.5v145H0l5-10a22.5 22.5 0 0 0-17.56-21.95l-14.63-3.29a10 10 0 1 1 4.43-19.5zm-6 34.35a20 20 0 0 0 4.39 37.48l14.63 3.29A12.5 12.5 0 0 1-5 162.5h-45V48.27a52.65 52.65 0 0 1 12.28 28.04zM-42 122.5h-10v10h10z"/>
-          </svg>
-        </div>
-      </div>
       <div class="ai-shell" id="aiShell">
         <header class="ai-top">
           <button type="button" class="ai-icon-btn" id="aiMenuBtn" aria-label="Меню">
@@ -1476,6 +1499,55 @@
     <h1>Питання та відповіді</h1>
   </div>
   <div class="fs-body" id="faqBody"></div>
+</div>
+
+<!-- Додати документ -->
+<div class="fs" id="fsAddDoc" aria-hidden="true">
+  <div class="fs-head">
+    <button class="back" type="button" data-fs-close aria-label="Назад">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <h1>Додати документ</h1>
+  </div>
+  <div class="fs-body" id="addDocBody"></div>
+</div>
+
+<!-- Поділитися документом -->
+<div class="dlg" id="shareDlg" aria-hidden="true">
+  <div class="dlg-bd" data-close-share></div>
+  <div class="dlg-card" role="dialog" aria-modal="true">
+    <i class="grab"></i>
+    <h3 id="shareTitle">Поділитися</h3>
+    <p style="text-align:center;font-size:13.5px;color:#5b6773;margin-bottom:4px">Посилання та QR дійсні обмежений час</p>
+    <div class="share-ttl" id="shareTtl">
+      <button type="button" data-min="3">3 хв</button>
+      <button type="button" data-min="5" class="on">5 хв</button>
+      <button type="button" data-min="15">15 хв</button>
+    </div>
+    <div class="share-qr"><div id="shareQr"></div></div>
+    <div class="share-link" id="shareLink"></div>
+    <div class="share-timer" id="shareTimer">—</div>
+    <button class="dlg-btn" type="button" id="shareCopy">Копіювати посилання</button>
+    <button class="dlg-btn secondary" type="button" data-close-share>Закрити</button>
+  </div>
+</div>
+
+<!-- Перевірка РНОКПП (прихована) -->
+<div class="fs" id="fsVerify" aria-hidden="true">
+  <div class="fs-head">
+    <button class="back" type="button" data-fs-close aria-label="Назад">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <h1>Перевірка РНОКПП</h1>
+  </div>
+  <div class="fs-body">
+    <div class="sup-form">
+      <label for="verifyRnokpp">РНОКПП (ІПН)</label>
+      <input type="text" id="verifyRnokpp" inputmode="numeric" maxlength="10" placeholder="0000000000" style="width:100%;height:44px;border:0;border-radius:14px;padding:0 14px;font:inherit;font-size:17px;background:#fff;outline:none;letter-spacing:.06em">
+      <button type="button" class="dlg-btn" id="verifyBtn" style="margin-top:12px">Перевірити</button>
+    </div>
+    <div id="verifyOut"></div>
+  </div>
 </div>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -1837,6 +1909,368 @@
     document.addEventListener('pointerup', endOrdDrag);
     document.addEventListener('pointercancel', endOrdDrag);
 
+    /* ===== Документи: каталог, додавання, шеринг, перевірка РНОКПП ===== */
+    function _lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+    function _lsSet(k, v) { try { localStorage.setItem(k, v); return true; } catch (e) { return false; } }
+    function _loadArr(key) {
+      try { var j = _lsGet(key); if (!j) return []; var a = JSON.parse(j); return Array.isArray(a) ? a : []; } catch (e) { return []; }
+    }
+    function _saveArr(key, arr) { try { _lsSet(key, JSON.stringify(arr)); } catch (e) {} }
+    function _esc(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+    var K_ACTIVE_DOCS = 'diia_active_docs';
+    var DEFAULT_DOCS = ['edoc', 'tax', 'passport'];
+    var DOC_CATALOG = [
+      { id: 'edoc', title: 'єДокумент', short: 'Цифровий документ', kind: 'photo' },
+      { id: 'tax', title: 'Карта платника податків', short: 'РНОКПП', kind: 'tax' },
+      { id: 'passport', title: 'Паспорт громадянина України', short: 'Внутрішній паспорт', kind: 'photo' },
+      { id: 'idcard', title: 'ID-картка', short: 'Посвідчення особи', kind: 'photo' },
+      { id: 'foreign', title: 'Закордонний паспорт', short: 'Паспорт для виїзду', kind: 'photo' },
+      { id: 'driver', title: 'Посвідчення водія', short: 'Водійські права', kind: 'photo' },
+      { id: 'vehicle', title: 'Свідоцтво про реєстрацію ТЗ', short: 'Техпаспорт', kind: 'vehicle' },
+      { id: 'birth', title: 'Свідоцтво про народження', short: 'Актовий запис', kind: 'simple' },
+      { id: 'student', title: 'Студентський квиток', short: 'Освіта', kind: 'simple' },
+      { id: 'pension', title: 'Пенсійне посвідчення', short: 'Пенсія', kind: 'simple' },
+      { id: 'vpo', title: 'Довідка ВПО', short: 'Внутрішньо переміщена особа', kind: 'simple' },
+      { id: 'weapon', title: 'Дозволи на зброю', short: 'Дозволи', kind: 'simple' }
+    ];
+    function catalogById(id) {
+      for (var i = 0; i < DOC_CATALOG.length; i++) if (DOC_CATALOG[i].id === id) return DOC_CATALOG[i];
+      return null;
+    }
+    function getActiveDocs() {
+      var a = _loadArr(K_ACTIVE_DOCS);
+      if (!a.length) a = DEFAULT_DOCS.slice();
+      return a.filter(function (id) { return !!catalogById(id); });
+    }
+    function setActiveDocs(ids) {
+      _saveArr(K_ACTIVE_DOCS, ids);
+    }
+
+    function photoSvg() {
+      return '<svg viewBox="0 0 40 48" fill="#000"><circle cx="20" cy="14" r="9"/><path d="M3 47c0-11 7-18 17-18s17 7 17 18z"/></svg>';
+    }
+    function qrSwitchHtml() {
+      return '<div class="qr-switches">'
+        + '<button class="qr-switch-btn" type="button"><div class="qr-icon-box"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M2 2h8v8H2V2zm2 2v4h4V4H4zm11-2h7v7h-7V2zm2 2v3h3V4h-3zM2 15h8v7H2v-7zm2 2v3h4v-3H4zm13-2h2v2h-2v-2zm-3 0h2v3h-2v-3zm0 5h2v2h-2v-2zm3-2h2v4h-2v-4zm2-3h3v2h-3v-2zm0 3h3v4h-3v-4z"/></svg></div><span>QR-код</span></button>'
+        + '<button class="qr-switch-btn" type="button"><div class="qr-icon-box"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 6v12M8 6v12M11 6v12M15 6v12M17 6v12M20 6v12"/></svg></div><span>Штрих-код</span></button>'
+        + '</div>';
+    }
+    function shareBtnHtml(docId) {
+      return '<div class="dcard-actions"><button type="button" class="dcard-act" data-share="' + docId + '" aria-label="Поділитися"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="M8.5 13.5l7 4M15.5 6.5l-7 4"/></svg></button></div>';
+    }
+    function buildDocPage(cat) {
+      var id = cat.id;
+      var title = cat.title.replace(/ /g, '<br>');
+      if (cat.id === 'tax') title = 'Карта платника<br>податків';
+      if (cat.id === 'passport') title = 'Паспорт громадянина<br>України';
+      if (cat.id === 'foreign') title = 'Закордонний<br>паспорт';
+      if (cat.id === 'vehicle') title = 'Свідоцтво про<br>реєстрацію ТЗ';
+      var front = '';
+      if (cat.kind === 'tax') {
+        front = shareBtnHtml(id) + '<h2 class="dtitle">' + title + '</h2><p class="dlab">РНОКПП</p><div class="dname sm" data-name></div><p class="dcap">Дата народження<b data-f="birth"></b></p><div class="ticker" aria-hidden="true"><div class="track"><span data-tick="stamp"></span><span data-tick="stamp"></span></div></div><div class="dnum" data-f="rnokpp"></div>';
+      } else if (cat.kind === 'vehicle') {
+        front = shareBtnHtml(id) + '<h2 class="dtitle">' + title + '</h2><div class="dbody" style="margin-top:20px"><div class="dinfo"><p>Власник:</p><b data-name-inline></b><p>РНОКПП:</p><b data-f="rnokpp"></b><p>Номер:</p><b data-f="passport"></b></div></div><div class="ticker" aria-hidden="true"><div class="track"><span data-tick="stamp"></span><span data-tick="stamp"></span></div></div>';
+      } else if (cat.kind === 'simple') {
+        front = shareBtnHtml(id) + '<h2 class="dtitle">' + title + '</h2><div class="dname" data-name style="margin-top:28px"></div><p class="dcap" style="margin-top:16px">Дата народження<b data-f="birth"></b></p><p class="dcap">РНОКПП<b data-f="rnokpp"></b></p><div class="ticker" aria-hidden="true"><div class="track"><span data-tick="stamp"></span><span data-tick="stamp"></span></div></div>';
+      } else {
+        front = shareBtnHtml(id) + '<h2 class="dtitle">' + title + '</h2><div class="dbody"><div class="dphoto" data-photo>' + photoSvg() + '</div><div class="dinfo"><p>Дата<br>народження:</p><b data-f="birth"></b><p>РНОКПП:</p><b data-f="rnokpp"></b></div></div><div class="ticker" aria-hidden="true"><div class="track"><span data-tick="stamp"></span><span data-tick="stamp"></span></div></div><div class="dname" data-name></div>';
+      }
+      var qrId = 'qrcode-' + id;
+      var html = '<div class="pg" data-doc="' + id + '"><div class="flip-card"><article class="dcard" style="position:relative">' + front + '</article>'
+        + '<div class="card-back"><div class="qr-container"><div class="qr-img-wrap" id="' + qrId + '"></div>' + qrSwitchHtml() + '</div></div></div></div>';
+      return html;
+    }
+
+    function rebuildDots() {
+      var dpg = document.getElementById('dpg');
+      if (!dpg) return;
+      var n = pager.querySelectorAll('.pg').length;
+      var html = '';
+      for (var i = 0; i < n; i++) html += i === 0 ? '<i class="on"></i>' : '<i></i>';
+      dpg.innerHTML = html;
+      pgDots = document.querySelectorAll('#dpg i');
+    }
+
+    function bindFlip(card) {
+      card.addEventListener('click', function (e) {
+        if (e.target.closest('.qr-switch-btn') || e.target.closest('.dcard-act')) {
+          e.stopPropagation();
+          return;
+        }
+        haptic('medium');
+        card.classList.toggle('flipped');
+      });
+    }
+
+    function genQrFor(el, text) {
+      if (!el || typeof QRCode === 'undefined') return;
+      el.innerHTML = '';
+      try {
+        new QRCode(el, { text: text, width: 190, height: 190, colorDark: '#000000', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M });
+      } catch (e) {}
+    }
+
+    function refreshAllDocQrs() {
+      docPages().forEach(function (pg) {
+        var id = pg.dataset.doc;
+        var el = document.getElementById('qrcode-' + id);
+        if (!el) return;
+        var payload = 'https://diia.app/doc/' + id + '/' + (DOC_DATA.rnokpp || '0');
+        genQrFor(el, payload);
+      });
+    }
+
+    function renderActiveDocs() {
+      var active = getActiveDocs();
+      var addPg = pager.querySelector('.pg-add');
+      var existing = {};
+      docPages().forEach(function (pg) { existing[pg.dataset.doc] = pg; });
+      active.forEach(function (id) {
+        if (existing[id]) {
+          pager.insertBefore(existing[id], addPg);
+          delete existing[id];
+        } else {
+          var cat = catalogById(id);
+          if (!cat) return;
+          var wrap = document.createElement('div');
+          wrap.innerHTML = buildDocPage(cat);
+          var pg = wrap.firstChild;
+          pager.insertBefore(pg, addPg);
+          bindFlip(pg.querySelector('.flip-card'));
+        }
+      });
+      Object.keys(existing).forEach(function (id) {
+        if (DEFAULT_DOCS.indexOf(id) >= 0 && active.indexOf(id) < 0) {
+          /* дозволяємо прибирати навіть дефолтні, якщо користувач так вирішив */
+        }
+        existing[id].parentNode && existing[id].parentNode.removeChild(existing[id]);
+      });
+      /* name-inline for vehicle */
+      [].forEach.call(document.querySelectorAll('[data-name-inline]'), function (el) {
+        el.textContent = [DOC_DATA.lastName, DOC_DATA.firstName, DOC_DATA.middleName].filter(Boolean).join(' ') || '—';
+      });
+      fillDocs();
+      refreshAllDocQrs();
+      rebuildDots();
+      /* ticks */
+      [].forEach.call(document.querySelectorAll('[data-tick="stamp"]'), function (el) {
+        if (!el.textContent) el.textContent = 'Документ сформовано в Дії · ';
+      });
+      [].forEach.call(document.querySelectorAll('[data-tick="war"]'), function (el) {
+        if (!el.textContent) el.textContent = 'Документ діє під час воєнного стану · ';
+      });
+    }
+
+    function openAddDoc() {
+      haptic('medium');
+      var bodyEl = document.getElementById('addDocBody');
+      var active = getActiveDocs();
+      var html = '<div class="doc-pick-list">';
+      DOC_CATALOG.forEach(function (cat) {
+        var on = active.indexOf(cat.id) >= 0;
+        html += '<button type="button" class="doc-pick-row" data-add="' + cat.id + '">';
+        html += '<span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/></svg></span>';
+        html += '<span class="meta">' + _esc(cat.title) + '<small>' + (on ? 'Додано · натисніть, щоб прибрати' : _esc(cat.short)) + '</small></span>';
+        html += on ? '<span style="font-size:13px;color:#1e7e34;font-weight:600">✓</span>' : '';
+        html += '</button>';
+      });
+      html += '</div>';
+      bodyEl.innerHTML = html;
+      bodyEl.querySelectorAll('[data-add]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var id = btn.getAttribute('data-add');
+          var list = getActiveDocs();
+          var i = list.indexOf(id);
+          if (i >= 0) {
+            if (list.length <= 1) { showToast('Потрібен хоча б один документ'); return; }
+            list.splice(i, 1);
+            haptic('light');
+          } else {
+            list.push(id);
+            haptic('success');
+          }
+          setActiveDocs(list);
+          renderActiveDocs();
+          openAddDoc();
+        });
+      });
+      document.getElementById('fsAddDoc').classList.add('on');
+      document.getElementById('fsAddDoc').setAttribute('aria-hidden', 'false');
+    }
+
+    /* --- Шеринг --- */
+    var shareState = { docId: null, exp: 0, url: '', timer: null, min: 5 };
+    var shareDlg = document.getElementById('shareDlg');
+    function closeShare() {
+      if (shareState.timer) clearInterval(shareState.timer);
+      shareState.timer = null;
+      shareDlg.classList.remove('on');
+      shareDlg.setAttribute('aria-hidden', 'true');
+    }
+    function buildShareUrl(docId, min) {
+      var exp = Date.now() + min * 60 * 1000;
+      var token = btoa(JSON.stringify({
+        d: docId,
+        r: DOC_DATA.rnokpp || '',
+        n: [DOC_DATA.lastName, DOC_DATA.firstName].filter(Boolean).join(' '),
+        e: exp
+      })).replace(/=+$/, '');
+      shareState.exp = exp;
+      shareState.url = location.origin + location.pathname.replace(/\/[^/]*$/, '/') + '#share/' + token;
+      return shareState.url;
+    }
+    function tickShare() {
+      var left = Math.max(0, shareState.exp - Date.now());
+      var el = document.getElementById('shareTimer');
+      if (left <= 0) {
+        el.textContent = 'Термін дії закінчився';
+        el.classList.add('exp');
+        if (shareState.timer) clearInterval(shareState.timer);
+        return;
+      }
+      el.classList.remove('exp');
+      var s = Math.ceil(left / 1000);
+      var m = Math.floor(s / 60);
+      s = s % 60;
+      el.textContent = 'Дійсне ще ' + m + ':' + (s < 10 ? '0' : '') + s;
+    }
+    function openShare(docId) {
+      haptic('medium');
+      shareState.docId = docId;
+      shareState.min = 5;
+      var cat = catalogById(docId);
+      document.getElementById('shareTitle').textContent = cat ? cat.title : 'Поділитися';
+      document.querySelectorAll('#shareTtl button').forEach(function (b) {
+        b.classList.toggle('on', Number(b.getAttribute('data-min')) === 5);
+      });
+      var url = buildShareUrl(docId, 5);
+      document.getElementById('shareLink').textContent = url;
+      var qrBox = document.getElementById('shareQr');
+      qrBox.innerHTML = '';
+      try {
+        new QRCode(qrBox, { text: url, width: 180, height: 180, colorDark: '#000', colorLight: '#fff', correctLevel: QRCode.CorrectLevel.M });
+      } catch (e) {}
+      if (shareState.timer) clearInterval(shareState.timer);
+      tickShare();
+      shareState.timer = setInterval(tickShare, 1000);
+      shareDlg.classList.add('on');
+      shareDlg.setAttribute('aria-hidden', 'false');
+    }
+    document.getElementById('shareTtl').addEventListener('click', function (e) {
+      var b = e.target.closest('button[data-min]');
+      if (!b) return;
+      document.querySelectorAll('#shareTtl button').forEach(function (x) { x.classList.remove('on'); });
+      b.classList.add('on');
+      shareState.min = Number(b.getAttribute('data-min')) || 5;
+      var url = buildShareUrl(shareState.docId, shareState.min);
+      document.getElementById('shareLink').textContent = url;
+      var qrBox = document.getElementById('shareQr');
+      qrBox.innerHTML = '';
+      try {
+        new QRCode(qrBox, { text: url, width: 180, height: 180, colorDark: '#000', colorLight: '#fff', correctLevel: QRCode.CorrectLevel.M });
+      } catch (e) {}
+      if (shareState.timer) clearInterval(shareState.timer);
+      tickShare();
+      shareState.timer = setInterval(tickShare, 1000);
+    });
+    document.getElementById('shareCopy').addEventListener('click', function () {
+      var url = shareState.url;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url).then(function () { showToast('Посилання скопійовано'); haptic('success'); });
+      } else showToast('Посилання скопійовано');
+    });
+    shareDlg.addEventListener('click', function (e) {
+      if (e.target.closest('[data-close-share]')) closeShare();
+    });
+    document.addEventListener('click', function (e) {
+      var btn = e.target.closest('[data-share]');
+      if (btn) {
+        e.preventDefault();
+        e.stopPropagation();
+        openShare(btn.getAttribute('data-share'));
+      }
+    });
+
+    /* --- Перевірка РНОКПП (контрольна сума + локальний статус) --- */
+    function rnokppValid(num) {
+      num = String(num || '').replace(/\D/g, '');
+      if (!/^\d{10}$/.test(num)) return false;
+      var weights = [-1, 5, 7, 9, 4, 6, 10, 5, 7];
+      var sum = 0;
+      for (var i = 0; i < 9; i++) sum += parseInt(num[i], 10) * weights[i];
+      var dig = (sum % 11) % 10;
+      return dig === parseInt(num[9], 10);
+    }
+    function openVerify() {
+      haptic('medium');
+      document.getElementById('verifyRnokpp').value = '';
+      document.getElementById('verifyOut').innerHTML = '';
+      document.getElementById('fsVerify').classList.add('on');
+      document.getElementById('fsVerify').setAttribute('aria-hidden', 'false');
+    }
+    document.getElementById('verifyBtn').addEventListener('click', function () {
+      var v = (document.getElementById('verifyRnokpp').value || '').replace(/\D/g, '');
+      var out = document.getElementById('verifyOut');
+      if (v.length !== 10) {
+        out.innerHTML = '<div class="verify-result bad"><h3>Некоректний формат</h3><p>РНОКПП має містити 10 цифр.</p></div>';
+        haptic('error');
+        return;
+      }
+      var ok = rnokppValid(v);
+      var own = (DOC_DATA.rnokpp || '').replace(/\D/g, '') === v;
+      if (ok) {
+        out.innerHTML = '<div class="verify-result ok"><h3>РНОКПП коректний</h3><p>Контрольна сума збігається.'
+          + (own ? ' Це ваш номер у документах Дії.' : ' Номер пройшов перевірку формату.')
+          + '</p><p style="margin-top:8px;font-size:12.5px;color:#5b6773">Перевірка за державним реєстром доступна в офіційних сервісах.</p></div>';
+        haptic('success');
+      } else {
+        out.innerHTML = '<div class="verify-result bad"><h3>РНОКПП некоректний</h3><p>Контрольна сума не збігається. Перевірте введені цифри.</p></div>';
+        haptic('error');
+      }
+    });
+
+    /* Прихований вхід: 7 натискань на версію в меню */
+    (function () {
+      var mver = document.querySelector('#tab-menu .mver');
+      if (!mver) return;
+      var taps = 0, t0 = 0;
+      mver.style.cursor = 'pointer';
+      mver.addEventListener('click', function () {
+        var now = Date.now();
+        if (now - t0 > 2500) taps = 0;
+        t0 = now;
+        taps++;
+        if (taps >= 7) {
+          taps = 0;
+          openVerify();
+        }
+      });
+    })();
+
+    /* Початковий рендер: додати кнопки шерингу на існуючі картки + active list */
+    (function () {
+      DEFAULT_DOCS.forEach(function (id) {
+        var pg = pager.querySelector('.pg[data-doc="' + id + '"]');
+        if (!pg) return;
+        var card = pg.querySelector('.dcard');
+        if (card && !card.querySelector('[data-share]')) {
+          card.style.position = 'relative';
+          card.insertAdjacentHTML('afterbegin', shareBtnHtml(id));
+        }
+        var q = pg.querySelector('.qr-img-wrap');
+        if (q && !q.id) q.id = 'qrcode-' + id;
+        if (q) q.id = 'qrcode-' + id;
+      });
+      var saved = _loadArr(K_ACTIVE_DOCS);
+      if (!saved.length) setActiveDocs(DEFAULT_DOCS.slice());
+      renderActiveDocs();
+    })();
+
+    /* re-bind data-fs-close for new panels */
+    document.querySelectorAll('[data-fs-close]').forEach(function (btn) {
+      btn.addEventListener('click', function () { haptic('light'); closeAllFs(); });
+    });
+
     var tabEls = {}, navEls = {}, curTab = 'feed';
     [].forEach.call(document.querySelectorAll('.tab'), function (el) { tabEls[el.dataset.tab] = el; });
     [].forEach.call(document.querySelectorAll('.nav-i'), function (el) { navEls[el.dataset.tab] = el; });
@@ -1929,7 +2363,7 @@
       dlg.setAttribute('aria-hidden', 'true');
       document.getElementById('signEditor').classList.remove('on');
       document.getElementById('signEditor').setAttribute('aria-hidden', 'true');
-      ['settingsDlg', 'codeDlg', 'updDlg'].forEach(function (id) {
+      ['settingsDlg', 'codeDlg', 'updDlg', 'shareDlg'].forEach(function (id) {
         var d = document.getElementById(id);
         if (d) { d.classList.remove('on'); d.setAttribute('aria-hidden', 'true'); }
       });
@@ -1967,6 +2401,7 @@
         else if (a === 'Налаштування') openSettings();
         else if (a === 'Оновити застосунок') openUpdate();
         else if (a === 'Змінити порядок документів') openOrder();
+        else if (a === 'Додати документ') openAddDoc();
         else if (a === 'Повідомлення') openNotif();
         else if (a === 'Історія підписань') openSignHist();
         else if (a === 'Підключені пристрої') openDevices();
@@ -3116,7 +3551,6 @@
 
     /* ===== Дія.AI ===== */
     (function () {
-      var aiLoad = document.getElementById('aiLoad');
       var aiShell = document.getElementById('aiShell');
       var aiChat = document.getElementById('aiChat');
       var aiInput = document.getElementById('aiInput');
@@ -3139,19 +3573,8 @@
       window.diiaAiEnter = function () {
         if (aiReady) return;
         aiReady = true;
-        if (aiLoad) {
-          aiLoad.classList.remove('hide');
-          aiLoad.setAttribute('aria-hidden', 'false');
-        }
-        if (aiShell) aiShell.classList.remove('ready');
-        setTimeout(function () {
-          if (aiLoad) {
-            aiLoad.classList.add('hide');
-            aiLoad.setAttribute('aria-hidden', 'true');
-          }
-          if (aiShell) aiShell.classList.add('ready');
-          showChatAnim();
-        }, 1600);
+        if (aiShell) aiShell.classList.add('ready');
+        showChatAnim();
       };
 
       var REACT_HTML = ''
