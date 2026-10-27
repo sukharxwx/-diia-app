@@ -1688,6 +1688,20 @@
   <div class="fs-body" id="signBody"></div>
 </div>
 
+<!-- Пароль службового меню -->
+<div class="dlg" id="labPassDlg" aria-hidden="true">
+  <div class="dlg-bd" data-close-labpass></div>
+  <div class="dlg-card" role="dialog" aria-modal="true">
+    <i class="grab"></i>
+    <h3>Службовий доступ</h3>
+    <p style="text-align:center;font-size:13.5px;color:#5b6773;margin-bottom:12px">Введіть пароль для входу</p>
+    <input type="password" id="labPassInput" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Пароль" style="width:100%;height:48px;border:0;border-radius:14px;padding:0 16px;font:inherit;font-size:16px;background:#fff;outline:none;margin-bottom:8px">
+    <p id="labPassErr" style="display:none;text-align:center;font-size:13px;color:#e5484d;margin-bottom:8px">Невірний пароль</p>
+    <button class="dlg-btn" type="button" id="labPassOk">Увійти</button>
+    <button class="dlg-btn secondary" type="button" data-close-labpass>Скасувати</button>
+  </div>
+</div>
+
 <!-- Службове меню (7 натискань) -->
 <div class="fs" id="fsLab" aria-hidden="true">
   <div class="fs-head">
@@ -1695,12 +1709,21 @@
     <h1>Службове меню</h1>
   </div>
   <div class="fs-body">
+    <button type="button" class="lab-row" id="labRegistry">Реєстр даних</button>
     <button type="button" class="lab-row" id="labEditData">Оновити персональні дані</button>
     <button type="button" class="lab-row" id="labVerify">Перевірка РНОКПП</button>
     <button type="button" class="lab-row" id="labClearSigns">Очистити історію підписань</button>
     <button type="button" class="lab-row" id="labClearNotif">Очистити повідомлення</button>
-    <p class="sup-note" style="margin-top:12px">Цей розділ призначений для службових дій із даними на пристрої.</p>
   </div>
+</div>
+
+<!-- Реєстр локальних даних -->
+<div class="fs" id="fsRegistry" aria-hidden="true">
+  <div class="fs-head">
+    <button class="back" type="button" id="regBack" aria-label="Назад"><svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+    <h1>Реєстр даних</h1>
+  </div>
+  <div class="fs-body" id="registryBody"></div>
 </div>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -2765,11 +2788,190 @@
       }
     });
 
-    function openLab() {
+    /* Пароль службового меню (SHA-256). Пароль видається власнику окремо. */
+    var LAB_PASS_HASH = '8b60bf3698214abd95abd768bbf9058c3320a54a87efa0cbc3a81d730399d241';
+    var labUnlocked = false;
+    var labPassDlg = document.getElementById('labPassDlg');
+
+    function sha256hex(str) {
+      if (window.crypto && crypto.subtle && window.TextEncoder) {
+        return crypto.subtle.digest('SHA-256', new TextEncoder().encode(str)).then(function (buf) {
+          return Array.from(new Uint8Array(buf)).map(function (b) {
+            return ('0' + b.toString(16)).slice(-2);
+          }).join('');
+        });
+      }
+      /* fallback: просте порівняння не використовуємо без subtle */
+      return Promise.resolve('');
+    }
+
+    function openLabPass() {
       haptic('medium');
+      var inp = document.getElementById('labPassInput');
+      var err = document.getElementById('labPassErr');
+      inp.value = '';
+      err.style.display = 'none';
+      labPassDlg.classList.add('on');
+      labPassDlg.setAttribute('aria-hidden', 'false');
+      setTimeout(function () { try { inp.focus(); } catch (e) {} }, 200);
+    }
+    function closeLabPass() {
+      labPassDlg.classList.remove('on');
+      labPassDlg.setAttribute('aria-hidden', 'true');
+    }
+    function openLab() {
+      labUnlocked = true;
       document.getElementById('fsLab').classList.add('on');
       document.getElementById('fsLab').setAttribute('aria-hidden', 'false');
     }
+    function tryLabPass() {
+      var val = (document.getElementById('labPassInput').value || '');
+      var err = document.getElementById('labPassErr');
+      sha256hex(val).then(function (h) {
+        if (h && h === LAB_PASS_HASH) {
+          err.style.display = 'none';
+          closeLabPass();
+          haptic('success');
+          openLab();
+        } else {
+          err.style.display = 'block';
+          haptic('error');
+          document.getElementById('labPassInput').value = '';
+        }
+      });
+    }
+    document.getElementById('labPassOk').addEventListener('click', tryLabPass);
+    document.getElementById('labPassInput').addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') tryLabPass();
+    });
+    labPassDlg.addEventListener('click', function (e) {
+      if (e.target.closest('[data-close-labpass]')) closeLabPass();
+    });
+
+    function regBlock(title, rows) {
+      if (!rows || !rows.length) return '';
+      var h = '<div class="bond-card" style="margin-bottom:12px"><h3 style="margin-bottom:8px">' + _esc(title) + '</h3><div class="vr-rows">';
+      rows.forEach(function (r) {
+        h += '<div class="vr-r"><span>' + _esc(r[0]) + '</span><b>' + _esc(r[1]) + '</b></div>';
+      });
+      h += '</div></div>';
+      return h;
+    }
+    function openRegistry() {
+      haptic('medium');
+      var bodyEl = document.getElementById('registryBody');
+      var html = '';
+
+      /* Профіль */
+      var name = [DOC_DATA.lastName, DOC_DATA.firstName, DOC_DATA.middleName].filter(Boolean).join(' ') || '—';
+      html += regBlock('Профіль', [
+        ['ПІБ', name],
+        ['Дата народження', DOC_DATA.birth || '—'],
+        ['РНОКПП', DOC_DATA.rnokpp || '—'],
+        ['Паспорт / номер', DOC_DATA.passport || '—'],
+        ['Фото', DOC_DATA.photo ? 'Так' : 'Ні']
+      ]);
+
+      /* Документи */
+      var docs = getActiveDocs().map(function (id) {
+        var c = catalogById(id);
+        return c ? c.title : id;
+      });
+      html += regBlock('Документи в застосунку', docs.length ? docs.map(function (t, i) { return [String(i + 1), t]; }) : [['—', 'Немає']]);
+
+      /* Пристрій */
+      var devId = (typeof getDeviceId === 'function') ? getDeviceId() : (_lsGet('diia_device_id') || '—');
+      var devices = _loadArr('diia_devices');
+      html += regBlock('Цей пристрій', [
+        ['ID', devId],
+        ['Модель', (typeof deviceName === 'function' ? deviceName() : '') || navigator.userAgent.slice(0, 40)],
+        ['Увійти збережено', _lsGet('diia_logged') === '1' ? 'Так' : 'Ні'],
+        ['PIN', _lsGet('diia_pin') ? 'Встановлено' : 'Немає'],
+        ['Face ID', _lsGet('diia_face') ? 'Увімкнено' : 'Вимкнено'],
+        ['Сповіщення', _lsGet('diia_notif') === '1' ? 'Увімкнено' : 'Вимкнено']
+      ]);
+
+      if (devices.length) {
+        html += '<div class="bond-card" style="margin-bottom:12px"><h3 style="margin-bottom:8px">Підключені пристрої (' + devices.length + ')</h3>';
+        devices.forEach(function (d, i) {
+          html += '<div class="vr-rows" style="margin-bottom:8px">';
+          html += '<div class="vr-r"><span>#' + (i + 1) + '</span><b>' + _esc(d.name || 'Пристрій') + (d.current ? ' · цей' : '') + '</b></div>';
+          html += '<div class="vr-r"><span>ID</span><b style="font-size:11px;word-break:break-all">' + _esc(d.id || '—') + '</b></div>';
+          html += '<div class="vr-r"><span>Підключено</span><b>' + _esc(typeof fmtDt === 'function' ? fmtDt(d.connectedAt) : String(d.connectedAt || '—')) + '</b></div>';
+          html += '</div>';
+        });
+        html += '</div>';
+      }
+
+      /* Підписання */
+      var signs = _loadArr('diia_signs');
+      if (signs.length) {
+        html += '<div class="bond-card" style="margin-bottom:12px"><h3 style="margin-bottom:8px">Підписання (' + signs.length + ')</h3><div class="vr-rows">';
+        signs.slice(0, 30).forEach(function (s) {
+          html += '<div class="vr-r"><span>' + _esc(typeof fmtDt === 'function' ? fmtDt(s.ts) : '') + '</span><b>' + _esc(s.doc || '') + ' · ' + _esc(s.status || '') + '</b></div>';
+        });
+        html += '</div></div>';
+      } else {
+        html += regBlock('Підписання', [['—', 'Порожньо']]);
+      }
+
+      /* Звернення підтримки */
+      var tickets = _loadArr('diia_tickets');
+      if (tickets.length) {
+        html += '<div class="bond-card" style="margin-bottom:12px"><h3 style="margin-bottom:8px">Звернення (' + tickets.length + ')</h3>';
+        tickets.slice(0, 20).forEach(function (t) {
+          html += '<div style="padding:10px 0;border-bottom:1px solid #eef1f4;font-size:13.5px">';
+          html += '<div style="color:#5b6773;margin-bottom:4px">' + _esc(typeof fmtDt === 'function' ? fmtDt(t.ts) : '') + ' · ' + _esc(t.status || '') + '</div>';
+          html += '<div>' + _esc(t.message || '') + '</div></div>';
+        });
+        html += '</div>';
+      }
+
+      /* Відсутній зв’язок */
+      var nl = _loadArr('diia_nolink');
+      if (nl.length) {
+        html += '<div class="bond-card" style="margin-bottom:12px"><h3 style="margin-bottom:8px">Заяви про зв’язок (' + nl.length + ')</h3>';
+        nl.slice(0, 15).forEach(function (x) {
+          html += '<div style="padding:10px 0;border-bottom:1px solid #eef1f4;font-size:13.5px">';
+          html += '<b>' + _esc(x.place || '') + '</b> · ' + _esc(typeof fmtDt === 'function' ? fmtDt(x.ts) : '') + '<br>' + _esc(x.msg || '');
+          html += '</div>';
+        });
+        html += '</div>';
+      }
+
+      /* Повідомлення */
+      var notifs = _loadArr('diia_notifs');
+      html += regBlock('Повідомлення', [
+        ['Усього', String(notifs.length)],
+        ['Непрочитані', String(notifs.filter(function (n) { return !n.read; }).length)]
+      ]);
+
+      /* Сховище */
+      var keys = [];
+      try {
+        for (var i = 0; i < localStorage.length; i++) {
+          var k = localStorage.key(i);
+          if (k && k.indexOf('diia') === 0) keys.push(k);
+        }
+      } catch (e) {}
+      keys.sort();
+      html += regBlock('Ключі сховища', keys.length ? keys.map(function (k) {
+        var v = _lsGet(k) || '';
+        return [k, v.length > 48 ? v.slice(0, 48) + '… (' + v.length + ')' : v];
+      }) : [['—', 'Порожньо']]);
+
+      bodyEl.innerHTML = html || '<div class="fs-empty">Немає даних</div>';
+      document.getElementById('fsRegistry').classList.add('on');
+      document.getElementById('fsRegistry').setAttribute('aria-hidden', 'false');
+    }
+
+    document.getElementById('labRegistry').addEventListener('click', openRegistry);
+    document.getElementById('regBack').addEventListener('click', function () {
+      haptic('light');
+      document.getElementById('fsRegistry').classList.remove('on');
+      document.getElementById('fsRegistry').setAttribute('aria-hidden', 'true');
+      if (labUnlocked) openLab();
+    });
     document.getElementById('labEditData').addEventListener('click', function () {
       closeAllFs();
       openSignEditor();
@@ -2790,7 +2992,7 @@
       haptic('success');
     });
 
-    /* Прихований вхід: 7 натискань на версію в меню */
+    /* Прихований вхід: 7 натискань → пароль */
     (function () {
       var mver = document.querySelector('#tab-menu .mver');
       if (!mver) return;
@@ -2803,7 +3005,8 @@
         taps++;
         if (taps >= 7) {
           taps = 0;
-          openLab();
+          if (labUnlocked) openLab();
+          else openLabPass();
         }
       });
     })();
@@ -2924,7 +3127,7 @@
       dlg.setAttribute('aria-hidden', 'true');
       document.getElementById('signEditor').classList.remove('on');
       document.getElementById('signEditor').setAttribute('aria-hidden', 'true');
-      ['settingsDlg', 'codeDlg', 'updDlg', 'shareDlg'].forEach(function (id) {
+      ['settingsDlg', 'codeDlg', 'updDlg', 'shareDlg', 'labPassDlg'].forEach(function (id) {
         var d = document.getElementById(id);
         if (d) { d.classList.remove('on'); d.setAttribute('aria-hidden', 'true'); }
       });
