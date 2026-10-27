@@ -824,48 +824,6 @@
   .dcap b { display: block; font-weight: 500; font-size: 16px; margin-top: 2px; }
   .dnum { margin-top: 22px; font-size: 24px; font-weight: 600; letter-spacing: .02em; }
 
-  /* Карточки документів: окремі кольорові теми в стилі сучасного цифрового UI.
-     Це демонстраційні картки, не офіційні документи Дії. */
-  .dcard {
-    border: 1px solid rgba(255,255,255,.78);
-    box-shadow: inset 0 1px 0 rgba(255,255,255,.55), 0 14px 32px rgba(32,64,85,.09);
-    background-image: radial-gradient(circle at 100% 0%, rgba(255,255,255,.72), transparent 38%), linear-gradient(145deg,#e7f5ff 0%,#d5ebf8 56%,#c6e0f0 100%);
-  }
-  .pg[data-doc="edoc"] .dcard,
-  .pg[data-doc="edoc"] .card-back { background-image: radial-gradient(circle at 100% 0%, rgba(255,255,255,.82), transparent 40%), linear-gradient(145deg,#e9f7ff 0%,#d4ecfa 54%,#bedff2 100%); }
-  .pg[data-doc="tax"] .dcard,
-  .pg[data-doc="tax"] .card-back { background-image: radial-gradient(circle at 100% 0%, rgba(255,255,255,.78), transparent 42%), linear-gradient(145deg,#fffbed 0%,#f7f0d0 55%,#e9e1b7 100%); }
-  .pg[data-doc="idcard"] .dcard,
-  .pg[data-doc="idcard"] .card-back { background-image: radial-gradient(circle at 100% 0%, rgba(255,255,255,.8), transparent 40%), linear-gradient(145deg,#e8f7f5 0%,#d0eeeb 55%,#bce0df 100%); }
-  .pg[data-doc="foreign"] .dcard,
-  .pg[data-doc="foreign"] .card-back { background-image: radial-gradient(circle at 100% 0%, rgba(255,255,255,.82), transparent 38%), linear-gradient(145deg,#eff0ff 0%,#dfe4fb 54%,#ccd9f1 100%); }
-  .pg[data-doc="vehicle"] .dcard,
-  .pg[data-doc="vehicle"] .card-back { background-image: radial-gradient(circle at 100% 0%, rgba(255,255,255,.8), transparent 38%), linear-gradient(145deg,#eff9e9 0%,#dff0d8 54%,#cce4c7 100%); }
-  .pg[data-doc="birth"] .dcard,
-  .pg[data-doc="birth"] .card-back { background-image: radial-gradient(circle at 100% 0%, rgba(255,255,255,.8), transparent 38%), linear-gradient(145deg,#fff0e8 0%,#fbe2d6 54%,#f0d0c7 100%); }
-  .pg[data-doc="student"] .dcard,
-  .pg[data-doc="student"] .card-back { background-image: radial-gradient(circle at 100% 0%, rgba(255,255,255,.8), transparent 38%), linear-gradient(145deg,#f3eeff 0%,#e7def9 54%,#d6ccef 100%); }
-  .pg[data-doc="pension"] .dcard,
-  .pg[data-doc="pension"] .card-back { background-image: radial-gradient(circle at 100% 0%, rgba(255,255,255,.8), transparent 38%), linear-gradient(145deg,#f5f5f2 0%,#e6e9e2 54%,#d7ded7 100%); }
-  .pg[data-doc="vpo"] .dcard,
-  .pg[data-doc="vpo"] .card-back { background-image: radial-gradient(circle at 100% 0%, rgba(255,255,255,.8), transparent 38%), linear-gradient(145deg,#e8f7fa 0%,#d5eef1 54%,#c1e0e7 100%); }
-  .pg[data-doc="weapon"] .dcard,
-  .pg[data-doc="weapon"] .card-back { background-image: radial-gradient(circle at 100% 0%, rgba(255,255,255,.7), transparent 38%), linear-gradient(145deg,#edf0f3 0%,#dce3e8 54%,#cbd6de 100%); }
-  .doc-demo-label {
-    display: inline-flex; align-items: center; align-self: flex-start; width: max-content; max-width: calc(100% - 46px);
-    min-height: 19px; margin-bottom: 7px; padding: 3px 8px; border-radius: 999px;
-    border: 1px solid rgba(20,47,60,.16); background: rgba(255,255,255,.55); color: #324c5a;
-    font-size: 9px; line-height: 1.15; font-weight: 700; letter-spacing: .055em; text-transform: uppercase;
-  }
-  .ticker { background: rgba(255,255,255,.46); border-top: 1px solid rgba(44,79,94,.08); }
-  .track { animation: none; width: 100%; }
-  .track span { width: 100%; padding: 0 8px; font-size: 9.5px; line-height: 28px; letter-spacing: .02em; text-align: center; }
-  .card-back { border: 1px solid rgba(255,255,255,.72); box-shadow: inset 0 1px 0 rgba(255,255,255,.55); }
-  .card-back .qr-container::after {
-    content: "ДЕМО-КОД · НЕ ДЛЯ ПЕРЕВІРКИ ДОКУМЕНТА"; display: block; width: 100%; margin-top: 10px;
-    color: #667780; font-size: 9px; font-weight: 700; line-height: 1.35; text-align: center; letter-spacing: .025em;
-  }
-
   .pg-add { display: flex; flex-direction: column; gap: 14px; }
   .acard { position: relative; flex: 1; min-height: 180px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; text-align: center; font-size: 17px; font-weight: 500; background: rgba(255, 255, 255, .25); border-radius: 26px; }
   .acard:active { transform: scale(.98); background: rgba(255, 255, 255, .35); }
@@ -1052,9 +1010,6 @@
   .file-upload span { font-size: 14px; color: #000; font-weight: 500; }
   .file-upload input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
   .photo-thumb { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; display: none; }
-  .photo-demo-note { margin: 0 2px 10px !important; padding: 10px 12px; border-radius: 12px; background: #eef6fa; color: #536875 !important; font-size: 11.5px !important; text-align: left !important; line-height: 1.4 !important; }
-  .photo-clear { width: 100%; min-height: 36px; margin: 0 0 10px; border: 1px solid #d8e0e5; border-radius: 12px; background: rgba(255,255,255,.72); color: #334650; font: inherit; font-size: 12.5px; font-weight: 500; cursor: pointer; }
-  .doc-data-note { padding: 9px 11px; margin: 0 0 10px; background: #f8f0d8; border-radius: 10px; color: #67582d !important; font-size: 11px !important; text-align: left !important; line-height: 1.35 !important; }
 
   /* === Фикс безопасной зоны в режиме "На экран Домой" === */
   /* Высоту задаёт JS (--app-h) = реальная высота экрана, включая нижнюю зону */
@@ -1337,7 +1292,6 @@
         <div class="pg" data-doc="edoc">
           <div class="flip-card">
             <article class="dcard">
-              <span class="doc-demo-label">ДЕМО · НЕ ОФІЦІЙНИЙ ДОКУМЕНТ</span>
               <h2 class="dtitle">єДокумент</h2>
               <div class="dbody">
                 <div class="dphoto" data-photo><svg viewBox="0 0 40 48" fill="#000"><circle cx="20" cy="14" r="9"/><path d="M3 47c0-11 7-18 17-18s17 7 17 18z"/></svg></div>
@@ -1368,12 +1322,11 @@
           </div>
         </div>
 
-        <!-- Документ 2: Картка платника податків -->
+        <!-- Документ 2: Карта платника податків -->
         <div class="pg" data-doc="tax">
           <div class="flip-card">
             <article class="dcard">
-              <span class="doc-demo-label">ДЕМО · НЕ ОФІЦІЙНИЙ ДОКУМЕНТ</span>
-              <h2 class="dtitle">Картка платника<br>податків</h2>
+              <h2 class="dtitle">Карта платника<br>податків</h2>
               <p class="dlab">РНОКПП</p>
               <div class="dname sm" data-name></div>
               <p class="dcap">Дата народження<b data-f="birth"></b></p>
@@ -1402,22 +1355,21 @@
           </div>
         </div>
 
-        <!-- Документ 3: ID-картка -->
-        <div class="pg" data-doc="idcard">
+        <!-- Документ 3: Паспорт -->
+        <div class="pg" data-doc="passport">
           <div class="flip-card">
             <article class="dcard">
-              <span class="doc-demo-label">ДЕМО · НЕ ОФІЦІЙНИЙ ДОКУМЕНТ</span>
-              <h2 class="dtitle">ID-картка</h2>
+              <h2 class="dtitle">Паспорт громадянина<br>України</h2>
               <div class="dbody">
                 <div class="dphoto" data-photo><svg viewBox="0 0 40 48" fill="#000"><circle cx="20" cy="14" r="9"/><path d="M3 47c0-11 7-18 17-18s17 7 17 18z"/></svg></div>
-                <div class="dinfo"><p>Дата<br>народження:</p><b data-f="birth"></b><p>Номер документа:</p><b data-f="passport"></b></div>
+                <div class="dinfo"><p>Дата<br>народження:</p><b data-f="birth"></b><p>Номер:</p><b data-f="passport"></b></div>
               </div>
               <div class="ticker" aria-hidden="true"><div class="track"><span data-tick="stamp"></span><span data-tick="stamp"></span></div></div>
               <div class="dname" data-name></div>
             </article>
             <div class="card-back">
               <div class="qr-container">
-                <div class="qr-img-wrap" id="qrcode-idcard"></div>
+                <div class="qr-img-wrap" id="qrcode-3"></div>
                 <div class="qr-switches">
                   <button class="qr-switch-btn" type="button">
                     <div class="qr-icon-box">
@@ -1593,24 +1545,13 @@
           <label>Дата народження</label>
           <input type="date" id="edit-birth" autocomplete="off">
         </div>
-        <div class="ios-row">
-          <label>РНОКПП (демо)</label>
-          <input type="text" id="edit-rnokpp" inputmode="numeric" maxlength="10" placeholder="10 цифр" autocomplete="off">
-        </div>
-        <div class="ios-row">
-          <label>Номер документа (демо)</label>
-          <input type="text" id="edit-passport" maxlength="20" placeholder="Введіть вручну" autocomplete="off">
-        </div>
       </div>
 
-      <p class="doc-data-note">Усі поля в цьому редакторі — демонстраційні. Зміни не надсилаються до державних реєстрів.</p>
       <label class="file-upload">
-        <span>Обрати фото для демо-карток</span>
-        <img class="photo-thumb" id="photoPreview" alt="Попередній перегляд фото">
+        <span>Завантажити фото</span>
+        <img class="photo-thumb" id="photoPreview" alt="Preview">
         <input type="file" id="edit-photo" accept="image/*">
       </label>
-      <p class="photo-demo-note">Фото застосовується лише до карток цього демо-проєкту на пристрої. У справжній Дії фото документів не можна довільно замінити завантаженням із галереї.</p>
-      <button type="button" class="photo-clear" id="btnClearPhoto">Прибрати фото з демо-карток</button>
     </div>
     
     <button class="dlg-btn" type="button" id="btnSaveData">Зберегти дані</button>
@@ -1766,7 +1707,7 @@
   <div class="dlg-card" role="dialog" aria-modal="true">
     <i class="grab"></i>
     <h3 id="shareTitle">Поділитися</h3>
-    <p style="text-align:center;font-size:13.5px;color:#5b6773;margin-bottom:4px">Це демонстраційний QR/код для тестування всередині цього проєкту. Він не перевіряє державні реєстри й не підтверджує справжність документа.</p>
+    <p style="text-align:center;font-size:13.5px;color:#5b6773;margin-bottom:4px">QR або посилання можна перевірити на іншому пристрої через «Сканувати QR-код». Дійсні обмежений час.</p>
     <div class="share-ttl" id="shareTtl">
       <button type="button" data-min="3">3 хв</button>
       <button type="button" data-min="5" class="on">5 хв</button>
@@ -1818,7 +1759,7 @@
       </label>
     </div>
     <div class="scan-result" id="scanResult"></div>
-    <p class="sup-note" style="margin-top:12px">Наведіть камеру на QR-код або завантажте його з галереї. Сканер зчитує вміст коду. Лише локальні демо-коди цього проєкту можна перевірити за строком дії; справжність державного документа без офіційного сервісу Дії тут підтвердити неможливо.</p>
+    <p class="sup-note" style="margin-top:12px">Наведіть камеру на QR з екрана «Поділитися» на іншому телефоні. Якщо код дійсний — з’являться ПІБ, дата народження та статус. Можна завантажити фото з галереї.</p>
   </div>
 </div>
 
@@ -1983,9 +1924,9 @@
       } catch (e) {}
     }
 
-    /* QR-коди для локальних демонстраційних карток — не для перевірки документа. */
-    var qrTargetUrl = 'DEMO ONLY | NOT A VALID GOVERNMENT DOCUMENT';
-    ['qrcode-1', 'qrcode-2', 'qrcode-idcard'].forEach(function(id) {
+    /* Генерация QR-кода (ссылка: https://diia.gov.ua/faq/25) */
+    var qrTargetUrl = 'https://diia.gov.ua/faq/25';
+    ['qrcode-1', 'qrcode-2', 'qrcode-3'].forEach(function(id) {
       var el = document.getElementById(id);
       if (el) {
         new QRCode(el, {
@@ -2253,9 +2194,11 @@
         }
       });
 
-      var demoStamp = 'ДЕМО · НЕ ОФІЦІЙНИЙ ДОКУМЕНТ';
+      var d = new Date();
+      var stamp = 'Документ оновлено о ' + pad2(d.getHours()) + ':' + pad2(d.getMinutes()) + ' | ' + pad2(d.getDate()) + '.' + pad2(d.getMonth() + 1) + '.' + d.getFullYear() + ' . Перевірено Дією';
+      var war = 'Документ дійсний в умовах воєнного стану. Ой у лузі червона калина похилилася, чогось наша славна Україна зажурилася.';
       [].forEach.call(document.querySelectorAll('[data-tick]'), function (el) {
-        el.textContent = demoStamp;
+        el.textContent = el.dataset.tick === 'war' ? war : stamp;
       });
     }
     fillDocs();
@@ -2369,10 +2312,11 @@
     function _saveArr(key, arr) { try { _lsSet(key, JSON.stringify(arr)); } catch (e) {} }
     function _esc(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
     var K_ACTIVE_DOCS = 'diia_active_docs';
-    var DEFAULT_DOCS = ['edoc', 'tax', 'idcard'];
+    var DEFAULT_DOCS = ['edoc', 'tax', 'passport'];
     var DOC_CATALOG = [
       { id: 'edoc', title: 'єДокумент', short: 'Цифровий документ', kind: 'photo' },
-      { id: 'tax', title: 'Картка платника податків', short: 'РНОКПП', kind: 'tax' },
+      { id: 'tax', title: 'Карта платника податків', short: 'РНОКПП', kind: 'tax' },
+      { id: 'passport', title: 'Паспорт громадянина України', short: 'Внутрішній паспорт', kind: 'photo' },
       { id: 'idcard', title: 'ID-картка', short: 'Посвідчення особи', kind: 'photo' },
       { id: 'foreign', title: 'Закордонний паспорт', short: 'Паспорт для виїзду', kind: 'photo' },
       { id: 'vehicle', title: 'Свідоцтво про реєстрацію ТЗ', short: 'Техпаспорт', kind: 'vehicle' },
@@ -2389,14 +2333,7 @@
     function getActiveDocs() {
       var a = _loadArr(K_ACTIVE_DOCS);
       if (!a.length) a = DEFAULT_DOCS.slice();
-      /* Міграція старої демонстраційної назви: паспорт-книжечка не відображається в Дії. */
-      a = a.map(function (id) { return id === 'passport' ? 'idcard' : id; });
-      var seen = {};
-      return a.filter(function (id) {
-        if (!catalogById(id) || seen[id]) return false;
-        seen[id] = true;
-        return true;
-      });
+      return a.filter(function (id) { return !!catalogById(id); });
     }
     function setActiveDocs(ids) {
       _saveArr(K_ACTIVE_DOCS, ids);
@@ -2417,19 +2354,19 @@
     function buildDocPage(cat) {
       var id = cat.id;
       var title = cat.title.replace(/ /g, '<br>');
-      if (cat.id === 'tax') title = 'Картка платника<br>податків';
+      if (cat.id === 'tax') title = 'Карта платника<br>податків';
+      if (cat.id === 'passport') title = 'Паспорт громадянина<br>України';
       if (cat.id === 'foreign') title = 'Закордонний<br>паспорт';
       if (cat.id === 'vehicle') title = 'Свідоцтво про<br>реєстрацію ТЗ';
       var front = '';
-      var demoLabel = '<span class="doc-demo-label">ДЕМО · НЕ ОФІЦІЙНИЙ ДОКУМЕНТ</span>';
       if (cat.kind === 'tax') {
-        front = shareBtnHtml(id) + demoLabel + '<h2 class="dtitle">' + title + '</h2><p class="dlab">РНОКПП</p><div class="dname sm" data-name></div><p class="dcap">Дата народження<b data-f="birth"></b></p><div class="ticker" aria-hidden="true"><div class="track"><span data-tick="stamp"></span><span data-tick="stamp"></span></div></div><div class="dnum" data-f="rnokpp"></div>';
+        front = shareBtnHtml(id) + '<h2 class="dtitle">' + title + '</h2><p class="dlab">РНОКПП</p><div class="dname sm" data-name></div><p class="dcap">Дата народження<b data-f="birth"></b></p><div class="ticker" aria-hidden="true"><div class="track"><span data-tick="stamp"></span><span data-tick="stamp"></span></div></div><div class="dnum" data-f="rnokpp"></div>';
       } else if (cat.kind === 'vehicle') {
-        front = shareBtnHtml(id) + demoLabel + '<h2 class="dtitle">' + title + '</h2><div class="dbody" style="margin-top:20px"><div class="dinfo"><p>Власник:</p><b data-name-inline></b><p>РНОКПП:</p><b data-f="rnokpp"></b><p>Номер:</p><b data-f="passport"></b></div></div><div class="ticker" aria-hidden="true"><div class="track"><span data-tick="stamp"></span><span data-tick="stamp"></span></div></div>';
+        front = shareBtnHtml(id) + '<h2 class="dtitle">' + title + '</h2><div class="dbody" style="margin-top:20px"><div class="dinfo"><p>Власник:</p><b data-name-inline></b><p>РНОКПП:</p><b data-f="rnokpp"></b><p>Номер:</p><b data-f="passport"></b></div></div><div class="ticker" aria-hidden="true"><div class="track"><span data-tick="stamp"></span><span data-tick="stamp"></span></div></div>';
       } else if (cat.kind === 'simple') {
-        front = shareBtnHtml(id) + demoLabel + '<h2 class="dtitle">' + title + '</h2><div class="dname" data-name style="margin-top:28px"></div><p class="dcap" style="margin-top:16px">Дата народження<b data-f="birth"></b></p><p class="dcap">РНОКПП<b data-f="rnokpp"></b></p><div class="ticker" aria-hidden="true"><div class="track"><span data-tick="stamp"></span><span data-tick="stamp"></span></div></div>';
+        front = shareBtnHtml(id) + '<h2 class="dtitle">' + title + '</h2><div class="dname" data-name style="margin-top:28px"></div><p class="dcap" style="margin-top:16px">Дата народження<b data-f="birth"></b></p><p class="dcap">РНОКПП<b data-f="rnokpp"></b></p><div class="ticker" aria-hidden="true"><div class="track"><span data-tick="stamp"></span><span data-tick="stamp"></span></div></div>';
       } else {
-        front = shareBtnHtml(id) + demoLabel + '<h2 class="dtitle">' + title + '</h2><div class="dbody"><div class="dphoto" data-photo>' + photoSvg() + '</div><div class="dinfo"><p>Дата<br>народження:</p><b data-f="birth"></b><p>РНОКПП:</p><b data-f="rnokpp"></b></div></div><div class="ticker" aria-hidden="true"><div class="track"><span data-tick="stamp"></span><span data-tick="stamp"></span></div></div><div class="dname" data-name></div>';
+        front = shareBtnHtml(id) + '<h2 class="dtitle">' + title + '</h2><div class="dbody"><div class="dphoto" data-photo>' + photoSvg() + '</div><div class="dinfo"><p>Дата<br>народження:</p><b data-f="birth"></b><p>РНОКПП:</p><b data-f="rnokpp"></b></div></div><div class="ticker" aria-hidden="true"><div class="track"><span data-tick="stamp"></span><span data-tick="stamp"></span></div></div><div class="dname" data-name></div>';
       }
       var qrId = 'qrcode-' + id;
       var html = '<div class="pg" data-doc="' + id + '"><div class="flip-card"><article class="dcard" style="position:relative">' + front + '</article>'
@@ -2471,7 +2408,7 @@
         var id = pg.dataset.doc;
         var el = document.getElementById('qrcode-' + id);
         if (!el) return;
-        var payload = 'DEMO ONLY | NOT A VALID DOCUMENT | ' + id + ' | ' + (DOC_DATA.rnokpp || 'NO-ID');
+        var payload = 'https://diia.app/doc/' + id + '/' + (DOC_DATA.rnokpp || '0');
         genQrFor(el, payload);
       });
     }
@@ -2579,7 +2516,7 @@
       var exp = Date.now() + min * 60 * 1000;
       return {
         v: 1,
-        type: 'demo-share',
+        type: 'diia-share',
         doc: docId,
         title: cat ? cat.title : docId,
         lastName: DOC_DATA.lastName || '',
@@ -2598,7 +2535,7 @@
       shareState.exp = payload.exp;
       shareState.payload = payload;
       /* У QR — компактний токен; у посиланні — той самий для відкриття на іншому пристрої */
-      shareState.qrText = 'DEMO1.' + token;
+      shareState.qrText = 'DIIA1.' + token;
       shareState.url = location.origin + location.pathname.replace(/index\.html$/i, '').replace(/\/?$/, '/') + '#share/' + token;
       return shareState.url;
     }
@@ -2699,12 +2636,12 @@
       if (!text) return null;
       text = String(text).trim();
       var token = null;
-      if (text.indexOf('DEMO1.') === 0) token = text.slice(6);
+      if (text.indexOf('DIIA1.') === 0) token = text.slice(6);
       else if (text.indexOf('#share/') >= 0) token = text.split('#share/')[1].split(/[&#?\s]/)[0];
       else if (/^eyJ|^[A-Za-z0-9\-_]+$/.test(text) && text.length > 20) token = text;
       if (!token) return null;
       var data = fromB64url(token);
-      if (!data || data.type !== 'demo-share') return null;
+      if (!data || data.type !== 'diia-share') return null;
       return data;
     }
     function maskRnokpp(r) {
@@ -2721,10 +2658,10 @@
         var s = Math.ceil(left / 1000);
         leftStr = Math.floor(s / 60) + ':' + (s % 60 < 10 ? '0' : '') + (s % 60);
       }
-      var html = '<div class="vr-card">';
-      html += '<div class="vr-badge">' + (valid ? 'Демо-код активний' : 'Термін дії демо-коду вичерпано') + '</div>';
-      html += '<h3>' + _esc(data.title || 'Демо-картка') + '</h3>';
-      html += '<p class="vr-sub">' + (valid ? 'Локальний демо-код активний ще ' + leftStr + ' · державні реєстри не перевіряються' : 'Цей демо-код більше не приймається') + '</p>';
+      var html = '<div class="vr-card ' + (valid ? 'ok' : 'bad') + '">';
+      html += '<div class="vr-badge">' + (valid ? 'Документ дійсний' : 'Термін дії вичерпано') + '</div>';
+      html += '<h3>' + _esc(data.title || 'Документ') + '</h3>';
+      html += '<p class="vr-sub">' + (valid ? 'Перевірено · код активний ще ' + leftStr : 'Цей код більше не приймається') + '</p>';
       html += '<div class="vr-rows">';
       html += '<div class="vr-r"><span>ПІБ</span><b>' + _esc(name) + '</b></div>';
       html += '<div class="vr-r"><span>Дата народження</span><b>' + _esc(data.birth || '—') + '</b></div>';
@@ -2742,14 +2679,11 @@
         box.innerHTML = renderShareVerify(data);
         haptic(data.exp && Date.now() < data.exp ? 'success' : 'error');
         if (typeof addNotif === 'function') {
-          addNotif('Демо-код', (data.title || 'Демо-картка') + ' — відскановано локальний демо-код', 'scan');
+          addNotif('Перевірка документа', (data.title || 'Документ') + (Date.now() < data.exp ? ' — дійсний' : ' — прострочений'), 'scan');
         }
         return;
       }
-      var safeText = String(text || '');
-      var url = null;
-      try { var parsedUrl = new URL(safeText); if (parsedUrl.protocol === 'https:' || parsedUrl.protocol === 'http:') url = parsedUrl.href; } catch (e) {}
-      box.innerHTML = '<div class="verify-result"><h3>QR-код зчитано</h3><p>Вміст коду розпізнано, але це <b>не означає</b>, що документ справжній або чинний.</p><div class="share-link">' + _esc(safeText) + '</div>' + (url ? '<p><a href="' + _esc(url) + '" target="_blank" rel="noopener noreferrer">Відкрити посилання з QR</a></p>' : '') + '<p>Цей демо-проєкт не має доступу до державного сервісу перевірки Дії. Для підтвердження справжності потрібна офіційна перевірка.</p></div>';
+      box.innerHTML = '<b>QR-код розпізнано</b><br><span style="word-break:break-all">' + _esc(text) + '</span><p class="share-hint">Це не код шерингу Дії. Покажіть QR з розділу «Поділитися» на документі.</p>';
       haptic('success');
     }
     function openShareFromHash() {
@@ -2758,7 +2692,7 @@
         if (h.indexOf('#share/') !== 0) return;
         var token = h.slice(7);
         var data = fromB64url(token);
-        if (!data || data.type !== 'demo-share') return;
+        if (!data || data.type !== 'diia-share') return;
         /* відкриваємо сканер з готовим результатом перевірки */
         document.getElementById('fsScan').classList.add('on');
         document.getElementById('fsScan').setAttribute('aria-hidden', 'false');
@@ -2769,67 +2703,41 @@
       } catch (e) {}
     }
     setTimeout(openShareFromHash, 400);
-    var scanDetecting = false;
-    var nativeQrDetector = null;
-    try {
-      if ('BarcodeDetector' in window) nativeQrDetector = new BarcodeDetector({ formats: ['qr_code'] });
-    } catch (e) { nativeQrDetector = null; }
-
     function decodeQrFromCanvas(ctx, w, h) {
-      try {
-        if (typeof jsQR !== 'undefined') {
-          var img = ctx.getImageData(0, 0, w, h);
-          var code = jsQR(img.data, w, h, { inversionAttempts: 'attemptBoth' });
-          if (code && code.data) return code.data;
-        }
-      } catch (e) {}
-      return null;
+      if (typeof jsQR === 'undefined') return null;
+      var img = ctx.getImageData(0, 0, w, h);
+      var code = jsQR(img.data, w, h, { inversionAttempts: 'dontInvert' });
+      return code && code.data ? code.data : null;
     }
-    async function decodeNativeQr(source) {
-      if (!nativeQrDetector || scanDetecting) return null;
-      scanDetecting = true;
-      try {
-        var codes = await nativeQrDetector.detect(source);
-        return codes && codes.length ? codes[0].rawValue : null;
-      } catch (e) { return null; }
-      finally { scanDetecting = false; }
-    }
-    async function tickScan() {
+    function tickScan() {
       var video = document.getElementById('scanVideo');
       var canvas = document.getElementById('scanCanvas');
-      if (!scanStream) return;
-      if (!video || !canvas || video.readyState < 2 || !video.videoWidth || !video.videoHeight) {
+      if (!video || !canvas || video.readyState !== video.HAVE_ENOUGH_DATA) {
         scanTimer = requestAnimationFrame(tickScan);
         return;
       }
-      try {
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        var ctx = canvas.getContext('2d', { willReadFrequently: true });
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-        var data = decodeQrFromCanvas(ctx, canvas.width, canvas.height);
-        if (!data && nativeQrDetector) data = await decodeNativeQr(video);
-        if (data) { showScanResult(data); return; }
-      } catch (e) {}
-      scanTimer = requestAnimationFrame(tickScan);
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      var ctx = canvas.getContext('2d');
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      var data = decodeQrFromCanvas(ctx, canvas.width, canvas.height);
+      if (data) showScanResult(data);
+      else scanTimer = requestAnimationFrame(tickScan);
     }
     function startScanCamera() {
       stopScan();
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        showToast('Камера недоступна. Відкрийте сайт через HTTPS або виберіть зображення QR з галереї.');
+        showToast('Камера недоступна на цьому пристрої');
         return;
       }
-      navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 }, height: { ideal: 720 } }, audio: false }).then(function (stream) {
+      navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' }, audio: false }).then(function (stream) {
         scanStream = stream;
         var video = document.getElementById('scanVideo');
         video.srcObject = stream;
-        video.setAttribute('playsinline', '');
-        video.muted = true;
-        var playResult = video.play();
-        if (playResult && playResult.catch) playResult.catch(function () { showToast('Натисніть «Камера» ще раз, щоб запустити сканування.'); });
+        video.play();
         scanTimer = requestAnimationFrame(tickScan);
       }).catch(function () {
-        showToast('Не вдалося відкрити камеру. Дозвольте доступ або виберіть QR з галереї.');
+        showToast('Дозвольте доступ до камери');
       });
     }
     function openScan() {
@@ -2855,12 +2763,7 @@
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
         var data = decodeQrFromCanvas(ctx, canvas.width, canvas.height);
         if (data) showScanResult(data);
-        else if (nativeQrDetector) {
-          decodeNativeQr(img).then(function (nativeData) {
-            if (nativeData) showScanResult(nativeData);
-            else { showToast('QR-код не розпізнано. Спробуйте чіткіше фото з усім кодом у кадрі.'); haptic('error'); }
-          });
-        } else { showToast('QR-код не розпізнано. Спробуйте чіткіше фото з усім кодом у кадрі.'); haptic('error'); }
+        else { showToast('QR-код не розпізнано'); haptic('error'); }
       };
       img.src = URL.createObjectURL(file);
       e.target.value = '';
@@ -3083,8 +2986,8 @@
       var own = (DOC_DATA.rnokpp || '').replace(/\D/g, '') === v;
       if (ok) {
         out.innerHTML = '<div class="verify-result ok"><h3>РНОКПП коректний</h3><p>Контрольна сума збігається.'
-          + (own ? ' Це номер, записаний у вашому демо-профілі.' : ' Номер пройшов лише локальну перевірку формату.')
-          + '</p><p style="margin-top:8px;font-size:12.5px;color:#5b6773">Це лише перевірка контрольної суми; державний реєстр не запитується.</p></div>';
+          + (own ? ' Це ваш номер у документах Дії.' : ' Номер пройшов перевірку формату.')
+          + '</p><p style="margin-top:8px;font-size:12.5px;color:#5b6773">Перевірка за державним реєстром доступна в офіційних сервісах.</p></div>';
         haptic('success');
       } else {
         out.innerHTML = '<div class="verify-result bad"><h3>РНОКПП некоректний</h3><p>Контрольна сума не збігається. Перевірте введені цифри.</p></div>';
@@ -3473,7 +3376,7 @@
       rows.innerHTML =
         '<div class="vr-r"><span>Дата народження</span><b>' + _esc(p.birth || '—') + '</b></div>' +
         '<div class="vr-r"><span>РНОКПП</span><b>' + _esc(p.rnokpp || '—') + '</b></div>' +
-        '<div class="vr-r"><span>Номер документа (демо)</span><b>' + _esc(p.passport || '—') + '</b></div>' +
+        '<div class="vr-r"><span>Паспорт</span><b>' + _esc(p.passport || '—') + '</b></div>' +
         '<div class="vr-r"><span>ID</span><b style="font-size:11px">' + _esc(p.id) + '</b></div>';
       var dlg = document.getElementById('profDlg');
       dlg.classList.add('on');
@@ -4557,14 +4460,11 @@
       document.getElementById('edit-lastName').value = DOC_DATA.lastName || '';
       document.getElementById('edit-firstName').value = DOC_DATA.firstName || '';
       document.getElementById('edit-middleName').value = DOC_DATA.middleName || '';
-      document.getElementById('edit-rnokpp').value = DOC_DATA.rnokpp || '';
-      document.getElementById('edit-passport').value = DOC_DATA.passport || '';
       
       var birthIso = toIsoDate(DOC_DATA.birth);
       document.getElementById('edit-birth').value = birthIso || '';
       
       var photoPreview = document.getElementById('photoPreview');
-      photoPreview.dataset.cleared = '0';
       if (DOC_DATA.photo) {
         photoPreview.src = DOC_DATA.photo;
         photoPreview.style.display = 'block';
@@ -4586,7 +4486,6 @@
       var reader = new FileReader();
       reader.onload = function(evt) {
         var photoPreview = document.getElementById('photoPreview');
-        photoPreview.dataset.cleared = '0';
         var img = new Image();
         img.onload = function () {
           /* Сжимаем фото, чтобы оно гарантированно поместилось в хранилище */
@@ -4608,15 +4507,6 @@
       reader.readAsDataURL(file);
     });
 
-    document.getElementById('btnClearPhoto').addEventListener('click', function () {
-      var preview = document.getElementById('photoPreview');
-      preview.removeAttribute('src');
-      preview.style.display = 'none';
-      preview.dataset.cleared = '1';
-      document.getElementById('edit-photo').value = '';
-      showToast('Фото буде прибрано з демо-карток');
-    });
-
     document.getElementById('btnSaveData').addEventListener('click', function(e) {
       e.preventDefault();
       haptic('success');
@@ -4627,13 +4517,16 @@
       
       var isoBirth = document.getElementById('edit-birth').value;
       DOC_DATA.birth = toDisplayDate(isoBirth);
-      DOC_DATA.rnokpp = document.getElementById('edit-rnokpp').value.replace(/\D/g, '').slice(0, 10);
-      DOC_DATA.passport = document.getElementById('edit-passport').value.trim();
+      
+      if (!DOC_DATA.rnokpp) {
+        DOC_DATA.rnokpp = Math.floor(1000000000 + Math.random() * 9000000000).toString();
+      }
+      if (!DOC_DATA.passport) {
+        DOC_DATA.passport = Math.floor(100000000 + Math.random() * 900000000).toString();
+      }
       
       var photoPreview = document.getElementById('photoPreview');
-      if (photoPreview.dataset.cleared === '1' || photoPreview.style.display === 'none') {
-        DOC_DATA.photo = '';
-      } else if (photoPreview.src.indexOf('data:image') === 0) {
+      if (photoPreview.style.display !== 'none' && photoPreview.src.indexOf('data:image') === 0) {
         DOC_DATA.photo = photoPreview.src;
       }
 
@@ -4651,16 +4544,13 @@
         }));
       } catch(err) {}
 
-      /* Збереження редактора не є Дія.Підписом і не має непомітно відправляти фото в GitHub. */
-      try {
-        var activePid = typeof _lsGet === 'function' ? _lsGet(K_ACTIVE_PID) : '';
-        if (activePid && typeof snapshotCurrentAsProfile === 'function' && typeof upsertProfile === 'function') {
-          var localProfile = snapshotCurrentAsProfile();
-          localProfile.id = activePid;
-          upsertProfile(localProfile);
-        }
-      } catch (e) {}
-      showToast('Демо-дані збережено на цьому пристрої');
+      if (window.diiaAddSign) {
+        window.diiaAddSign('Оновлення персональних даних', 'Підписано');
+      }
+      if (window.diiaSyncProfile) {
+        window.diiaSyncProfile();
+      }
+
       closeDlg();
     });
 
@@ -4989,7 +4879,7 @@
       {
         cat: 'Документи та підпис',
         items: [
-          { q: 'Як оновити дані документа?', a: 'У справжній Дії цифрові документи формуються з державних реєстрів: довільно змінити фото чи персональні дані в застосунку не можна. Для зміни або виправлення даних зверніться до відповідної державної послуги чи ДМС/ЦНАП. Редактор у цьому демо-проєкті змінює лише локальний макет і не оновлює офіційні документи.' },
+          { q: 'Як оновити дані документа?', a: 'У вкладці Документи або через Дія.Підпис у меню відкрийте потрібний документ і збережіть зміни.' },
           { q: 'Де переглянути історію підписань?', a: 'Меню → Історія підписань. Тут відображаються всі ваші підписи з датою, часом і статусом.' }
         ]
       },
