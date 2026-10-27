@@ -2,7 +2,7 @@
    Єдине джерело версії — файл version.json (поле build). Змінили build у репозиторії —
    застосунок побачить нову версію, повідомить користувача і за кнопкою «Оновити»
    очистить старий кеш та завантажить свіжі HTML/CSS/JS. */
-/* App shell protocol revision: 1.3.9 (build 22) */
+/* App shell protocol revision: 1.4.1 (build 25) */
 'use strict';
 
 var SHELL_PREFIX = 'diia-shell-';
@@ -141,6 +141,8 @@ self.addEventListener('periodicsync', function (e) {
     Promise.all([readVersion(), loadVersion(), getFlag('notif'), getFlag('notified')]).then(function (r) {
       var cur = r[0], remote = r[1];
       if (!cur || !remote || remote.build <= cur.build) return;
+      /* тихе оновлення: без сповіщення, оболонку просто підвантажуємо наперед */
+      if (remote.mode === 'silent') return precache();
       if (r[2] !== '1' || r[3] === String(remote.build)) return;
       return setFlag('notified', remote.build).then(function () {
         return self.registration.showNotification('Дія', {

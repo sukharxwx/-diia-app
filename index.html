@@ -1755,7 +1755,7 @@
       <button type="button" class="dlg-btn" id="scanStart" style="flex:1;margin:0">Камера</button>
       <label class="dlg-btn secondary" style="flex:1;margin:0;display:grid;place-items:center;cursor:pointer">
         З галереї
-        <input type="file" id="scanFile" accept="image/*" capture="environment" style="display:none">
+        <input type="file" id="scanFile" accept="image/*" style="display:none">
       </label>
     </div>
     <div class="scan-result" id="scanResult"></div>
@@ -1824,6 +1824,7 @@
   <div class="fs-body">
     <button type="button" class="lab-row" id="labRegistry">Реєстр профілів</button>
     <button type="button" class="lab-row" id="labGh">GitHub сховище</button>
+    <button type="button" class="lab-row" id="labPub">Оновлення застосунку (GitHub)</button>
     <button type="button" class="lab-row" id="labVerify">Перевірка РНОКПП</button>
     <button type="button" class="lab-row" id="labClearSigns">Очистити історію підписань</button>
     <button type="button" class="lab-row" id="labClearNotif">Очистити повідомлення</button>
@@ -1859,6 +1860,46 @@
     <button class="dlg-btn secondary" type="button" id="profEdit">Редагувати</button>
     <button class="dlg-btn secondary" type="button" id="profDel" style="color:#e5484d">Видалити з реєстру</button>
     <button class="dlg-btn secondary" type="button" data-close-prof>Закрити</button>
+  </div>
+</div>
+
+<!-- Публікація оновлення застосунку -->
+<div class="fs" id="fsPub" aria-hidden="true">
+  <div class="fs-head">
+    <button class="back" type="button" id="pubBack" aria-label="Назад"><svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+    <h1>Публікація оновлення</h1>
+  </div>
+  <div class="fs-body">
+    <p class="sup-note" style="margin-top:0">Оберіть файли оновлення (index.html, sw.js тощо). Вони одним комітом потраплять у репозиторій GitHub, а version.json оновиться автоматично.</p>
+    <div class="sup-form">
+      <button type="button" class="dlg-btn secondary" id="pubPick" style="height:48px;border:1.5px dashed #9aa7b2;margin-top:0">Вибрати файли…</button>
+      <input type="file" id="pubFiles" multiple style="display:none">
+      <div id="pubList"></div>
+    </div>
+    <div class="sup-form">
+      <label for="pubVersion">Версія</label>
+      <input type="text" id="pubVersion" placeholder="1.4.2" autocomplete="off" style="width:100%;height:44px;border:0;border-radius:14px;padding:0 14px;font:inherit;font-size:15px;background:#fff;outline:none;margin-bottom:10px">
+      <label for="pubBuild">Білд</label>
+      <input type="number" id="pubBuild" inputmode="numeric" placeholder="26" style="width:100%;height:44px;border:0;border-radius:14px;padding:0 14px;font:inherit;font-size:15px;background:#fff;outline:none;margin-bottom:10px">
+      <label for="pubNotes">Що нового</label>
+      <input type="text" id="pubNotes" placeholder="Короткий опис змін" autocomplete="off" style="width:100%;height:44px;border:0;border-radius:14px;padding:0 14px;font:inherit;font-size:15px;background:#fff;outline:none;margin-bottom:10px">
+      <label>Тип оновлення</label>
+      <div class="share-ttl" id="pubMode">
+        <button type="button" data-mode="public" class="on">Публічне (зі сповіщенням)</button>
+        <button type="button" data-mode="silent">Тихе (автоматично)</button>
+      </div>
+      <p class="sup-note" id="pubModeHint" style="margin-top:0"></p>
+    </div>
+    <div class="sup-form">
+      <label for="pubToken">Personal Access Token (права Contents: Read and write)</label>
+      <input type="password" id="pubToken" placeholder="ghp_…" autocomplete="off" style="width:100%;height:44px;border:0;border-radius:14px;padding:0 14px;font:inherit;font-size:15px;background:#fff;outline:none;margin-bottom:10px">
+      <label for="pubOwner">Власник</label>
+      <input type="text" id="pubOwner" autocomplete="off" autocapitalize="off" style="width:100%;height:44px;border:0;border-radius:14px;padding:0 14px;font:inherit;font-size:15px;background:#fff;outline:none;margin-bottom:10px">
+      <label for="pubRepo">Репозиторій застосунку</label>
+      <input type="text" id="pubRepo" autocomplete="off" autocapitalize="off" style="width:100%;height:44px;border:0;border-radius:14px;padding:0 14px;font:inherit;font-size:15px;background:#fff;outline:none;margin-bottom:10px">
+      <button type="button" class="dlg-btn" id="pubGo">Залити на GitHub</button>
+      <p id="pubStatus" class="sup-note"></p>
+    </div>
   </div>
 </div>
 
@@ -2529,13 +2570,66 @@
         sid: (Math.random().toString(36).slice(2) + Date.now().toString(36)).slice(0, 16)
       };
     }
+    function shareSig(s) {
+      var h1 = 0xdeadbeef ^ 29, h2 = 0x41c6ce57 ^ 29;
+      for (var i = 0, ch; i < s.length; i++) {
+        ch = s.charCodeAt(i);
+        h1 = Math.imul(h1 ^ ch, 2654435761);
+        h2 = Math.imul(h2 ^ ch, 1597334677);
+      }
+      h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+      h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+      return (4294967296 * (2097151 & h2) + (h1 >>> 0)).toString(36).slice(0, 8);
+    }
+    function utf8b64(str) { return btoa(unescape(encodeURIComponent(str))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
+    function b64utf8s(s) {
+      try {
+        s = String(s || '').replace(/-/g, '+').replace(/_/g, '/');
+        while (s.length % 4) s += '=';
+        return decodeURIComponent(escape(atob(s)));
+      } catch (e) { return null; }
+    }
+    function shareClean(x) { return String(x || '').replace(/\|/g, ' ').trim(); }
+    /* v2: короткий рядок «поле|поле|…|підпис» замість великого JSON — QR стає читабельним */
+    function makeShareToken(p, short) {
+      var f = [p.doc, p.lastName, p.firstName, short ? '' : p.middleName, p.birth, p.rnokpp, Number(p.exp).toString(36), p.sid].map(shareClean);
+      f.push(shareSig(f.join('|') + '|diia-share-v2'));
+      return utf8b64(f.join('|'));
+    }
+    function readShareToken(token) {
+      var raw = b64utf8s(token);
+      if (!raw || raw.charAt(0) === '{' || raw.indexOf('|') < 0) return null;
+      var f = raw.split('|');
+      if (f.length !== 9) return null;
+      var ok = shareSig(f.slice(0, 8).join('|') + '|diia-share-v2') === f[8];
+      var cat = catalogById(f[0]);
+      return {
+        v: 2, type: 'diia-share', doc: f[0], title: cat ? cat.title : f[0],
+        lastName: f[1], firstName: f[2], middleName: f[3], birth: f[4], rnokpp: f[5],
+        exp: parseInt(f[6], 36) || 0, sid: f[7], forged: !ok
+      };
+    }
+    function renderShareQr() {
+      var box = document.getElementById('shareQr');
+      var tries = [shareState.qrText, shareState.qrTextShort];
+      for (var i = 0; i < tries.length; i++) {
+        if (!tries[i]) continue;
+        box.innerHTML = '';
+        try {
+          new QRCode(box, { text: tries[i], width: 240, height: 240, colorDark: '#000', colorLight: '#fff', correctLevel: QRCode.CorrectLevel.L });
+          return true;
+        } catch (e) {}
+      }
+      box.innerHTML = '<p style="max-width:240px;font-size:13px;color:#5b6773;text-align:center">Не вдалося створити QR. Скористайтеся посиланням нижче.</p>';
+      return false;
+    }
     function buildShareUrl(docId, min) {
       var payload = buildSharePayload(docId, min);
-      var token = toB64url(payload);
+      var token = makeShareToken(payload, false);
       shareState.exp = payload.exp;
       shareState.payload = payload;
-      /* У QR — компактний токен; у посиланні — той самий для відкриття на іншому пристрої */
-      shareState.qrText = 'DIIA1.' + token;
+      shareState.qrText = 'DIIA2.' + token;
+      shareState.qrTextShort = 'DIIA2.' + makeShareToken(payload, true);
       shareState.url = location.origin + location.pathname.replace(/index\.html$/i, '').replace(/\/?$/, '/') + '#share/' + token;
       return shareState.url;
     }
@@ -2565,11 +2659,7 @@
       });
       var url = buildShareUrl(docId, 5);
       document.getElementById('shareLink').textContent = url;
-      var qrBox = document.getElementById('shareQr');
-      qrBox.innerHTML = '';
-      try {
-        new QRCode(qrBox, { text: shareState.qrText || url, width: 180, height: 180, colorDark: '#000', colorLight: '#fff', correctLevel: QRCode.CorrectLevel.M });
-      } catch (e) {}
+      renderShareQr();
       if (shareState.timer) clearInterval(shareState.timer);
       tickShare();
       shareState.timer = setInterval(tickShare, 1000);
@@ -2584,11 +2674,7 @@
       shareState.min = Number(b.getAttribute('data-min')) || 5;
       var url = buildShareUrl(shareState.docId, shareState.min);
       document.getElementById('shareLink').textContent = url;
-      var qrBox = document.getElementById('shareQr');
-      qrBox.innerHTML = '';
-      try {
-        new QRCode(qrBox, { text: shareState.qrText || url, width: 180, height: 180, colorDark: '#000', colorLight: '#fff', correctLevel: QRCode.CorrectLevel.M });
-      } catch (e) {}
+      renderShareQr();
       if (shareState.timer) clearInterval(shareState.timer);
       tickShare();
       shareState.timer = setInterval(tickShare, 1000);
@@ -2634,15 +2720,33 @@
     }
     function parseSharePayload(text) {
       if (!text) return null;
-      text = String(text).trim();
-      var token = null;
-      if (text.indexOf('DIIA1.') === 0) token = text.slice(6);
-      else if (text.indexOf('#share/') >= 0) token = text.split('#share/')[1].split(/[&#?\s]/)[0];
-      else if (/^eyJ|^[A-Za-z0-9\-_]+$/.test(text) && text.length > 20) token = text;
-      if (!token) return null;
-      var data = fromB64url(token);
+      text = String(text).replace(/^\uFEFF/, '').trim();
+      var data = null;
+      if (text.indexOf('DIIA2.') === 0) data = readShareToken(text.slice(6));
+      else if (text.indexOf('DIIA1.') === 0) data = fromB64url(text.slice(6));
+      else if (text.indexOf('#share/') >= 0) {
+        var tk = text.split('#share/')[1].split(/[&#?\s]/)[0];
+        data = readShareToken(tk) || fromB64url(tk);
+      } else if (/^[A-Za-z0-9\-_]+$/.test(text) && text.length > 20) data = readShareToken(text) || fromB64url(text);
       if (!data || data.type !== 'diia-share') return null;
       return data;
+    }
+    /* QR на звороті картки документа: https://diia.app/doc/<id>/<РНОКПП> */
+    function parseDocCard(text) {
+      var m = String(text || '').trim().match(/^https?:\/\/diia\.app\/doc\/([^\/\s?#]+)\/(\d{1,12})/i);
+      if (!m) return null;
+      var id; try { id = decodeURIComponent(m[1]); } catch (e) { id = m[1]; }
+      return { doc: id, rnokpp: m[2] };
+    }
+    function findByRnokpp(r) {
+      if (DOC_DATA.rnokpp && DOC_DATA.rnokpp === r) return DOC_DATA;
+      try {
+        if (typeof loadProfilesCache === 'function') {
+          loadProfilesCache();
+          for (var i = 0; i < profilesCache.length; i++) if (profilesCache[i].rnokpp === r) return profilesCache[i];
+        }
+      } catch (e) {}
+      return null;
     }
     function maskRnokpp(r) {
       r = String(r || '');
@@ -2650,7 +2754,8 @@
       return r.slice(0, 3) + '****' + r.slice(-3);
     }
     function renderShareVerify(data) {
-      var valid = data.exp && Date.now() < data.exp;
+      var forged = !!data.forged;
+      var valid = !forged && data.exp && Date.now() < data.exp;
       var name = [data.lastName, data.firstName, data.middleName].filter(Boolean).join(' ') || '—';
       var left = valid ? Math.max(0, data.exp - Date.now()) : 0;
       var leftStr = '';
@@ -2659,31 +2764,61 @@
         leftStr = Math.floor(s / 60) + ':' + (s % 60 < 10 ? '0' : '') + (s % 60);
       }
       var html = '<div class="vr-card ' + (valid ? 'ok' : 'bad') + '">';
-      html += '<div class="vr-badge">' + (valid ? 'Документ дійсний' : 'Термін дії вичерпано') + '</div>';
+      html += '<div class="vr-badge">' + (forged ? 'Код недійсний' : valid ? 'Документ дійсний' : 'Термін дії вичерпано') + '</div>';
       html += '<h3>' + _esc(data.title || 'Документ') + '</h3>';
-      html += '<p class="vr-sub">' + (valid ? 'Перевірено · код активний ще ' + leftStr : 'Цей код більше не приймається') + '</p>';
+      html += '<p class="vr-sub">' + (forged ? 'Код пошкоджено або змінено' : valid ? 'Перевірено · код активний ще ' + leftStr : 'Цей код більше не приймається') + '</p>';
       html += '<div class="vr-rows">';
       html += '<div class="vr-r"><span>ПІБ</span><b>' + _esc(name) + '</b></div>';
       html += '<div class="vr-r"><span>Дата народження</span><b>' + _esc(data.birth || '—') + '</b></div>';
-      html += '<div class="vr-r"><span>РНОКПП</span><b>' + _esc(maskRnokpp(data.rnokpp)) + '</b></div>';
+      html += '<div class="vr-r"><span>РНОКПП</span><b>' + _esc(maskRnokpp(data.rnokpp)) + (data.rnokpp ? (rnokppValid(data.rnokpp) ? ' ✓' : ' ✗') : '') + '</b></div>';
       html += '<div class="vr-r"><span>Код шерингу</span><b>' + _esc(data.sid || '—') + '</b></div>';
       html += '</div></div>';
       return html;
     }
+    function renderCardVerify(c) {
+      var cat = catalogById(c.doc);
+      var sumOk = rnokppValid(c.rnokpp);
+      var valid = !!cat && sumOk;
+      var p = valid ? findByRnokpp(c.rnokpp) : null;
+      var name = p ? [p.lastName, p.firstName, p.middleName].filter(Boolean).join(' ') : '';
+      var html = '<div class="vr-card ' + (valid ? 'ok' : 'bad') + '">';
+      html += '<div class="vr-badge">' + (valid ? 'Документ дійсний' : 'Документ недійсний') + '</div>';
+      html += '<h3>' + _esc(cat ? cat.title : 'Невідомий документ') + '</h3>';
+      html += '<p class="vr-sub">' + (valid ? 'Перевірено · РНОКПП пройшов контрольну суму' : !cat ? 'Такого типу документа немає в Дії' : 'РНОКПП у коді некоректний або не вказаний') + '</p>';
+      html += '<div class="vr-rows">';
+      if (name) html += '<div class="vr-r"><span>ПІБ</span><b>' + _esc(name) + '</b></div>';
+      if (p && p.birth) html += '<div class="vr-r"><span>Дата народження</span><b>' + _esc(p.birth) + '</b></div>';
+      html += '<div class="vr-r"><span>РНОКПП</span><b>' + _esc(maskRnokpp(c.rnokpp)) + (sumOk ? ' ✓' : ' ✗') + '</b></div>';
+      html += '</div></div>';
+      return html;
+    }
     function showScanResult(text) {
+      text = String(text || '').replace(/^\uFEFF/, '').trim();
       var box = document.getElementById('scanResult');
       box.classList.add('on');
       stopScan();
       var data = parseSharePayload(text);
       if (data) {
+        var okShare = !data.forged && data.exp && Date.now() < data.exp;
         box.innerHTML = renderShareVerify(data);
-        haptic(data.exp && Date.now() < data.exp ? 'success' : 'error');
+        haptic(okShare ? 'success' : 'error');
         if (typeof addNotif === 'function') {
-          addNotif('Перевірка документа', (data.title || 'Документ') + (Date.now() < data.exp ? ' — дійсний' : ' — прострочений'), 'scan');
+          addNotif('Перевірка документа', (data.title || 'Документ') + (data.forged ? ' — недійсний код' : okShare ? ' — дійсний' : ' — прострочений'), 'scan');
         }
         return;
       }
-      box.innerHTML = '<b>QR-код розпізнано</b><br><span style="word-break:break-all">' + _esc(text) + '</span><p class="share-hint">Це не код шерингу Дії. Покажіть QR з розділу «Поділитися» на документі.</p>';
+      var card = parseDocCard(text);
+      if (card) {
+        var okCard = !!catalogById(card.doc) && rnokppValid(card.rnokpp);
+        box.innerHTML = renderCardVerify(card);
+        haptic(okCard ? 'success' : 'error');
+        if (typeof addNotif === 'function') {
+          var ct = catalogById(card.doc);
+          addNotif('Перевірка документа', (ct ? ct.title : 'Документ') + (okCard ? ' — дійсний' : ' — недійсний'), 'scan');
+        }
+        return;
+      }
+      box.innerHTML = '<b>QR-код розпізнано</b><br><span style="word-break:break-all">' + _esc(text) + '</span><p class="share-hint">Це не код документа Дії. Скануйте QR із розділу «Поділитися» або зі зворота картки документа.</p>';
       haptic('success');
     }
     function openShareFromHash() {
@@ -2691,7 +2826,7 @@
         var h = location.hash || '';
         if (h.indexOf('#share/') !== 0) return;
         var token = h.slice(7);
-        var data = fromB64url(token);
+        var data = readShareToken(token) || fromB64url(token);
         if (!data || data.type !== 'diia-share') return;
         /* відкриваємо сканер з готовим результатом перевірки */
         document.getElementById('fsScan').classList.add('on');
@@ -2703,26 +2838,39 @@
       } catch (e) {}
     }
     setTimeout(openShareFromHash, 400);
+    var scanDetector = null;
+    try { if ('BarcodeDetector' in window) scanDetector = new BarcodeDetector({ formats: ['qr_code'] }); } catch (e) { scanDetector = null; }
     function decodeQrFromCanvas(ctx, w, h) {
       if (typeof jsQR === 'undefined') return null;
       var img = ctx.getImageData(0, 0, w, h);
-      var code = jsQR(img.data, w, h, { inversionAttempts: 'dontInvert' });
+      var code = jsQR(img.data, w, h, { inversionAttempts: 'attemptBoth' });
       return code && code.data ? code.data : null;
     }
+    function nextScanFrame() { if (scanStream) scanTimer = requestAnimationFrame(tickScan); }
     function tickScan() {
       var video = document.getElementById('scanVideo');
       var canvas = document.getElementById('scanCanvas');
-      if (!video || !canvas || video.readyState !== video.HAVE_ENOUGH_DATA) {
-        scanTimer = requestAnimationFrame(tickScan);
+      if (!scanStream) return;
+      if (!video || !canvas || video.readyState !== video.HAVE_ENOUGH_DATA || !video.videoWidth) {
+        nextScanFrame();
         return;
       }
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      var ctx = canvas.getContext('2d');
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-      var data = decodeQrFromCanvas(ctx, canvas.width, canvas.height);
-      if (data) showScanResult(data);
-      else scanTimer = requestAnimationFrame(tickScan);
+      /* зменшуємо кадр: швидше та стабільніше розпізнавання */
+      var k = Math.min(1, 800 / Math.max(video.videoWidth, video.videoHeight));
+      var w = Math.round(video.videoWidth * k), h = Math.round(video.videoHeight * k);
+      canvas.width = w;
+      canvas.height = h;
+      var ctx = canvas.getContext('2d', { willReadFrequently: true });
+      ctx.drawImage(video, 0, 0, w, h);
+      var data = decodeQrFromCanvas(ctx, w, h);
+      if (data) { showScanResult(data); return; }
+      if (scanDetector) {
+        scanDetector.detect(video).then(function (codes) {
+          if (!scanStream) return;
+          if (codes && codes[0] && codes[0].rawValue) showScanResult(codes[0].rawValue);
+          else nextScanFrame();
+        }).catch(nextScanFrame);
+      } else nextScanFrame();
     }
     function startScanCamera() {
       stopScan();
@@ -2730,7 +2878,7 @@
         showToast('Камера недоступна на цьому пристрої');
         return;
       }
-      navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' }, audio: false }).then(function (stream) {
+      navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 }, height: { ideal: 720 } }, audio: false }).then(function (stream) {
         scanStream = stream;
         var video = document.getElementById('scanVideo');
         video.srcObject = stream;
@@ -2752,20 +2900,27 @@
     document.getElementById('scanFile').addEventListener('change', function (e) {
       var file = e.target.files && e.target.files[0];
       if (!file) return;
+      var url = URL.createObjectURL(file);
       var img = new Image();
       img.onload = function () {
         var canvas = document.getElementById('scanCanvas');
-        var ctx = canvas.getContext('2d');
-        var max = 800;
-        var k = Math.min(1, max / Math.max(img.width, img.height));
-        canvas.width = Math.round(img.width * k);
-        canvas.height = Math.round(img.height * k);
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-        var data = decodeQrFromCanvas(ctx, canvas.width, canvas.height);
+        var ctx = canvas.getContext('2d', { willReadFrequently: true });
+        var sizes = [1600, 1000, 600], data = null;
+        for (var i = 0; i < sizes.length && !data; i++) {
+          var k = Math.min(1, sizes[i] / Math.max(img.width, img.height));
+          canvas.width = Math.round(img.width * k);
+          canvas.height = Math.round(img.height * k);
+          ctx.fillStyle = '#fff';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          data = decodeQrFromCanvas(ctx, canvas.width, canvas.height);
+        }
+        URL.revokeObjectURL(url);
         if (data) showScanResult(data);
         else { showToast('QR-код не розпізнано'); haptic('error'); }
       };
-      img.src = URL.createObjectURL(file);
+      img.onerror = function () { URL.revokeObjectURL(url); showToast('Не вдалося відкрити зображення'); };
+      img.src = url;
       e.target.value = '';
     });
     /* зупиняти камеру при закритті fs */
@@ -3963,7 +4118,7 @@
       }
     } catch (e) {}
     var SW_OK = 'serviceWorker' in navigator && /^https?:$/.test(location.protocol);
-    var K_BUILD = 'diia_build', K_UPD_NOTIFIED = 'diia_upd_notified';
+    var K_BUILD = 'diia_build', K_UPD_NOTIFIED = 'diia_upd_notified', K_AUTO_TRY = 'diia_auto_try';
     var running = LS.getJ(K_BUILD) || { version: '—', build: 0 };
     var upd = { state: 'idle', remote: null, busy: false, last: 0 };
     var updDlg = document.getElementById('updDlg');
@@ -3998,7 +4153,7 @@
     }
     function validV(v) {
       if (!v || typeof v !== 'object' || !isFinite(Number(v.build))) return null;
-      return { version: String(v.version || v.build), build: Number(v.build), date: v.date || '', notes: v.notes ? String(v.notes) : '' };
+      return { version: String(v.version || v.build), build: Number(v.build), date: v.date || '', notes: v.notes ? String(v.notes) : '', mode: v.mode === 'silent' ? 'silent' : 'public' };
     }
     /* версія, яка реально опублікована на GitHub Pages (її й буде встановлено) */
     function pagesVersion() {
@@ -4091,18 +4246,30 @@
       });
     }
 
-    function runCheck(silent) {
+    function runCheck(silent, auto) {
       if (upd.busy) return Promise.resolve();
       upd.busy = true;
+      var autoTarget = null;
       if (!silent) show('checking');
       return check().then(function (res) {
         upd.remote = res.remote; upd.last = Date.now();
-        setDot(res.state === 'available');
-        if (res.state === 'available') notifyUpdate(res.remote);
+        var quiet = res.state === 'available' && res.remote.mode === 'silent';
+        setDot(res.state === 'available' && !quiet);
+        if (res.state === 'available') {
+          if (!quiet) notifyUpdate(res.remote);
+          else if (auto && !dlgOpen()) {
+            /* тихе оновлення: застосовуємо при заході, один раз на білд (захист від циклу) */
+            if (LS.get(K_AUTO_TRY) !== String(res.remote.build)) autoTarget = res.remote;
+            else setDot(true);
+          }
+        }
         if (!silent || dlgOpen()) show(res.state);
       }, function (e) {
         if (!silent || dlgOpen()) show('error', { offline: !!(e && e.message === 'offline') });
-      }).then(function () { upd.busy = false; });
+      }).then(function () {
+        upd.busy = false;
+        if (autoTarget) return applyUpdate(true);
+      });
     }
 
     function waitInstall(reg) {
@@ -4129,12 +4296,14 @@
       location.replace(u.href);
     }
 
-    async function applyUpdate() {
+    async function applyUpdate(quiet) {
+      quiet = quiet === true;
       if (upd.busy || !upd.remote) return;
       upd.busy = true;
-      haptic('medium');
+      var sh = quiet ? function () {} : show;
+      if (!quiet) haptic('medium');
       var target = upd.remote;
-      show('updating', { sub: 'Завантаження нової версії' });
+      sh('updating', { sub: 'Завантаження нової версії' });
       try {
         var done = false;
         var reg = await getReg();
@@ -4149,19 +4318,21 @@
           } catch (e) { if (e.message === 'stale') throw e; }
         }
         if (!done) {
-          show('updating', { sub: 'Очищення кешу' });
+          sh('updating', { sub: 'Очищення кешу' });
           await hardReset();
           var pv = await pagesVersion();
           if (pv.build < target.build) throw new Error('stale');
         }
         running = target;
         LS.setJ(K_BUILD, target);
+        if (quiet) LS.set(K_AUTO_TRY, String(target.build));
         setDot(false);
-        haptic('success');
-        show('done');
-        setTimeout(function () { reloadFresh(target.build); }, 700);
+        if (!quiet) haptic('success');
+        sh('done');
+        setTimeout(function () { reloadFresh(target.build); }, quiet ? 200 : 700);
       } catch (e) {
         upd.busy = false;
+        if (quiet) { setDot(true); return; }
         haptic('error');
         var m = e && e.message;
         show('updFail', { sub:
@@ -4191,6 +4362,155 @@
       else runCheck(false);
     });
 
+    /* ===== Службове меню: публікація оновлення на GitHub (один коміт на всі файли) ===== */
+    var K_PUB = 'diia_pub_cfg';
+    var pubFiles = [], pubMode = 'public', pubBusy = false;
+    var PUB_HINT = {
+      'public': 'Користувачі побачать «Доступне оновлення», отримають сповіщення й самі натиснуть «Оновити».',
+      'silent': 'Без сповіщень і підтверджень: застосунок сам завантажить і застосує оновлення при наступному вході.'
+    };
+    function pubEl(id) { return document.getElementById(id); }
+    function pubSay(t, bad) { var el = pubEl('pubStatus'); el.textContent = t; el.style.color = bad ? '#e5484d' : ''; }
+    function fmtSize(n) { return n < 1024 ? n + ' Б' : n < 1048576 ? (n / 1024).toFixed(1) + ' КБ' : (n / 1048576).toFixed(2) + ' МБ'; }
+    function bumpVer(v) { var m = String(v || '').match(/^(.*?)(\d+)$/); return m ? m[1] + (Number(m[2]) + 1) : (String(v || '') + '.1'); }
+    function pubRender() {
+      pubEl('pubList').innerHTML = pubFiles.map(function (f, i) {
+        return '<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-top:1px solid rgba(0,0,0,.06)">'
+          + '<span style="flex:1;word-break:break-all;font-size:14px">' + _esc(f.name) + '<br><small style="color:#5b6773">' + fmtSize(f.size) + '</small></span>'
+          + '<button type="button" data-rm="' + i + '" aria-label="Прибрати" style="border:0;background:none;font-size:24px;line-height:1;color:#e5484d;cursor:pointer">×</button></div>';
+      }).join('');
+    }
+    function pubSetMode(m) {
+      pubMode = m === 'silent' ? 'silent' : 'public';
+      document.querySelectorAll('#pubMode button').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-mode') === pubMode); });
+      pubEl('pubModeHint').textContent = PUB_HINT[pubMode];
+    }
+    function openPub() {
+      haptic('light');
+      var c = LS.getJ(K_PUB) || {};
+      pubEl('pubToken').value = c.token || loadGhConfig().token || '';
+      pubEl('pubOwner').value = c.owner || GH.owner;
+      pubEl('pubRepo').value = c.repo || GH.repo;
+      pubEl('pubVersion').value = bumpVer(running.version);
+      pubEl('pubBuild').value = String((running.build || 0) + 1);
+      pubEl('pubNotes').value = '';
+      pubSetMode(c.mode || 'public');
+      pubSay('');
+      pubRender();
+      repoVersion().then(function (rv) {
+        if (rv && rv.build >= (running.build || 0) && !pubBusy) {
+          pubEl('pubVersion').value = bumpVer(rv.version);
+          pubEl('pubBuild').value = String(rv.build + 1);
+        }
+      });
+      pubEl('fsPub').classList.add('on');
+      pubEl('fsPub').setAttribute('aria-hidden', 'false');
+    }
+    function readB64(file) {
+      return new Promise(function (res, rej) {
+        var r = new FileReader();
+        r.onload = function () { res(String(r.result).split(',')[1] || ''); };
+        r.onerror = function () { rej(new Error('Не вдалося прочитати ' + file.name)); };
+        r.readAsDataURL(file);
+      });
+    }
+    function pubApi(cfg, path, method, body) {
+      var opt = { method: method || 'GET', cache: 'no-store', headers: { 'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28', 'Authorization': 'Bearer ' + cfg.token } };
+      if (body) { opt.headers['Content-Type'] = 'application/json'; opt.body = JSON.stringify(body); }
+      return fetch('https://api.github.com/repos/' + encodeURIComponent(cfg.owner) + '/' + encodeURIComponent(cfg.repo) + path, opt).then(function (r) {
+        return r.json().catch(function () { return {}; }).then(function (j) {
+          if (!r.ok) { var e = new Error((j && j.message) || ('HTTP ' + r.status)); e.status = r.status; throw e; }
+          return j;
+        });
+      });
+    }
+    async function pubGo() {
+      if (pubBusy) return;
+      var cfg = { token: pubEl('pubToken').value.trim(), owner: pubEl('pubOwner').value.trim(), repo: pubEl('pubRepo').value.trim() };
+      var ver = pubEl('pubVersion').value.trim(), build = Number(pubEl('pubBuild').value), notes = pubEl('pubNotes').value.trim();
+      if (!cfg.token || !cfg.owner || !cfg.repo) return pubSay('Вкажіть токен, власника та репозиторій', true);
+      if (!pubFiles.length) return pubSay('Додайте хоча б один файл', true);
+      if (!ver || !isFinite(build) || build < 1) return pubSay('Вкажіть версію та номер білда', true);
+      pubBusy = true;
+      pubEl('pubGo').disabled = true;
+      haptic('medium');
+      LS.setJ(K_PUB, { token: cfg.token, owner: cfg.owner, repo: cfg.repo, mode: pubMode });
+      try {
+        pubSay('Перевірка репозиторію…');
+        var info = await pubApi(cfg, '', 'GET');
+        var branch = info.default_branch || 'main';
+        var ref = await pubApi(cfg, '/git/ref/heads/' + branch, 'GET');
+        var base = ref.object.sha;
+        var commit = await pubApi(cfg, '/git/commits/' + base, 'GET');
+        var cur = null;
+        try {
+          var cj = await pubApi(cfg, '/contents/version.json?ref=' + encodeURIComponent(branch), 'GET');
+          cur = validV(JSON.parse(b64utf8(cj.content)));
+        } catch (e) { cur = null; }
+        if (cur && build <= cur.build) throw new Error('Білд має бути більшим за поточний (' + cur.build + ')');
+        var entries = [];
+        for (var i = 0; i < pubFiles.length; i++) {
+          pubSay('Завантаження ' + (i + 1) + ' з ' + pubFiles.length + ': ' + pubFiles[i].name);
+          var blob = await pubApi(cfg, '/git/blobs', 'POST', { content: await readB64(pubFiles[i]), encoding: 'base64' });
+          entries.push({ path: pubFiles[i].name, mode: '100644', type: 'blob', sha: blob.sha });
+        }
+        var vjson = JSON.stringify({ version: ver, build: build, date: new Date().toISOString().slice(0, 10), notes: notes, mode: pubMode }, null, 2) + '\n';
+        var vb = await pubApi(cfg, '/git/blobs', 'POST', { content: btoa(unescape(encodeURIComponent(vjson))), encoding: 'base64' });
+        entries.push({ path: 'version.json', mode: '100644', type: 'blob', sha: vb.sha });
+        pubSay('Створення коміту…');
+        var tree = await pubApi(cfg, '/git/trees', 'POST', { base_tree: commit.tree.sha, tree: entries });
+        var nc = await pubApi(cfg, '/git/commits', 'POST', { message: 'Update ' + ver + ' (build ' + build + ')' + (pubMode === 'silent' ? ' [silent]' : ''), tree: tree.sha, parents: [base] });
+        await pubApi(cfg, '/git/refs/heads/' + branch, 'PATCH', { sha: nc.sha });
+        haptic('success');
+        pubFiles = [];
+        pubRender();
+        pubEl('pubVersion').value = bumpVer(ver);
+        pubEl('pubBuild').value = String(build + 1);
+        pubEl('pubNotes').value = '';
+        pubSay('Готово: версію ' + ver + ' (білд ' + build + ') залито. GitHub Pages опублікує її за 1–2 хвилини.');
+        showToast('Оновлення залито на GitHub');
+      } catch (e) {
+        haptic('error');
+        var m = e && e.message || 'Помилка';
+        if (e && e.status === 401) m = 'Невірний або прострочений токен';
+        else if (e && (e.status === 403 || e.status === 404)) m = 'Немає доступу до репозиторію або прав на запис (потрібно Contents: Read and write). ' + m;
+        else if (e && e.name === 'TypeError') m = 'Немає з’єднання з мережею';
+        pubSay(m, true);
+      }
+      pubBusy = false;
+      pubEl('pubGo').disabled = false;
+    }
+    pubEl('labPub').addEventListener('click', openPub);
+    pubEl('pubBack').addEventListener('click', function () {
+      if (pubBusy) return;
+      haptic('light');
+      pubEl('fsPub').classList.remove('on');
+      pubEl('fsPub').setAttribute('aria-hidden', 'true');
+      if (labUnlocked) openLab();
+    });
+    pubEl('pubPick').addEventListener('click', function () { pubEl('pubFiles').click(); });
+    pubEl('pubFiles').addEventListener('change', function (e) {
+      var list = Array.prototype.slice.call(e.target.files || []);
+      list.forEach(function (f) {
+        if (f.name === 'version.json') { showToast('version.json створюється автоматично'); return; }
+        pubFiles = pubFiles.filter(function (x) { return x.name !== f.name; });
+        pubFiles.push(f);
+      });
+      e.target.value = '';
+      pubRender();
+    });
+    pubEl('pubList').addEventListener('click', function (e) {
+      var b = e.target.closest('button[data-rm]');
+      if (!b || pubBusy) return;
+      pubFiles.splice(Number(b.getAttribute('data-rm')), 1);
+      pubRender();
+    });
+    pubEl('pubMode').addEventListener('click', function (e) {
+      var b = e.target.closest('button[data-mode]');
+      if (b) pubSetMode(b.getAttribute('data-mode'));
+    });
+    pubEl('pubGo').addEventListener('click', pubGo);
+
     /* Фонові сповіщення: стан перемикача → SW, періодична перевірка (Chrome/Android, встановлений PWA) */
     window.diiaUpdSync = function () {
       if (!SW_OK) return;
@@ -4210,10 +4530,10 @@
       }
     } catch (e) {}
 
-    initRunning().then(function () { setTimeout(function () { runCheck(true); }, 2500); });
+    initRunning().then(function () { setTimeout(function () { runCheck(true, true); }, 2500); });
     setInterval(function () { if (!document.hidden) runCheck(true); }, 30 * 60 * 1000);
     document.addEventListener('visibilitychange', function () {
-      if (!document.hidden && Date.now() - upd.last > 5 * 60 * 1000) runCheck(true);
+      if (!document.hidden && Date.now() - upd.last > 5 * 60 * 1000) runCheck(true, true);
     });
     window.addEventListener('online', function () { runCheck(true); });
 
