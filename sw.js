@@ -2,7 +2,7 @@
    Єдине джерело версії — файл version.json (поле build). Змінили build у репозиторії —
    застосунок побачить нову версію, повідомить користувача і за кнопкою «Оновити»
    очистить старий кеш та завантажить свіжі HTML/CSS/JS. */
-/* App shell protocol revision: 1.4.1 (build 25) */
+/* App shell protocol revision: 1.4.2 (build 26) */
 'use strict';
 
 var SHELL_PREFIX = 'diia-shell-';

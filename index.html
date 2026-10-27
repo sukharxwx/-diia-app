@@ -1119,6 +1119,106 @@
     pointer-events: none;
   }
   body.privacy-shield-on .privacy-shield { display: block; }
+
+  /* ===== QR-сканер на весь екран ===== */
+  #fsScan { padding: 0; background: #000; }
+  .sc-stage { position: absolute; inset: 0; overflow: hidden; background: #000; }
+  .sc-stage video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+  .sc-stage video.mirror { transform: scaleX(-1); }
+  .sc-frame {
+    position: absolute; left: 50%; top: 44%; width: min(72vw, 300px); aspect-ratio: 1;
+    transform: translate(-50%, -50%); border-radius: 28px; pointer-events: none;
+    box-shadow: 0 0 0 100vmax rgba(0,0,0,.55); transition: box-shadow .25s;
+  }
+  .sc-frame .c { position: absolute; width: 38px; height: 38px; border: 4px solid #fff; transition: border-color .2s; animation: scPulse 1.8s ease-in-out infinite; }
+  .sc-frame .c.tl { left: -2px; top: -2px; border-right: 0; border-bottom: 0; border-top-left-radius: 28px; }
+  .sc-frame .c.tr { right: -2px; top: -2px; border-left: 0; border-bottom: 0; border-top-right-radius: 28px; }
+  .sc-frame .c.bl { left: -2px; bottom: -2px; border-right: 0; border-top: 0; border-bottom-left-radius: 28px; }
+  .sc-frame .c.br { right: -2px; bottom: -2px; border-left: 0; border-top: 0; border-bottom-right-radius: 28px; }
+  .sc-frame .ln {
+    position: absolute; left: 8%; right: 8%; top: 8%; height: 3px; border-radius: 3px;
+    background: linear-gradient(90deg, transparent, #fff, transparent); box-shadow: 0 0 14px 2px rgba(255,255,255,.7);
+    animation: scLine 2.1s ease-in-out infinite alternate;
+  }
+  .sc-frame.ok .c { border-color: #3ddc84; animation: none; }
+  .sc-frame.bad .c { border-color: #ff5a5f; animation: none; }
+  .sc-frame.ok .ln, .sc-frame.bad .ln { display: none; }
+  @keyframes scLine { from { top: 8%; } to { top: 90%; } }
+  @keyframes scPulse { 0%, 100% { opacity: 1; } 50% { opacity: .55; } }
+  .sc-top {
+    position: absolute; top: 0; left: 0; right: 0; z-index: 3; display: flex; align-items: center; gap: 10px; color: #fff;
+    padding: calc(var(--sat) + 12px) calc(var(--sar) + 16px) 18px calc(var(--sal) + 16px);
+    background: linear-gradient(180deg, rgba(0,0,0,.6), transparent);
+  }
+  .sc-top h1 { flex: 1; margin: 0; font-size: 19px; font-weight: 600; color: #fff; }
+  .sc-btn {
+    flex: none; width: 44px; height: 44px; border: 0; border-radius: 50%; display: grid; place-items: center;
+    background: rgba(255,255,255,.18); color: #fff; cursor: pointer; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  }
+  .sc-btn svg { width: 22px; height: 22px; }
+  .sc-btn:active { opacity: .7; }
+  .sc-btn.on { background: #fff; color: #000; }
+  .sc-hint {
+    position: absolute; left: 16px; right: 16px; top: calc(44% + min(36vw, 150px) + 26px); text-align: center;
+    color: #fff; font-size: 15px; font-weight: 500; text-shadow: 0 1px 6px rgba(0,0,0,.6);
+  }
+  .sc-bottom {
+    position: absolute; left: 0; right: 0; bottom: 0; z-index: 3; display: flex; justify-content: center; gap: 12px;
+    padding: 18px 16px calc(var(--sab) + 22px); background: linear-gradient(0deg, rgba(0,0,0,.6), transparent);
+  }
+  .sc-pill {
+    display: flex; align-items: center; gap: 8px; height: 48px; padding: 0 20px; border: 0; border-radius: 24px;
+    background: rgba(255,255,255,.2); color: #fff; font: inherit; font-size: 15px; font-weight: 500; cursor: pointer;
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  }
+  .sc-pill svg { width: 20px; height: 20px; }
+  .sc-pill:active { opacity: .7; }
+  .sc-sheet {
+    position: absolute; left: 0; right: 0; bottom: 0; z-index: 5; max-height: 86%; overflow-y: auto;
+    background: #f3f8fb; border-radius: 26px 26px 0 0; padding: 20px 16px calc(var(--sab) + 16px);
+    transform: translateY(105%); transition: transform .3s cubic-bezier(.2,.8,.2,1); box-shadow: 0 -10px 40px rgba(0,0,0,.35);
+  }
+  .sc-sheet.on { transform: none; }
+  .sc-sheet .sc-big { width: 64px; height: 64px; border-radius: 50%; margin: 0 auto 12px; display: grid; place-items: center; }
+  .sc-sheet .sc-big svg { width: 34px; height: 34px; }
+  .sc-sheet .sc-big.ok { background: #d4edda; } .sc-sheet .sc-big.bad { background: #f8d7da; } .sc-sheet .sc-big.other { background: #e3e9ef; }
+  .sc-sheet .sc-raw { word-break: break-all; font-size: 14px; background: #fff; border-radius: 14px; padding: 12px; margin: 10px 0 4px; line-height: 1.4; }
+  .sc-err {
+    position: absolute; inset: 0; z-index: 4; display: none; flex-direction: column; align-items: center; justify-content: center;
+    padding: 24px; text-align: center; color: #fff; background: rgba(0,0,0,.82);
+  }
+  .sc-err.on { display: flex; }
+  .sc-err .e-ic { width: 56px; height: 56px; border-radius: 50%; background: rgba(255,90,95,.2); color: #ff5a5f; display: grid; place-items: center; font-size: 30px; font-weight: 700; margin-bottom: 14px; }
+  .sc-err h3 { font-size: 19px; margin: 0 0 8px; }
+  .sc-err p { font-size: 14px; line-height: 1.45; opacity: .85; margin: 0 0 16px; max-width: 320px; }
+  .sc-err .dlg-btn { max-width: 320px; background: #fff; color: #000; }
+  .sc-err .dlg-btn.secondary { background: transparent; color: #fff; }
+  .sc-hist {
+    position: absolute; inset: 0; z-index: 6; background: #eef4f8; overflow-y: auto;
+    padding: calc(var(--sat) + 14px) 16px calc(var(--sab) + 16px); transform: translateX(100%); transition: transform .25s;
+  }
+  .sc-hist.on { transform: none; }
+  .sc-hist-head { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
+  .sc-hist-head b { flex: 1; font-size: 20px; font-weight: 600; }
+  .sc-hist-head button { border: 0; background: none; font: inherit; font-size: 15px; color: #1a5fb4; cursor: pointer; padding: 8px; }
+  .sc-hi { display: flex; align-items: center; gap: 12px; background: #fff; border-radius: 16px; padding: 12px 14px; margin-bottom: 8px; }
+  .sc-hi i { flex: none; width: 10px; height: 10px; border-radius: 50%; background: #9aa7b2; }
+  .sc-hi i.ok { background: #1f9d55; } .sc-hi i.bad { background: #e5484d; } .sc-hi i.exp { background: #e5a100; }
+  .sc-hi div { flex: 1; min-width: 0; } .sc-hi b { display: block; font-size: 15px; font-weight: 600; }
+  .sc-hi small { display: block; font-size: 12.5px; color: #5b6773; margin-top: 2px; }
+  .scan-cta {
+    display: flex; align-items: center; gap: 14px; width: 100%; margin: 14px 0 0; padding: 14px 18px; border: 0; border-radius: 22px;
+    background: #000; color: #fff; font: inherit; text-align: left; cursor: pointer;
+  }
+  .scan-cta .ic { flex: none; width: 48px; height: 48px; border-radius: 14px; background: rgba(255,255,255,.16); display: grid; place-items: center; }
+  .scan-cta b { display: block; font-size: 17px; font-weight: 600; }
+  .scan-cta span { font-size: 13px; opacity: .75; }
+  .scan-cta:active { opacity: .8; }
+  .rb-row { display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,.7); border-radius: 14px; padding: 10px 12px; margin-bottom: 8px; }
+  .rb-row div { flex: 1; min-width: 0; } .rb-row b { display: block; font-size: 14px; font-weight: 600; word-break: break-word; }
+  .rb-row small { color: #5b6773; font-size: 12px; }
+  .rb-row button { flex: none; border: 0; border-radius: 10px; background: #000; color: #fff; font: inherit; font-size: 13px; padding: 8px 12px; cursor: pointer; }
+  .rb-row button:disabled { opacity: .3; }
 </style>
 </head>
 <body>
@@ -1241,6 +1341,11 @@
   <main class="screen sub home" aria-label="Головна">
     <section class="home-scroll tab on" id="tab-feed" data-tab="feed">
       <h1 class="greet"><span>Привіт<span data-gname></span></span><span class="wave" aria-hidden="true">👋</span></h1>
+
+      <button class="scan-cta" type="button" data-act="Сканувати QR-код">
+        <span class="ic"><svg width="28" height="28" viewBox="0 0 26 26" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8V4a2 2 0 0 1 2-2h4M18 2h4a2 2 0 0 1 2 2v4M24 18v4a2 2 0 0 1-2 2h-4M8 24H4a2 2 0 0 1-2-2v-4M3 13h20"/></svg></span>
+        <span><b>Сканувати QR-код</b><span>Миттєва перевірка документа</span></span>
+      </button>
 
       <section class="card-light ncard" role="button" tabindex="0" data-act="Незламність">
         <h2>Незламність</h2>
@@ -1740,26 +1845,39 @@
 </div>
 
 <!-- Сканувати QR -->
-<div class="fs" id="fsScan" aria-hidden="true">
-  <div class="fs-head">
-    <button class="back" type="button" data-fs-close aria-label="Назад"><svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
-    <h1>Сканувати QR-код</h1>
+<div class="fs scanfs" id="fsScan" aria-hidden="true">
+  <div class="sc-stage">
+    <video id="scanVideo" playsinline muted autoplay></video>
+    <div class="sc-frame" id="scFrame"><i class="c tl"></i><i class="c tr"></i><i class="c bl"></i><i class="c br"></i><i class="ln"></i></div>
+    <div class="sc-hint" id="scHint">Наведіть камеру на QR-код</div>
   </div>
-  <div class="fs-body">
-    <div class="scan-wrap" id="scanWrap">
-      <video id="scanVideo" playsinline muted></video>
-      <canvas id="scanCanvas"></canvas>
-      <div class="scan-frame"></div>
-    </div>
-    <div class="scan-actions">
-      <button type="button" class="dlg-btn" id="scanStart" style="flex:1;margin:0">Камера</button>
-      <label class="dlg-btn secondary" style="flex:1;margin:0;display:grid;place-items:center;cursor:pointer">
-        З галереї
-        <input type="file" id="scanFile" accept="image/*" style="display:none">
-      </label>
-    </div>
-    <div class="scan-result" id="scanResult"></div>
-    <p class="sup-note" style="margin-top:12px">Наведіть камеру на QR з екрана «Поділитися» на іншому телефоні. Якщо код дійсний — з’являться ПІБ, дата народження та статус. Можна завантажити фото з галереї.</p>
+  <div class="sc-top">
+    <button class="sc-btn" type="button" data-fs-close aria-label="Назад"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M15 18l-6-6 6-6"/></svg></button>
+    <h1>Сканувати QR-код</h1>
+    <button class="sc-btn" type="button" id="scTorch" aria-label="Ліхтарик" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M7 2h10l-2 7H9zM9 9v3l-2 3v7h10v-7l-2-3V9"/></svg></button>
+    <button class="sc-btn" type="button" id="scFlip" aria-label="Змінити камеру" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M20 11a8 8 0 0 0-14.3-4M4 4v4h4M4 13a8 8 0 0 0 14.3 4M20 20v-4h-4"/></svg></button>
+    <button class="sc-btn" type="button" id="scHistBtn" aria-label="Історія"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></button>
+  </div>
+  <div class="sc-bottom">
+    <label class="sc-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="1.6"/><path d="M21 16l-5-5-9 9"/></svg>Галерея
+      <input type="file" id="scanFile" accept="image/*" style="display:none">
+    </label>
+  </div>
+  <div class="sc-err" id="scErr">
+    <div class="e-ic">!</div>
+    <h3 id="scErrT"></h3>
+    <p id="scErrP"></p>
+    <button type="button" class="dlg-btn" id="scRetry">Спробувати ще раз</button>
+    <label class="dlg-btn secondary" style="display:grid;place-items:center;cursor:pointer">Обрати з галереї<input type="file" id="scanFile2" accept="image/*" style="display:none"></label>
+  </div>
+  <div class="sc-sheet" id="scSheet">
+    <div id="scSheetBody"></div>
+    <button type="button" class="dlg-btn" id="scAgain">Сканувати ще</button>
+    <button type="button" class="dlg-btn secondary" id="scDone">Закрити</button>
+  </div>
+  <div class="sc-hist" id="scHist">
+    <div class="sc-hist-head"><b>Історія сканувань</b><button type="button" id="scHistClear">Очистити</button><button type="button" id="scHistClose">Готово</button></div>
+    <div id="scHistList"></div>
   </div>
 </div>
 
@@ -1825,6 +1943,9 @@
     <button type="button" class="lab-row" id="labRegistry">Реєстр профілів</button>
     <button type="button" class="lab-row" id="labGh">GitHub сховище</button>
     <button type="button" class="lab-row" id="labPub">Оновлення застосунку (GitHub)</button>
+    <button type="button" class="lab-row" id="labRb">Відкат версій</button>
+    <button type="button" class="lab-row" id="labClean">Очистити кеш і сміття</button>
+    <button type="button" class="lab-row" id="labHaptic">Вібровідгук: увімкнено</button>
     <button type="button" class="lab-row" id="labVerify">Перевірка РНОКПП</button>
     <button type="button" class="lab-row" id="labClearSigns">Очистити історію підписань</button>
     <button type="button" class="lab-row" id="labClearNotif">Очистити повідомлення</button>
@@ -1903,6 +2024,30 @@
   </div>
 </div>
 
+<!-- Відкат версій -->
+<div class="fs" id="fsRb" aria-hidden="true">
+  <div class="fs-head">
+    <button class="back" type="button" id="rbBack" aria-label="Назад"><svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+    <h1>Відкат версій</h1>
+  </div>
+  <div class="fs-body">
+    <p class="sup-note" style="margin-top:0">Відкат створює новий коміт зі станом файлів обраної версії. Історія зберігається, нічого не втрачається. Токен і репозиторій беруться з розділу «Оновлення застосунку».</p>
+    <div class="sup-form">
+      <label>Тип оновлення після відкату</label>
+      <div class="share-ttl" id="rbMode">
+        <button type="button" data-mode="public" class="on">Публічне</button>
+        <button type="button" data-mode="silent">Тихе (автоматично)</button>
+      </div>
+      <button type="button" class="dlg-btn" id="rbOne">Відкотити на одну версію назад</button>
+      <button type="button" class="dlg-btn secondary" id="rbUndo" style="border:1.5px solid #000">Повернути як було</button>
+      <p id="rbStatus" class="sup-note"></p>
+    </div>
+    <p class="sup-note" style="margin:0 0 8px"><b>Останні версії</b> — можна відновити будь-яку</p>
+    <div id="rbList"></div>
+    <button type="button" class="dlg-btn secondary" id="rbReload">Оновити список</button>
+  </div>
+</div>
+
 <!-- GitHub налаштування -->
 <div class="fs" id="fsGh" aria-hidden="true">
   <div class="fs-head">
@@ -1954,8 +2099,13 @@
     var sheet = document.getElementById('sheet');
     var consent = document.getElementById('consent');
 
+    var _hLast = 0;
     function haptic(type = 'light') {
       if (!navigator.vibrate) return;
+      try { if (localStorage.getItem('diia_haptic') === '0') return; } catch (e) {}
+      var _n = Date.now();
+      if ((type === 'light' || type === 'medium' || type === 'heavy') && _n - _hLast < 120) return;
+      _hLast = _n;
       try {
         if (type === 'light') navigator.vibrate(10);
         else if (type === 'medium') navigator.vibrate(20);
@@ -1964,6 +2114,14 @@
         else if (type === 'error') navigator.vibrate([20, 50, 20, 50, 20]);
       } catch (e) {}
     }
+
+
+    /* Лёгкий виброотклик на будь-яке натискання кнопки (якщо пристрій підтримує) */
+    document.addEventListener('click', function (e) {
+      var t = e.target && e.target.closest ? e.target.closest('button,[role="button"],[data-act],.nav-i,.tile,.mrow,.lab-row,a[href],label.dlg-btn,label.sc-pill,input[type="checkbox"],input[type="radio"]') : null;
+      if (!t || t.disabled) return;
+      haptic('light');
+    }, true);
 
     /* Генерация QR-кода (ссылка: https://diia.gov.ua/faq/25) */
     var qrTargetUrl = 'https://diia.gov.ua/faq/25';
@@ -2708,15 +2866,22 @@
       return dig === parseInt(num[9], 10);
     }
     /* --- Сканер QR --- */
-    var scanStream = null, scanTimer = null;
+    var scanStream = null, scanRun = 0, scanBusy = false, scanTimerId = null, scanLeftTimer = null;
+    var scanFacing = 'environment', scanTorch = false;
+    var scanCv = document.createElement('canvas');
+    var K_SCAN_HIST = 'diia_scan_hist';
+    var scanDetector = null;
+    try { if ('BarcodeDetector' in window) scanDetector = new BarcodeDetector({ formats: ['qr_code'] }); } catch (e) { scanDetector = null; }
+    function sEl(id) { return document.getElementById(id); }
+    function stopLoop() { scanRun++; if (scanTimerId) { clearTimeout(scanTimerId); scanTimerId = null; } }
     function stopScan() {
-      if (scanTimer) { cancelAnimationFrame(scanTimer); scanTimer = null; }
-      if (scanStream) {
-        scanStream.getTracks().forEach(function (t) { t.stop(); });
-        scanStream = null;
-      }
-      var v = document.getElementById('scanVideo');
-      if (v) v.srcObject = null;
+      stopLoop();
+      if (scanLeftTimer) { clearInterval(scanLeftTimer); scanLeftTimer = null; }
+      if (scanStream) { scanStream.getTracks().forEach(function (t) { t.stop(); }); scanStream = null; }
+      var v = sEl('scanVideo');
+      if (v) { try { v.pause(); } catch (e) {} v.srcObject = null; }
+      scanTorch = false;
+      var tb = sEl('scTorch'); if (tb) tb.classList.remove('on');
     }
     function parseSharePayload(text) {
       if (!text) return null;
@@ -2792,34 +2957,212 @@
       html += '</div></div>';
       return html;
     }
-    function showScanResult(text) {
-      text = String(text || '').replace(/^\uFEFF/, '').trim();
-      var box = document.getElementById('scanResult');
-      box.classList.add('on');
+    
+    function setHint(t) { var h = sEl('scHint'); if (h) h.textContent = t; }
+    function setFrame(cls) { var f = sEl('scFrame'); f.classList.remove('ok', 'bad'); if (cls) f.classList.add(cls); }
+    function hideErr() { sEl('scErr').classList.remove('on'); }
+    function showErr(title, text) {
       stopScan();
+      sEl('scErrT').textContent = title;
+      sEl('scErrP').textContent = text;
+      sEl('scErr').classList.add('on');
+      haptic('error');
+    }
+    function camError(e) {
+      var n = e && e.name;
+      if (n === 'NotAllowedError' || n === 'SecurityError' || n === 'PermissionDeniedError') return ['Немає доступу до камери', 'Дозвольте доступ до камери в налаштуваннях браузера або застосунку й спробуйте ще раз. Можна також обрати фото з галереї.'];
+      if (n === 'NotFoundError' || n === 'DevicesNotFoundError' || n === 'OverconstrainedError') return ['Камеру не знайдено', 'На цьому пристрої не знайдено камеру. Скористайтеся вибором фото з галереї.'];
+      if (n === 'NotReadableError' || n === 'TrackStartError' || n === 'AbortError') return ['Камера зайнята', 'Камеру використовує інший застосунок. Закрийте його та спробуйте знову.'];
+      return ['Не вдалося запустити камеру', 'Спробуйте ще раз або оберіть фото з галереї.'];
+    }
+    /* ---- розпізнавання ---- */
+    function decodeQrFromCanvas(ctx, w, h) {
+      if (typeof jsQR === 'undefined') return null;
+      var img = ctx.getImageData(0, 0, w, h);
+      var code = jsQR(img.data, w, h, { inversionAttempts: 'attemptBoth' });
+      return code && code.data ? code.data : null;
+    }
+    function scanDecodeFrame(video) {
+      var vw = video.videoWidth, vh = video.videoHeight;
+      if (!vw || !vh) return Promise.resolve(null);
+      var ctx = scanCv.getContext('2d', { willReadFrequently: true });
+      var k = Math.min(1, 800 / Math.max(vw, vh));
+      var w = Math.round(vw * k), h = Math.round(vh * k);
+      scanCv.width = w; scanCv.height = h;
+      ctx.drawImage(video, 0, 0, w, h);
+      var d = decodeQrFromCanvas(ctx, w, h);
+      if (d) return Promise.resolve(d);
+      /* центральна область у повній роздільності — для дрібних / щільних кодів */
+      var cs = Math.round(Math.min(vw, vh) * 0.7), out = Math.min(cs, 700);
+      scanCv.width = out; scanCv.height = out;
+      ctx.drawImage(video, (vw - cs) / 2, (vh - cs) / 2, cs, cs, 0, 0, out, out);
+      d = decodeQrFromCanvas(ctx, out, out);
+      if (d) return Promise.resolve(d);
+      if (scanDetector) return scanDetector.detect(video).then(function (c) { return c && c[0] && c[0].rawValue ? c[0].rawValue : null; }).catch(function () { return null; });
+      return Promise.resolve(null);
+    }
+    function scanLoop(run) {
+      if (run !== scanRun || !scanStream) return;
+      var video = sEl('scanVideo');
+      if (scanBusy || video.readyState < 2) { scanTimerId = setTimeout(function () { scanLoop(run); }, 80); return; }
+      scanBusy = true;
+      scanDecodeFrame(video).then(function (text) {
+        scanBusy = false;
+        if (run !== scanRun) return;
+        if (text) { onScanned(text); return; }
+        scanTimerId = setTimeout(function () { scanLoop(run); }, 60);
+      }, function () { scanBusy = false; scanTimerId = setTimeout(function () { scanLoop(run); }, 150); });
+    }
+    /* ---- оцінка результату ---- */
+    function shortName(d) {
+      var ln = d.lastName || '', fn = (d.firstName || '').charAt(0), mn = (d.middleName || '').charAt(0);
+      return (ln + (fn ? ' ' + fn + '.' : '') + (mn ? mn + '.' : '')).trim();
+    }
+    function evaluateScan(text) {
       var data = parseSharePayload(text);
       if (data) {
-        var okShare = !data.forged && data.exp && Date.now() < data.exp;
-        box.innerHTML = renderShareVerify(data);
-        haptic(okShare ? 'success' : 'error');
-        if (typeof addNotif === 'function') {
-          addNotif('Перевірка документа', (data.title || 'Документ') + (data.forged ? ' — недійсний код' : okShare ? ' — дійсний' : ' — прострочений'), 'scan');
-        }
-        return;
+        var exp = data.exp || 0;
+        return {
+          kind: 'share', exp: exp, title: data.title || 'Документ', sub: shortName(data),
+          status: function () { return data.forged ? 'bad' : (exp && Date.now() < exp ? 'ok' : 'exp'); },
+          html: function () { return renderShareVerify(data); }
+        };
       }
       var card = parseDocCard(text);
       if (card) {
-        var okCard = !!catalogById(card.doc) && rnokppValid(card.rnokpp);
-        box.innerHTML = renderCardVerify(card);
-        haptic(okCard ? 'success' : 'error');
-        if (typeof addNotif === 'function') {
-          var ct = catalogById(card.doc);
-          addNotif('Перевірка документа', (ct ? ct.title : 'Документ') + (okCard ? ' — дійсний' : ' — недійсний'), 'scan');
-        }
-        return;
+        var cat = catalogById(card.doc);
+        var okC = !!cat && rnokppValid(card.rnokpp);
+        return { kind: 'card', exp: 0, title: cat ? cat.title : 'Невідомий документ', sub: maskRnokpp(card.rnokpp), status: function () { return okC ? 'ok' : 'bad'; }, html: function () { return renderCardVerify(card); } };
       }
-      box.innerHTML = '<b>QR-код розпізнано</b><br><span style="word-break:break-all">' + _esc(text) + '</span><p class="share-hint">Це не код документа Дії. Скануйте QR із розділу «Поділитися» або зі зворота картки документа.</p>';
-      haptic('success');
+      return {
+        kind: 'other', exp: 0, title: 'Невідомий QR-код', sub: text.length > 40 ? text.slice(0, 40) + '…' : text, status: function () { return 'other'; },
+        html: function () {
+          return '<div class="sc-big other"><svg viewBox="0 0 24 24" fill="none" stroke="#5b6773" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v6M12 17h.01"/></svg></div>'
+            + '<h3 style="text-align:center;margin-bottom:4px">QR-код розпізнано</h3>'
+            + '<p class="vr-sub" style="text-align:center;font-size:13.5px;color:#5b6773">Це не код документа Дії, перевірити його неможливо</p>'
+            + '<div class="sc-raw">' + _esc(text) + '</div>';
+        }
+      };
+    }
+    function histLoad() { var a = LS.getJ(K_SCAN_HIST); return Array.isArray(a) ? a : []; }
+    function histAdd(res) {
+      var a = histLoad();
+      a.unshift({ t: Date.now(), title: res.title, sub: res.sub, status: res.status() });
+      LS.setJ(K_SCAN_HIST, a.slice(0, 30));
+    }
+    var HIST_LABEL = { ok: 'Дійсний', exp: 'Прострочений', bad: 'Недійсний', other: 'Невідомий код' };
+    function fmtT(ts) { var d = new Date(ts), p = function (n) { return (n < 10 ? '0' : '') + n; }; return p(d.getDate()) + '.' + p(d.getMonth() + 1) + ' ' + p(d.getHours()) + ':' + p(d.getMinutes()); }
+    function histRender() {
+      var a = histLoad(), el = sEl('scHistList');
+      if (!a.length) { el.innerHTML = '<p class="sup-note" style="text-align:center;margin-top:30px">Історія порожня. Тут з’являться останні перевірки.</p>'; return; }
+      el.innerHTML = a.map(function (x) {
+        return '<div class="sc-hi"><i class="' + _esc(x.status) + '"></i><div><b>' + _esc(x.title) + '</b><small>' + _esc(HIST_LABEL[x.status] || '') + (x.sub ? ' · ' + _esc(x.sub) : '') + ' · ' + fmtT(x.t) + '</small></div></div>';
+      }).join('');
+    }
+    function hideSheet() {
+      sEl('scSheet').classList.remove('on');
+      if (scanLeftTimer) { clearInterval(scanLeftTimer); scanLeftTimer = null; }
+    }
+    var SC_ICON = {
+      ok: '<svg viewBox="0 0 24 24" fill="none" stroke="#1f9d55" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',
+      bad: '<svg viewBox="0 0 24 24" fill="none" stroke="#e5484d" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg>'
+    };
+    function renderSheet(res) {
+      var st = res.status();
+      var body = sEl('scSheetBody');
+      var head = res.kind === 'other' ? '' : '<div class="sc-big ' + (st === 'ok' ? 'ok' : 'bad') + '">' + (st === 'ok' ? SC_ICON.ok : SC_ICON.bad) + '</div>';
+      body.innerHTML = head + res.html();
+      return st;
+    }
+    function showSheet(res) {
+      var st = renderSheet(res);
+      sEl('scSheet').classList.add('on');
+      if (scanLeftTimer) { clearInterval(scanLeftTimer); scanLeftTimer = null; }
+      /* живий таймер дійсності власних QR: коли час вийшов — картка сама стає «прострочений» */
+      if (res.exp && st === 'ok') {
+        scanLeftTimer = setInterval(function () {
+          var s2 = renderSheet(res);
+          if (s2 !== 'ok') { clearInterval(scanLeftTimer); scanLeftTimer = null; haptic('error'); setFrame('bad'); }
+        }, 1000);
+      }
+    }
+    function onScanned(text) {
+      text = String(text || '').replace(/^\uFEFF/, '').trim();
+      if (!text) return;
+      stopLoop();
+      var res = evaluateScan(text);
+      var st = res.status();
+      setFrame(st === 'ok' ? 'ok' : st === 'other' ? '' : 'bad');
+      haptic(st === 'ok' ? 'success' : 'error');
+      if (typeof addNotif === 'function' && res.kind !== 'other') addNotif('Перевірка документа', res.title + ' — ' + (HIST_LABEL[st] || '').toLowerCase(), 'scan');
+      histAdd(res);
+      showSheet(res);
+    }
+    function scanAgain() {
+      hideSheet(); hideErr(); setFrame('');
+      if (scanStream) {
+        var run = ++scanRun;
+        var v = sEl('scanVideo'); var p = v.play(); if (p && p.catch) p.catch(function () {});
+        setHint('Наведіть камеру на QR-код');
+        scanLoop(run);
+      } else startScanCamera();
+    }
+    /* ---- камера ---- */
+    function initTorch(stream) {
+      var tr = stream.getVideoTracks()[0], caps = {};
+      try { caps = tr && tr.getCapabilities ? tr.getCapabilities() : {}; } catch (e) { caps = {}; }
+      sEl('scTorch').style.display = caps && caps.torch ? '' : 'none';
+      sEl('scTorch').classList.remove('on');
+      scanTorch = false;
+    }
+    function toggleTorch() {
+      if (!scanStream) return;
+      var tr = scanStream.getVideoTracks()[0];
+      var want = !scanTorch;
+      tr.applyConstraints({ advanced: [{ torch: want }] }).then(function () {
+        scanTorch = want; sEl('scTorch').classList.toggle('on', want);
+      }).catch(function () { showToast('Ліхтарик недоступний на цій камері'); });
+    }
+    function startScanCamera() {
+      stopScan(); hideErr(); hideSheet(); setFrame('');
+      if (!window.isSecureContext && location.hostname !== 'localhost') {
+        return showErr('Потрібне захищене з’єднання', 'Камера працює лише на сторінках https. Відкрийте застосунок за захищеною адресою.');
+      }
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        return showErr('Камера недоступна', 'Цей браузер не підтримує доступ до камери. Оберіть фото з галереї.');
+      }
+      var run = ++scanRun;
+      setHint('Запуск камери…');
+      navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: scanFacing }, width: { ideal: 1280 }, height: { ideal: 720 } }, audio: false }).then(function (stream) {
+        if (run !== scanRun) { stream.getTracks().forEach(function (t) { t.stop(); }); return; }
+        scanStream = stream;
+        var v = sEl('scanVideo');
+        v.setAttribute('playsinline', ''); v.muted = true;
+        v.classList.toggle('mirror', scanFacing === 'user');
+        v.srcObject = stream;
+        var p = v.play(); if (p && p.catch) p.catch(function () {});
+        initTorch(stream);
+        if (navigator.mediaDevices.enumerateDevices) {
+          navigator.mediaDevices.enumerateDevices().then(function (l) {
+            var n = l.filter(function (d) { return d.kind === 'videoinput'; }).length;
+            sEl('scFlip').style.display = n > 1 ? '' : 'none';
+          }).catch(function () {});
+        }
+        setHint('Наведіть камеру на QR-код');
+        scanLoop(run);
+      }).catch(function (e) {
+        if (run !== scanRun) return;
+        var m = camError(e);
+        showErr(m[0], m[1]);
+      });
+    }
+    function openScan(noCam) {
+      haptic('medium');
+      hideSheet(); hideErr(); setFrame('');
+      sEl('scHist').classList.remove('on');
+      sEl('fsScan').classList.add('on');
+      sEl('fsScan').setAttribute('aria-hidden', 'false');
+      if (noCam !== true) startScanCamera();
     }
     function openShareFromHash() {
       try {
@@ -2828,109 +3171,61 @@
         var token = h.slice(7);
         var data = readShareToken(token) || fromB64url(token);
         if (!data || data.type !== 'diia-share') return;
-        /* відкриваємо сканер з готовим результатом перевірки */
-        document.getElementById('fsScan').classList.add('on');
-        document.getElementById('fsScan').setAttribute('aria-hidden', 'false');
-        var box = document.getElementById('scanResult');
-        box.classList.add('on');
-        box.innerHTML = renderShareVerify(data);
+        openScan(true);
+        setHint('Перевірка за посиланням');
+        onScanned('#share/' + token);
         try { history.replaceState(history.state, '', location.pathname + location.search); } catch (e) {}
       } catch (e) {}
     }
     setTimeout(openShareFromHash, 400);
-    var scanDetector = null;
-    try { if ('BarcodeDetector' in window) scanDetector = new BarcodeDetector({ formats: ['qr_code'] }); } catch (e) { scanDetector = null; }
-    function decodeQrFromCanvas(ctx, w, h) {
-      if (typeof jsQR === 'undefined') return null;
-      var img = ctx.getImageData(0, 0, w, h);
-      var code = jsQR(img.data, w, h, { inversionAttempts: 'attemptBoth' });
-      return code && code.data ? code.data : null;
-    }
-    function nextScanFrame() { if (scanStream) scanTimer = requestAnimationFrame(tickScan); }
-    function tickScan() {
-      var video = document.getElementById('scanVideo');
-      var canvas = document.getElementById('scanCanvas');
-      if (!scanStream) return;
-      if (!video || !canvas || video.readyState !== video.HAVE_ENOUGH_DATA || !video.videoWidth) {
-        nextScanFrame();
-        return;
-      }
-      /* зменшуємо кадр: швидше та стабільніше розпізнавання */
-      var k = Math.min(1, 800 / Math.max(video.videoWidth, video.videoHeight));
-      var w = Math.round(video.videoWidth * k), h = Math.round(video.videoHeight * k);
-      canvas.width = w;
-      canvas.height = h;
-      var ctx = canvas.getContext('2d', { willReadFrequently: true });
-      ctx.drawImage(video, 0, 0, w, h);
-      var data = decodeQrFromCanvas(ctx, w, h);
-      if (data) { showScanResult(data); return; }
-      if (scanDetector) {
-        scanDetector.detect(video).then(function (codes) {
-          if (!scanStream) return;
-          if (codes && codes[0] && codes[0].rawValue) showScanResult(codes[0].rawValue);
-          else nextScanFrame();
-        }).catch(nextScanFrame);
-      } else nextScanFrame();
-    }
-    function startScanCamera() {
-      stopScan();
-      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        showToast('Камера недоступна на цьому пристрої');
-        return;
-      }
-      navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 }, height: { ideal: 720 } }, audio: false }).then(function (stream) {
-        scanStream = stream;
-        var video = document.getElementById('scanVideo');
-        video.srcObject = stream;
-        video.play();
-        scanTimer = requestAnimationFrame(tickScan);
-      }).catch(function () {
-        showToast('Дозвольте доступ до камери');
-      });
-    }
-    function openScan() {
-      haptic('medium');
-      document.getElementById('scanResult').classList.remove('on');
-      document.getElementById('scanResult').innerHTML = '';
-      document.getElementById('fsScan').classList.add('on');
-      document.getElementById('fsScan').setAttribute('aria-hidden', 'false');
-      startScanCamera();
-    }
-    document.getElementById('scanStart').addEventListener('click', startScanCamera);
-    document.getElementById('scanFile').addEventListener('change', function (e) {
-      var file = e.target.files && e.target.files[0];
+    function scanFromFile(file) {
       if (!file) return;
+      stopLoop(); hideErr();
       var url = URL.createObjectURL(file);
       var img = new Image();
       img.onload = function () {
-        var canvas = document.getElementById('scanCanvas');
-        var ctx = canvas.getContext('2d', { willReadFrequently: true });
+        var ctx = scanCv.getContext('2d', { willReadFrequently: true });
         var sizes = [1600, 1000, 600], data = null;
         for (var i = 0; i < sizes.length && !data; i++) {
           var k = Math.min(1, sizes[i] / Math.max(img.width, img.height));
-          canvas.width = Math.round(img.width * k);
-          canvas.height = Math.round(img.height * k);
+          scanCv.width = Math.round(img.width * k);
+          scanCv.height = Math.round(img.height * k);
           ctx.fillStyle = '#fff';
-          ctx.fillRect(0, 0, canvas.width, canvas.height);
-          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-          data = decodeQrFromCanvas(ctx, canvas.width, canvas.height);
+          ctx.fillRect(0, 0, scanCv.width, scanCv.height);
+          ctx.drawImage(img, 0, 0, scanCv.width, scanCv.height);
+          data = decodeQrFromCanvas(ctx, scanCv.width, scanCv.height);
         }
         URL.revokeObjectURL(url);
-        if (data) showScanResult(data);
-        else { showToast('QR-код не розпізнано'); haptic('error'); }
+        if (data) onScanned(data);
+        else fileFail();
       };
-      img.onerror = function () { URL.revokeObjectURL(url); showToast('Не вдалося відкрити зображення'); };
+      img.onerror = function () { URL.revokeObjectURL(url); fileFail(); };
       img.src = url;
-      e.target.value = '';
-    });
-    /* зупиняти камеру при закритті fs */
-    (function () {
-      var _close = window.closeAllFs;
-      /* hook after closeAllFs defined later — also on fs close buttons */
-      document.querySelectorAll('#fsScan [data-fs-close]').forEach(function (btn) {
-        btn.addEventListener('click', stopScan);
+    }
+    function fileFail() {
+      haptic('error');
+      setFrame('bad');
+      showSheet({
+        kind: 'err', exp: 0, title: 'QR не знайдено', sub: '', status: function () { return 'bad'; },
+        html: function () { return '<div class="sc-big bad">' + SC_ICON.bad + '</div><h3 style="text-align:center;margin-bottom:6px">QR-код не знайдено</h3><p class="vr-sub" style="text-align:center;font-size:13.5px;color:#5b6773">На зображенні немає читабельного QR-коду. Спробуйте чіткіше фото, щоб код був повністю в кадрі.</p>'; }
       });
-    })();
+    }
+    ['scanFile', 'scanFile2'].forEach(function (id) {
+      sEl(id).addEventListener('change', function (e) { var f = e.target.files && e.target.files[0]; e.target.value = ''; scanFromFile(f); });
+    });
+    sEl('scTorch').addEventListener('click', toggleTorch);
+    sEl('scFlip').addEventListener('click', function () { scanFacing = scanFacing === 'environment' ? 'user' : 'environment'; startScanCamera(); });
+    sEl('scRetry').addEventListener('click', startScanCamera);
+    sEl('scAgain').addEventListener('click', scanAgain);
+    sEl('scDone').addEventListener('click', function () { closeAllFs(); });
+    sEl('scHistBtn').addEventListener('click', function () { histRender(); sEl('scHist').classList.add('on'); });
+    sEl('scHistClose').addEventListener('click', function () { sEl('scHist').classList.remove('on'); });
+    sEl('scHistClear').addEventListener('click', function () { LS.setJ(K_SCAN_HIST, []); histRender(); haptic('success'); });
+    /* зупиняти камеру, коли екран сканера закрито будь-яким способом */
+    new MutationObserver(function () {
+      if (!sEl('fsScan').classList.contains('on')) { stopScan(); hideSheet(); sEl('scHist').classList.remove('on'); hideErr(); }
+    }).observe(sEl('fsScan'), { attributes: true, attributeFilter: ['class'] });
+    document.addEventListener('visibilitychange', function () { if (document.hidden && scanStream && sEl('fsScan').classList.contains('on')) stopScan(); });
 
     /* --- Військові облігації --- */
     var BONDS = [
@@ -4415,7 +4710,8 @@
       });
     }
     function pubApi(cfg, path, method, body) {
-      var opt = { method: method || 'GET', cache: 'no-store', headers: { 'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28', 'Authorization': 'Bearer ' + cfg.token } };
+      var opt = { method: method || 'GET', cache: 'no-store', headers: { 'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' } };
+      if (cfg.token) opt.headers['Authorization'] = 'Bearer ' + cfg.token;
       if (body) { opt.headers['Content-Type'] = 'application/json'; opt.body = JSON.stringify(body); }
       return fetch('https://api.github.com/repos/' + encodeURIComponent(cfg.owner) + '/' + encodeURIComponent(cfg.repo) + path, opt).then(function (r) {
         return r.json().catch(function () { return {}; }).then(function (j) {
@@ -4510,6 +4806,141 @@
       if (b) pubSetMode(b.getAttribute('data-mode'));
     });
     pubEl('pubGo').addEventListener('click', pubGo);
+
+    /* ===== Відкат версій (новий коміт зі станом обраної версії) ===== */
+    var K_RB = 'diia_rb_state', rbMode = 'public', rbBusy = false;
+    function rbCfg() { var c = LS.getJ(K_PUB) || {}; return { token: c.token || loadGhConfig().token || '', owner: c.owner || GH.owner, repo: c.repo || GH.repo }; }
+    function rbSay(t, bad) { var el = pubEl('rbStatus'); el.textContent = t; el.style.color = bad ? '#e5484d' : ''; }
+    function rbState() {
+      var st = LS.getJ(K_RB);
+      pubEl('rbUndo').disabled = !st || rbBusy;
+      pubEl('rbOne').disabled = rbBusy;
+    }
+    function rbSetMode(m) {
+      rbMode = m === 'silent' ? 'silent' : 'public';
+      document.querySelectorAll('#rbMode button').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-mode') === rbMode); });
+    }
+    function rbLoad() {
+      var cfg = rbCfg(), el = pubEl('rbList');
+      el.innerHTML = '<p class="sup-note">Завантаження…</p>';
+      return pubApi(cfg, '/commits?per_page=20', 'GET').then(function (list) {
+        if (!Array.isArray(list) || !list.length) { el.innerHTML = '<p class="sup-note">Комітів не знайдено</p>'; return list; }
+        el.innerHTML = list.map(function (c, i) {
+          var msg = String((c.commit && c.commit.message) || '').split('\n')[0];
+          var d = c.commit && c.commit.author && c.commit.author.date ? fmtT(c.commit.author.date) : '';
+          return '<div class="rb-row"><div><b>' + _esc(msg) + '</b><small>' + _esc(d) + ' · ' + _esc(c.sha.slice(0, 7)) + (i === 0 ? ' · поточна' : '') + '</small></div>'
+            + '<button type="button" data-sha="' + _esc(c.sha) + '"' + (i === 0 ? ' disabled' : '') + '>Відновити</button></div>';
+        }).join('');
+        return list;
+      }).catch(function (e) {
+        el.innerHTML = '<p class="sup-note" style="color:#e5484d">' + _esc(e && e.message || 'Не вдалося завантажити') + '</p>';
+        return [];
+      });
+    }
+    async function rbRestore(sha, isUndo) {
+      if (rbBusy) return;
+      var cfg = rbCfg();
+      if (!cfg.token) return rbSay('Вкажіть токен у розділі «Оновлення застосунку»', true);
+      if (!window.confirm(isUndo ? 'Повернути файли до стану перед відкатом?' : 'Відновити файли до версії ' + sha.slice(0, 7) + '? Буде створено новий коміт.')) return;
+      rbBusy = true; rbState(); haptic('medium');
+      try {
+        rbSay('Перевірка репозиторію…');
+        var info = await pubApi(cfg, '', 'GET');
+        var branch = info.default_branch || 'main';
+        var ref = await pubApi(cfg, '/git/ref/heads/' + branch, 'GET');
+        var head = ref.object.sha;
+        if (head === sha) throw new Error('Це вже поточна версія');
+        var target = await pubApi(cfg, '/git/commits/' + sha, 'GET');
+        var readV = function (r) {
+          return pubApi(cfg, '/contents/version.json?ref=' + encodeURIComponent(r), 'GET').then(function (j) { return validV(JSON.parse(b64utf8(j.content))); }).catch(function () { return null; });
+        };
+        var cur = await readV(head), tv = await readV(sha);
+        var build = Math.max(cur ? cur.build : 0, tv ? tv.build : 0, running.build || 0) + 1;
+        var vj = {
+          version: tv ? tv.version : (cur ? cur.version : '0'), build: build, date: new Date().toISOString().slice(0, 10),
+          notes: isUndo ? 'Повернення до стану перед відкатом' : 'Відкат до ' + sha.slice(0, 7) + (tv ? ' (' + tv.version + ')' : ''), mode: rbMode
+        };
+        rbSay('Створення коміту…');
+        var vb = await pubApi(cfg, '/git/blobs', 'POST', { content: btoa(unescape(encodeURIComponent(JSON.stringify(vj, null, 2) + '\n'))), encoding: 'base64' });
+        var tree = await pubApi(cfg, '/git/trees', 'POST', { base_tree: target.tree.sha, tree: [{ path: 'version.json', mode: '100644', type: 'blob', sha: vb.sha }] });
+        var nc = await pubApi(cfg, '/git/commits', 'POST', { message: (isUndo ? 'Undo rollback → ' : 'Rollback to ') + sha.slice(0, 7) + ' (build ' + build + ')' + (rbMode === 'silent' ? ' [silent]' : ''), tree: tree.sha, parents: [head] });
+        await pubApi(cfg, '/git/refs/heads/' + branch, 'PATCH', { sha: nc.sha });
+        if (isUndo) LS.del(K_RB); else LS.setJ(K_RB, { from: head, to: sha, at: Date.now() });
+        haptic('success');
+        rbSay('Готово: файли відновлено, білд ' + build + '. GitHub Pages опублікує зміни за 1–2 хвилини.');
+        showToast('Відкат виконано');
+      } catch (e) {
+        haptic('error');
+        var m = e && e.message || 'Помилка';
+        if (e && e.status === 401) m = 'Невірний або прострочений токен';
+        else if (e && (e.status === 403 || e.status === 404)) m = 'Немає доступу або прав на запис (Contents: Read and write). ' + m;
+        else if (e && e.name === 'TypeError') m = 'Немає з’єднання з мережею';
+        rbSay(m, true);
+      }
+      rbBusy = false; rbState(); rbLoad();
+    }
+    function openRb() {
+      haptic('light');
+      rbSetMode(pubMode); rbSay(''); rbState(); rbLoad();
+      pubEl('fsRb').classList.add('on'); pubEl('fsRb').setAttribute('aria-hidden', 'false');
+    }
+    pubEl('labRb').addEventListener('click', openRb);
+    pubEl('rbBack').addEventListener('click', function () {
+      if (rbBusy) return;
+      pubEl('fsRb').classList.remove('on'); pubEl('fsRb').setAttribute('aria-hidden', 'true');
+      if (labUnlocked) openLab();
+    });
+    pubEl('rbMode').addEventListener('click', function (e) { var b = e.target.closest('button[data-mode]'); if (b) rbSetMode(b.getAttribute('data-mode')); });
+    pubEl('rbOne').addEventListener('click', function () {
+      pubApi(rbCfg(), '/commits?per_page=2', 'GET').then(function (l) {
+        if (!Array.isArray(l) || l.length < 2) return rbSay('Немає попередньої версії', true);
+        rbRestore(l[1].sha, false);
+      }).catch(function (e) { rbSay(e && e.message || 'Помилка', true); });
+    });
+    pubEl('rbUndo').addEventListener('click', function () { var st = LS.getJ(K_RB); if (st && st.from) rbRestore(st.from, true); });
+    pubEl('rbReload').addEventListener('click', rbLoad);
+    pubEl('rbList').addEventListener('click', function (e) { var b = e.target.closest('button[data-sha]'); if (b && !b.disabled) rbRestore(b.getAttribute('data-sha'), false); });
+
+    /* ===== Очищення застарілого кешу та службового сміття ===== */
+    function cleanJunk() {
+      var removed = 0, jobs = [];
+      if (window.caches) {
+        jobs.push(caches.keys().then(function (keys) {
+          var shells = keys.filter(function (k) { return k.indexOf('diia-shell-') === 0; }).sort(function (a, b) { return Number(a.slice(11)) - Number(b.slice(11)); });
+          var keep = shells.length ? shells[shells.length - 1] : null;
+          return Promise.all(keys.filter(function (k) { return k !== keep && k !== 'diia-meta'; }).map(function (k) { removed++; return caches.delete(k); }));
+        }));
+      }
+      try {
+        var b = Number(running.build) || 0;
+        if (LS.get(K_AUTO_TRY) !== null && Number(LS.get(K_AUTO_TRY)) <= b) LS.del(K_AUTO_TRY);
+        if (LS.get(K_UPD_NOTIFIED) !== null && Number(LS.get(K_UPD_NOTIFIED)) <= b) LS.del(K_UPD_NOTIFIED);
+        sessionStorage.clear();
+      } catch (e) {}
+      return Promise.all(jobs.map(function (j) { return j.catch(function () {}); })).then(function () { return removed; });
+    }
+    pubEl('labClean').addEventListener('click', function () {
+      haptic('medium');
+      cleanJunk().then(function (n) {
+        var done = function (mb) { showToast('Очищено застарілих кешів: ' + n + (mb ? '. Зайнято ' + mb + ' МБ' : '')); haptic('success'); };
+        if (navigator.storage && navigator.storage.estimate) navigator.storage.estimate().then(function (e) { done(((e.usage || 0) / 1048576).toFixed(1)); }, function () { done(''); });
+        else done('');
+      });
+    });
+    setTimeout(function () { cleanJunk(); }, 9000);
+
+    /* ===== Вібровідгук: перемикач у службовому меню ===== */
+    function hapLabel() {
+      var off = false; try { off = localStorage.getItem('diia_haptic') === '0'; } catch (e) {}
+      pubEl('labHaptic').textContent = 'Вібровідгук: ' + (off ? 'вимкнено' : 'увімкнено');
+    }
+    hapLabel();
+    pubEl('labHaptic').addEventListener('click', function () {
+      var off = false; try { off = localStorage.getItem('diia_haptic') === '0'; } catch (e) {}
+      try { localStorage.setItem('diia_haptic', off ? '1' : '0'); } catch (e) {}
+      hapLabel();
+      if (off) { try { navigator.vibrate && navigator.vibrate(15); } catch (e) {} }
+    });
 
     /* Фонові сповіщення: стан перемикача → SW, періодична перевірка (Chrome/Android, встановлений PWA) */
     window.diiaUpdSync = function () {
