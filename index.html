@@ -150,6 +150,35 @@
     pointer-events: none;
   }
 
+
+  /* Экран приветствия при каждом новом открытии приложения */
+  .welcome-splash {
+    position: fixed; inset: 0; z-index: 10000; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; overflow: hidden;
+    padding: calc(var(--sat) + 24px) 24px calc(var(--sab) + 24px);
+    background:
+      radial-gradient(70% 28% at 100% 100%, #e9f2d3 0%, transparent 100%),
+      radial-gradient(80% 26% at 0% 34%, #c6dff3 0%, transparent 100%),
+      linear-gradient(180deg, #abc8e2 0%, #bfd9ee 30%, #d2e5e9 55%, #d3e8dc 80%, #c7e1d6 100%);
+    opacity: 1; visibility: visible; transition: opacity .35s ease, visibility .35s ease;
+  }
+  .welcome-splash.dismissed { opacity: 0; visibility: hidden; pointer-events: none; }
+  .welcome-title { display:flex; align-items:center; justify-content:center; gap:14px; font-family:"e-Ukraine Head","e-Ukraine",sans-serif; font-size:clamp(34px, 10vw, 58px); font-weight:400; letter-spacing:-.04em; color:#000; }
+  .welcome-wave { display:inline-block; font-family:system-ui,sans-serif; font-size:.95em; transform-origin:70% 70%; animation:welcomeWave 1.1s ease-in-out .25s 2; }
+  @keyframes welcomeWave { 0%,100%{transform:rotate(0)} 25%{transform:rotate(18deg)} 50%{transform:rotate(-9deg)} 75%{transform:rotate(14deg)} }
+  .welcome-marks { position:absolute; bottom:calc(var(--sab) + 42px); left:0; right:0; display:flex; justify-content:center; align-items:center; gap:24px; }
+  .welcome-diia { width:92px; height:92px; border-radius:25px; display:grid; place-items:center; background:#000; color:#fff; font-family:"e-Ukraine Head","e-Ukraine",sans-serif; font-size:28px; font-weight:700; letter-spacing:-.04em; }
+  .welcome-trident { width:92px; height:92px; border:3px solid #000; border-radius:24px; display:grid; place-items:center; color:#000; }
+  .welcome-trident svg { width:55px; height:64px; display:block; }
+  @media (prefers-reduced-motion:reduce) { .welcome-wave { animation:none; } .welcome-splash { transition:none; } }
+  /* Категории водителя: демонстрационные поля, не подтверждение прав */
+  .driver-categories { margin-top:14px; padding:12px; border-radius:16px; background:rgba(255,255,255,.58); }
+  .driver-cat-title { font-size:13px; font-weight:600; margin-bottom:4px; }
+  .driver-cat-note { font-size:10.5px; line-height:1.35; color:#5b6773; margin-bottom:9px; }
+  .driver-cat-grid { display:flex; flex-wrap:wrap; gap:6px; }
+  .driver-cat { min-width:42px; height:30px; padding:0 8px; border:1px solid rgba(0,0,0,.35); border-radius:8px; font:inherit; font-size:11px; font-weight:600; background:rgba(255,255,255,.65); }
+  .driver-cat.on { background:#000; color:#fff; border-color:#000; }
+
   /* Авторизация */
   .auth .page {
     height: 100%;
@@ -1099,6 +1128,13 @@
 </style>
 </head>
 <body>
+<div class="welcome-splash" id="welcomeSplash" role="status" aria-label="Привітання">
+  <div class="welcome-title"><span>Привіт</span><span class="welcome-wave" aria-hidden="true">👋</span></div>
+  <div class="welcome-marks" aria-hidden="true">
+    <div class="welcome-diia">Дія</div>
+    <div class="welcome-trident"><svg viewBox="0 0 64 76" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M32 7v61M16 19c0 12 2 20 9 26M48 19c0 12-2 20-9 26M16 19l-6-7v23c0 14 8 24 22 31 14-7 22-17 22-31V12l-6 7M24 31c0 8 2 14 8 19 6-5 8-11 8-19M24 31l-5-7v16c0 9 5 16 13 21 8-5 13-12 13-21V24l-5 7"/></svg></div>
+  </div>
+</div>
 
 <div class="app-viewport">
   <!-- Авторизация -->
@@ -2338,6 +2374,16 @@
         front = shareBtnHtml(id) + '<h2 class="dtitle">' + title + '</h2><div class="dname" data-name style="margin-top:28px"></div><p class="dcap" style="margin-top:16px">Дата народження<b data-f="birth"></b></p><p class="dcap">РНОКПП<b data-f="rnokpp"></b></p><div class="ticker" aria-hidden="true"><div class="track"><span data-tick="stamp"></span><span data-tick="stamp"></span></div></div>';
       } else {
         front = shareBtnHtml(id) + '<h2 class="dtitle">' + title + '</h2><div class="dbody"><div class="dphoto" data-photo>' + photoSvg() + '</div><div class="dinfo"><p>Дата<br>народження:</p><b data-f="birth"></b><p>РНОКПП:</p><b data-f="rnokpp"></b></div></div><div class="ticker" aria-hidden="true"><div class="track"><span data-tick="stamp"></span><span data-tick="stamp"></span></div></div><div class="dname" data-name></div>';
+      }
+      if (id === 'driver') {
+        front += '<section class="driver-categories" aria-label="Категорії водія">'
+          + '<div class="driver-cat-title">Категорії</div>'
+          + '<div class="driver-cat-note">Демо-поля. Позначте лише категорії, зазначені у вашому документі; це не перевірка справжності посвідчення.</div>'
+          + '<div class="driver-cat-grid" data-driver-cats>'
+          + ['A1','A','B1','B','C1','C','D1','D','BE','C1E','CE','D1E','DE','T'].map(function(c) {
+              return '<button type="button" class="driver-cat" data-driver-cat="' + c + '" aria-pressed="false">' + c + '</button>';
+            }).join('')
+          + '</div></section>';
       }
       var qrId = 'qrcode-' + id;
       var html = '<div class="pg" data-doc="' + id + '"><div class="flip-card"><article class="dcard" style="position:relative">' + front + '</article>'
@@ -5001,6 +5047,49 @@
     window.addEventListener('unhandledrejection', function (e) { e.preventDefault(); });
     document.addEventListener('contextmenu', function (e) { if (!e.target.closest('input')) e.preventDefault(); });
     document.addEventListener('dragstart', function (e) { e.preventDefault(); });
+    /* Привітання показується при кожному новом завантаженні/відкритті PWA */
+    (function initWelcomeSplash() {
+      var splash = document.getElementById('welcomeSplash');
+      if (!splash) return;
+      var dismissed = false;
+      function dismiss() {
+        if (dismissed) return;
+        dismissed = true;
+        splash.classList.add('dismissed');
+        window.setTimeout(function () { if (splash.parentNode) splash.parentNode.removeChild(splash); }, 420);
+      }
+      splash.addEventListener('click', dismiss);
+      window.setTimeout(dismiss, 1900);
+      document.addEventListener('visibilitychange', function () { if (document.hidden) dismiss(); }, { once: true });
+    })();
+
+    /* Демонстрационные категории водителя сохраняются локально на устройстве */
+    (function initDriverCategories() {
+      var key = 'diia_demo_driver_categories';
+      var selected = [];
+      try { selected = JSON.parse(localStorage.getItem(key) || '[]'); } catch (e) { selected = []; }
+      function paint() {
+        document.querySelectorAll('[data-driver-cat]').forEach(function (b) {
+          var on = selected.indexOf(b.getAttribute('data-driver-cat')) !== -1;
+          b.classList.toggle('on', on);
+          b.setAttribute('aria-pressed', on ? 'true' : 'false');
+        });
+      }
+      document.addEventListener('click', function (e) {
+        var b = e.target.closest('[data-driver-cat]');
+        if (!b) return;
+        var cat = b.getAttribute('data-driver-cat');
+        var i = selected.indexOf(cat);
+        if (i === -1) selected.push(cat); else selected.splice(i, 1);
+        try { localStorage.setItem(key, JSON.stringify(selected)); } catch (err) {}
+        paint();
+        e.stopPropagation();
+      });
+      paint();
+      var observer = new MutationObserver(paint);
+      observer.observe(document.body, { childList: true, subtree: true });
+    })();
+
     /* Автоблокування при поверненні та розмиття в перемикачі застосунків */
     var privacyShield = document.getElementById('privacyShield');
     var appBackgroundAt = 0;
