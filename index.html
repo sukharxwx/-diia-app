@@ -891,7 +891,7 @@
   .mrow.has-badge .badge { display: flex; }
 
   /* Диалоги (BottomSheet) */
-  .dlg { position: fixed; inset: 0; z-index: 60; visibility: hidden; opacity: 0; transition: opacity .25s, visibility 0s linear .25s; display: flex; flex-direction: column; justify-content: flex-end; }
+  .dlg { position: fixed; inset: 0; z-index: 90; visibility: hidden; opacity: 0; transition: opacity .25s, visibility 0s linear .25s; display: flex; flex-direction: column; justify-content: flex-end; }
   .dlg.on { visibility: visible; opacity: 1; transition-delay: 0s; }
   .dlg-bd { position: absolute; inset: 0; background: rgba(10, 14, 20, .38); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
   
@@ -1892,7 +1892,31 @@
     });
 
     var hist = false;
+    var homeBusy = false;
+    var pinBusy = false;
+    function isLoggedIn() {
+      try { return localStorage.getItem('diia_logged') === '1'; } catch (e) { return false; }
+    }
+    function stayOnHome() {
+      if (typeof closeAllFs === 'function') closeAllFs();
+      if (typeof closeDlg === 'function') closeDlg();
+      body.classList.remove('v-pin', 'v-banks');
+      body.classList.add('v-home');
+      resetPin();
+      pinBusy = false;
+      homeBusy = false;
+      try { history.pushState({ screen: 'home' }, ''); hist = true; } catch (e) {}
+    }
+    function stayOnPin() {
+      body.classList.remove('v-home', 'v-banks');
+      body.classList.add('v-pin');
+      resetPin();
+      pinBusy = false;
+      homeBusy = false;
+      try { history.pushState({ screen: 'pin' }, ''); hist = true; } catch (e) {}
+    }
     function openView(name) {
+      /* На головному — не відкриваємо PIN/банки свайпом. На екрані коду — дозволяємо лише якщо ще не в системі повністю (cold start). */
       if (body.classList.contains('v-home')) return;
       if (body.classList.contains('v-' + name)) return;
       try { history.pushState({ screen: name }, ''); hist = true; } catch (e) { hist = false; }
@@ -1905,16 +1929,19 @@
       }
     }
     function closeView() {
-      /* На головному екрані свайп «назад» лише закриває оверлеї, не викидає на PIN */
+      /* Головний екран: свайп лише закриває оверлеї, ніколи не кидає на код */
       if (body.classList.contains('v-home')) {
-        if (typeof closeAllFs === 'function') closeAllFs();
-        if (typeof closeDlg === 'function') closeDlg();
-        try { history.pushState({ screen: 'home' }, ''); } catch (e) {}
+        stayOnHome();
         return;
       }
+      /* Екран коду (після запуску): залишаємось на коді, клавіатура знову працює */
       if (body.classList.contains('v-pin')) {
-        /* З екрана PIN не йдемо «назад» у порожнечу — залишаємось на PIN */
-        try { history.pushState({ screen: 'pin' }, ''); } catch (e) {}
+        stayOnPin();
+        return;
+      }
+      /* Залогінені, але класи збились — повертаємо на головну, не на код */
+      if (isLoggedIn()) {
+        stayOnHome();
         return;
       }
       body.classList.remove('v-banks', 'v-pin');
@@ -1927,8 +1954,11 @@
     function goBack() {
       haptic('light');
       if (body.classList.contains('v-home')) {
-        if (typeof closeAllFs === 'function') closeAllFs();
-        if (typeof closeDlg === 'function') closeDlg();
+        stayOnHome();
+        return;
+      }
+      if (body.classList.contains('v-pin')) {
+        stayOnPin();
         return;
       }
       if (hist && history.state && history.state.screen) history.back();
@@ -1942,6 +1972,9 @@
       try { localStorage.removeItem('diia_logged'); } catch (e) {}
       body.classList.remove('v-pin', 'v-home', 'v-banks');
       resetPin();
+      pinBusy = false;
+      homeBusy = false;
+      try { history.pushState({ screen: 'auth' }, ''); } catch (e) {}
     });
 
     function sync() { sheet.classList.toggle('locked', !agree.checked); }
@@ -1974,6 +2007,8 @@
     }
     function resetPin() { pin = ''; paint(); }
     function press(k) {
+      if (!body.classList.contains('v-pin')) return;
+      if (pinBusy) return;
       if (k === 'del') { haptic('light'); pin = pin.slice(0, -1); paint(); return; }
       if (pin.length >= 4) return;
       haptic('light');
@@ -3086,7 +3121,7 @@
       selectedProfileId = id;
       var wrap = document.getElementById('profPhotoWrap');
       if (p.photo) {
-        wrap.style.backgroundImage = 'url("' + p.photo + '")';
+        wrap.style.backgroundImage = 'url(' + JSON.stringify(p.photo) + ')';
         wrap.innerHTML = '';
       } else {
         wrap.style.backgroundImage = '';
@@ -3100,8 +3135,11 @@
         '<div class="vr-r"><span>РНОКПП</span><b>' + _esc(p.rnokpp || '—') + '</b></div>' +
         '<div class="vr-r"><span>Паспорт</span><b>' + _esc(p.passport || '—') + '</b></div>' +
         '<div class="vr-r"><span>ID</span><b style="font-size:11px">' + _esc(p.id) + '</b></div>';
-      document.getElementById('profDlg').classList.add('on');
-      document.getElementById('profDlg').setAttribute('aria-hidden', 'false');
+      var dlg = document.getElementById('profDlg');
+      dlg.classList.add('on');
+      dlg.setAttribute('aria-hidden', 'false');
+      /* гарантовано поверх .fs */
+      dlg.style.zIndex = '95';
     }
     function closeProfDlg() {
       document.getElementById('profDlg').classList.remove('on');
@@ -3466,16 +3504,19 @@
       }
     });
 
-    var homeBusy = false;
     function openHome() {
       if (body.classList.contains('v-home') || homeBusy) return;
       homeBusy = true;
-      try { history.pushState({ screen: 'home' }, ''); hist = true; } catch (e) {}
+      pinBusy = false;
       setTab('feed', true);
       body.classList.remove('v-pin', 'v-banks');
       body.classList.add('v-home');
       try { localStorage.setItem('diia_logged', '1'); } catch (e) {}
-      setTimeout(function () { resetPin(); homeBusy = false; }, 700);
+      /* replaceState — щоб свайп «назад» не повертав на екран коду */
+      try { history.replaceState({ screen: 'home' }, ''); hist = true; } catch (e) {
+        try { history.pushState({ screen: 'home' }, ''); hist = true; } catch (e2) {}
+      }
+      setTimeout(function () { resetPin(); homeBusy = false; }, 400);
     }
 
     /* ================= Налаштування: код, Face ID, сповіщення ================= */
@@ -3535,7 +3576,8 @@
     }
 
     /* --- Вход по коду: проверка сохранённого кода --- */
-    var pinBusy = false, pinTitleEl = document.querySelector('.pin-title'), pinTitleT = 0;
+    var pinTitleEl = document.querySelector('.pin-title'), pinTitleT = 0;
+    pinBusy = false;
     function flashPinTitle(t) {
       pinTitleEl.textContent = t;
       clearTimeout(pinTitleT);
@@ -3922,6 +3964,10 @@
     document.getElementById('logoutBtn').addEventListener('click', function () {
       haptic('medium');
       try { localStorage.removeItem('diia_logged'); } catch (e) {}
+      body.classList.remove('v-pin', 'v-home', 'v-banks');
+      resetPin();
+      pinBusy = false;
+      homeBusy = false;
       location.reload();
     });
 
@@ -4120,18 +4166,17 @@
       else if (e.key === 'Backspace') codeKey('del');
     });
 
-    /* "Не пам'ятаю код" — сбрасывает запомненный вход, снова будет экран авторизации */
-    document.getElementById('forgot').addEventListener('click', function () {
-      try { localStorage.removeItem('diia_logged'); } catch (e) {}
-    });
-
     /* Просим iOS не удалять сохранённые данные */
     try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch (e) {}
 
     /* После первого входа при каждом запуске сразу показываем ввод кода */
     try {
       if (localStorage.getItem('diia_logged') === '1') {
+        body.classList.remove('v-home', 'v-banks');
         body.classList.add('v-pin');
+        resetPin();
+        pinBusy = false;
+        try { history.replaceState({ screen: 'pin' }, ''); hist = true; } catch (e) {}
         refreshFaceBtn();
         tryFaceLogin();
       }
