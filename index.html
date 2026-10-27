@@ -20,6 +20,39 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jsqr/1.4.0/jsQR.min.js"></script>
 <style>
+  /* e-Ukraine — гарнітура Міністерства цифрової трансформації України (CC BY 4.0).
+     Джерело: https://github.com/bennetfabian/e-Ukraine */
+  @font-face {
+    font-family: "e-Ukraine";
+    src: url("https://cdn.jsdelivr.net/gh/bennetfabian/e-Ukraine@main/e-Ukraine-Regular.otf") format("opentype");
+    font-style: normal; font-weight: 400; font-display: swap;
+  }
+  @font-face {
+    font-family: "e-Ukraine";
+    src: url("https://cdn.jsdelivr.net/gh/bennetfabian/e-Ukraine@main/e-Ukraine-Medium.otf") format("opentype");
+    font-style: normal; font-weight: 500; font-display: swap;
+  }
+  @font-face {
+    font-family: "e-Ukraine";
+    src: url("https://cdn.jsdelivr.net/gh/bennetfabian/e-Ukraine@main/e-Ukraine-Bold.otf") format("opentype");
+    font-style: normal; font-weight: 700; font-display: swap;
+  }
+  @font-face {
+    font-family: "e-Ukraine Head";
+    src: url("https://cdn.jsdelivr.net/gh/bennetfabian/e-Ukraine@main/e-UkraineHead-Regular.otf") format("opentype");
+    font-style: normal; font-weight: 400; font-display: swap;
+  }
+  @font-face {
+    font-family: "e-Ukraine Head";
+    src: url("https://cdn.jsdelivr.net/gh/bennetfabian/e-Ukraine@main/e-UkraineHead-Medium.otf") format("opentype");
+    font-style: normal; font-weight: 500; font-display: swap;
+  }
+  @font-face {
+    font-family: "e-Ukraine Head";
+    src: url("https://cdn.jsdelivr.net/gh/bennetfabian/e-Ukraine@main/e-UkraineHead-Bold.otf") format("opentype");
+    font-style: normal; font-weight: 700; font-display: swap;
+  }
+
   :root {
     --sat: env(safe-area-inset-top, 0px);
     --sar: env(safe-area-inset-right, 0px);
@@ -50,7 +83,7 @@
   }
 
   body {
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Inter", sans-serif;
+    font-family: "e-Ukraine", -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
     color: #000;
     -webkit-font-smoothing: antialiased;
     background:
@@ -1037,6 +1070,32 @@
   .key-face { visibility: hidden; }
   .key-face.show { visibility: visible; }
   .key-face svg { width: 30px; height: 30px; }
+
+  /* Заголовки у стилі типографіки Дії */
+  h1, .pin-title, .greet, .ptitle, .sect, .ncard h2, .banner b, .dlg h3 {
+    font-family: "e-Ukraine Head", "e-Ukraine", sans-serif;
+  }
+
+  /* Автоблокування */
+  .set-row-select { cursor: default; }
+  .set-row-select:active { background: transparent; }
+  .set-row-select .set-pick { display: flex; align-items: center; gap: 4px; flex: none; }
+  .set-row-select select {
+    appearance: none; -webkit-appearance: none; border: 0; outline: 0;
+    background: transparent; color: #1b4b91; font: inherit; font-size: 13px;
+    text-align: right; text-align-last: right; padding: 8px 0; max-width: 92px; cursor: pointer;
+  }
+  .set-row-select select option { color: #000; background: #fff; }
+  .set-row-select .set-pick svg { color: #9aa6b0; }
+
+  /* Захист знімка екрана в перемикачі застосунків */
+  .privacy-shield {
+    position: fixed; inset: 0; z-index: 99999; display: none;
+    background: rgba(235, 242, 248, .86);
+    -webkit-backdrop-filter: blur(30px); backdrop-filter: blur(30px);
+    pointer-events: none;
+  }
+  body.privacy-shield-on .privacy-shield { display: block; }
 </style>
 </head>
 <body>
@@ -1481,6 +1540,19 @@
         <span class="set-txt"><span class="set-t">Змінити код для входу</span><span class="set-s" id="setCodeSub"></span></span>
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#9aa6b0" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3l5 5-5 5"/></svg>
       </button>
+      <div class="set-row set-row-select">
+        <span class="set-txt"><span class="set-t">Автоблокування</span><span class="set-s" id="setAutoLockSub">Блокування після 1 хвилини у фоні</span></span>
+        <span class="set-pick">
+          <select id="autoLockSelect" aria-label="Час автоблокування">
+            <option value="0">Одразу</option>
+            <option value="30">30 с</option>
+            <option value="60" selected>1 хв</option>
+            <option value="300">5 хв</option>
+            <option value="900">15 хв</option>
+          </select>
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 4.5 3 3 3-3"/></svg>
+        </span>
+      </div>
       <button class="set-row" type="button" id="setFace" role="switch" aria-checked="false">
         <span class="set-txt"><span class="set-t">Дозволити Face ID</span><span class="set-s" id="setFaceSub"></span></span>
         <span class="sw"><i></i></span>
@@ -1785,6 +1857,7 @@
   </div>
 </div>
 
+<div class="privacy-shield" id="privacyShield" aria-hidden="true"></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
@@ -3665,7 +3738,7 @@
       getJ: function (k) { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } },
       setJ: function (k, v) { return LS.set(k, JSON.stringify(v)); }
     };
-    var K_PIN = 'diia_pin', K_LOCK = 'diia_pin_lock', K_FACE = 'diia_face', K_NOTIF = 'diia_notif';
+    var K_PIN = 'diia_pin', K_LOCK = 'diia_pin_lock', K_FACE = 'diia_face', K_NOTIF = 'diia_notif', K_AUTO_LOCK = 'diia_auto_lock_seconds';
     var ICON_URL = 'https://i.postimg.cc/J0NbVkQK/IMG-0269.jpg';
     var enc = new TextEncoder();
     var canCrypto = !!(window.crypto && window.crypto.subtle && window.isSecureContext);
@@ -3679,6 +3752,20 @@
     /* --- Код для входу: PBKDF2 + соль, сам код нигде не хранится --- */
     function pinRec() { var r = LS.getJ(K_PIN); return r && r.s && r.h && r.i ? r : null; }
     var DEFAULT_PIN = '1234';
+    var DEFAULT_AUTO_LOCK_SECONDS = 60;
+    function autoLockSeconds() {
+      var raw = LS.get(K_AUTO_LOCK);
+      if (raw === null || raw === '') return DEFAULT_AUTO_LOCK_SECONDS;
+      var value = Number(raw);
+      return [0, 30, 60, 300, 900].indexOf(value) !== -1 ? value : DEFAULT_AUTO_LOCK_SECONDS;
+    }
+    function autoLockDescription(seconds) {
+      if (seconds === 0) return 'Блокування одразу після згортання';
+      if (seconds === 30) return 'Блокування після 30 секунд у фоні';
+      if (seconds === 60) return 'Блокування після 1 хвилини у фоні';
+      if (seconds === 300) return 'Блокування після 5 хвилин у фоні';
+      return 'Блокування після 15 хвилин у фоні';
+    }
     function hasPin() { return true; } /* свій код або код за замовчуванням */
     async function derive(code, salt, iter) {
       var key = await crypto.subtle.importKey('raw', enc.encode(code), 'PBKDF2', false, ['deriveBits']);
@@ -4131,6 +4218,8 @@
     var setCodeSub = document.getElementById('setCodeSub');
     var setFaceSub = document.getElementById('setFaceSub');
     var setNotifSub = document.getElementById('setNotifSub');
+    var autoLockSelect = document.getElementById('autoLockSelect');
+    var setAutoLockSub = document.getElementById('setAutoLockSub');
 
     function setSwitch(btn, on) { btn.setAttribute('aria-checked', on ? 'true' : 'false'); }
     function syncSettingsUI() {
@@ -4139,6 +4228,9 @@
       if (LS.get(K_NOTIF) === '1' && np !== 'granted') LS.set(K_NOTIF, '0');
 
       setCodeSub.textContent = hasPin() ? 'Змінити поточний код' : 'Встановити власний код';
+      var autoLock = autoLockSeconds();
+      autoLockSelect.value = String(autoLock);
+      setAutoLockSub.textContent = autoLockDescription(autoLock);
 
       var fOn = !!faceState();
       setSwitch(setFace, fOn);
@@ -4198,6 +4290,15 @@
       Promise.resolve(Notification.requestPermission())
         .then(function (r) { if (r === 'granted') enableNotif(); else syncSettingsUI(); })
         .catch(syncSettingsUI);
+    });
+    autoLockSelect.addEventListener('change', function () {
+      var value = Number(autoLockSelect.value);
+      if ([0, 30, 60, 300, 900].indexOf(value) === -1) value = DEFAULT_AUTO_LOCK_SECONDS;
+      if (!LS.set(K_AUTO_LOCK, String(value))) {
+        autoLockSelect.value = String(DEFAULT_AUTO_LOCK_SECONDS);
+      }
+      syncSettingsUI();
+      haptic('light');
     });
     window.addEventListener('focus', syncSettingsUI);
     document.addEventListener('visibilitychange', function () { if (!document.hidden) syncSettingsUI(); });
@@ -4900,7 +5001,66 @@
     window.addEventListener('unhandledrejection', function (e) { e.preventDefault(); });
     document.addEventListener('contextmenu', function (e) { if (!e.target.closest('input')) e.preventDefault(); });
     document.addEventListener('dragstart', function (e) { e.preventDefault(); });
-    document.addEventListener('visibilitychange', function () { if (document.hidden) resetPin(); });
+    /* Автоблокування при поверненні та розмиття в перемикачі застосунків */
+    var privacyShield = document.getElementById('privacyShield');
+    var appBackgroundAt = 0;
+    function setPrivacyShield(on) {
+      body.classList.toggle('privacy-shield-on', !!on);
+      privacyShield.setAttribute('aria-hidden', on ? 'false' : 'true');
+    }
+    function markAppBackgrounded() {
+      if (!appBackgroundAt) appBackgroundAt = Date.now();
+      setPrivacyShield(true);
+      resetPin();
+    }
+    function closeSensitiveLayers() {
+      document.querySelectorAll('.dlg.on').forEach(function (el) {
+        el.classList.remove('on');
+        el.setAttribute('aria-hidden', 'true');
+      });
+      if (typeof closeAllFs === 'function') closeAllFs();
+      document.querySelectorAll('.fs.on').forEach(function (el) {
+        el.classList.remove('on');
+        el.setAttribute('aria-hidden', 'true');
+      });
+    }
+    function forceAutoLock() {
+      if (!isLoggedIn()) return false;
+      closeSensitiveLayers();
+      body.classList.remove('v-home', 'v-banks');
+      body.classList.add('v-pin');
+      resetPin();
+      pinBusy = false;
+      homeBusy = false;
+      try { history.replaceState({ screen: 'pin' }, ''); hist = true; } catch (e) {}
+      refreshFaceBtn();
+      return true;
+    }
+    function handleAppForegrounded() {
+      if (document.hidden) return;
+      if (!appBackgroundAt) { setPrivacyShield(false); return; }
+      var awayMs = Math.max(0, Date.now() - appBackgroundAt);
+      appBackgroundAt = 0;
+      var seconds = autoLockSeconds();
+      var shouldLock = isLoggedIn() && (seconds === 0 || awayMs >= seconds * 1000);
+      if (shouldLock) forceAutoLock();
+      /* Клас екрана PIN змінено перед зняттям маски, тож вміст не спалахує відкритим. */
+      setPrivacyShield(false);
+      if (shouldLock && faceState()) {
+        window.setTimeout(function () {
+          if (!document.hidden && body.classList.contains('v-pin')) tryFaceLogin();
+        }, 160);
+      }
+    }
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) markAppBackgrounded();
+      else handleAppForegrounded();
+    });
+    window.addEventListener('pagehide', markAppBackgrounded);
+    window.addEventListener('pageshow', function () {
+      if (document.hidden) markAppBackgrounded();
+      else handleAppForegrounded();
+    });
 
     document.getElementById('keypad').addEventListener('click', function (e) {
       var b = e.target.closest('.key');

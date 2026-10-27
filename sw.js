@@ -2,13 +2,22 @@
    Єдине джерело версії — файл version.json (поле build). Змінили build у репозиторії —
    застосунок побачить нову версію, повідомить користувача і за кнопкою «Оновити»
    очистить старий кеш та завантажить свіжі HTML/CSS/JS. */
+/* App shell protocol revision: 1.3.5 (build 18) */
 'use strict';
 
 var SHELL_PREFIX = 'diia-shell-';
 var META = 'diia-meta';
 var ICON = 'https://i.postimg.cc/J0NbVkQK/IMG-0269.jpg';
 var ASSETS = ['./', './index.html'];
-var EXTERNAL = ['https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js'];
+var FONT_ASSETS = [
+  'https://cdn.jsdelivr.net/gh/bennetfabian/e-Ukraine@main/e-Ukraine-Regular.otf',
+  'https://cdn.jsdelivr.net/gh/bennetfabian/e-Ukraine@main/e-Ukraine-Medium.otf',
+  'https://cdn.jsdelivr.net/gh/bennetfabian/e-Ukraine@main/e-Ukraine-Bold.otf',
+  'https://cdn.jsdelivr.net/gh/bennetfabian/e-Ukraine@main/e-UkraineHead-Regular.otf',
+  'https://cdn.jsdelivr.net/gh/bennetfabian/e-Ukraine@main/e-UkraineHead-Medium.otf',
+  'https://cdn.jsdelivr.net/gh/bennetfabian/e-Ukraine@main/e-UkraineHead-Bold.otf'
+];
+var EXTERNAL = ['https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js'].concat(FONT_ASSETS);
 var SYNC_TAG = 'diia-update-check';
 
 function loadVersion() {
@@ -42,7 +51,12 @@ function precache() {
       return Promise.all(jobs).then(function () {
         /* зовнішні ресурси — за можливості, без збою всього оновлення */
         return Promise.all(EXTERNAL.map(function (u) {
-          return fetch(new Request(u, { mode: 'no-cors' })).then(function (r) { return c.put(u, r); }).catch(function () {});
+          /* Шрифти запитуються в CORS-режимі, щоб кешовані відповіді працювали офлайн. */
+          var mode = FONT_ASSETS.indexOf(u) !== -1 ? 'cors' : 'no-cors';
+          return fetch(new Request(u, { mode: mode, cache: 'reload' })).then(function (r) {
+            if (mode === 'cors' && !r.ok) throw new Error('external asset ' + u);
+            return c.put(u, r);
+          }).catch(function () {});
         }));
       }).then(function () {
         return c.put('./version.json', new Response(JSON.stringify(v), { headers: { 'Content-Type': 'application/json' } }));
