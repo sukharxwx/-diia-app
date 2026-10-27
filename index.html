@@ -408,23 +408,20 @@
   .ai-load {
     position: absolute; inset: 0; z-index: 5;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
-    background: linear-gradient(180deg, #c8dff0 0%, #d4e6f2 40%, #e8e4f2 100%);
-    transition: opacity .45s ease, visibility .45s;
+    background: #000;
+    transition: opacity .5s ease, visibility .5s;
   }
   .ai-load.hide { opacity: 0; visibility: hidden; pointer-events: none; }
   .ai-tryzub {
-    width: 72px; height: 86px;
-    animation: tryzubPulse 1.4s ease-in-out infinite;
+    width: 88px; height: 110px;
+    animation: tryzubPulse 1.5s ease-in-out infinite;
   }
-  .ai-tryzub svg { width: 100%; height: 100%; display: block; filter: drop-shadow(0 4px 16px rgba(0,87,183,.25)); }
+  .ai-tryzub svg { width: 100%; height: 100%; display: block; }
   @keyframes tryzubPulse {
     0%, 100% { transform: scale(1); opacity: 1; }
-    50% { transform: scale(1.08); opacity: .85; }
+    50% { transform: scale(1.06); opacity: .72; }
   }
-  .ai-load-txt {
-    margin-top: 18px; font-size: 17px; font-weight: 600; letter-spacing: .02em; color: #1a2a3a;
-    animation: tryzubPulse 1.4s ease-in-out infinite;
-  }
+  .ai-load-txt { display: none; }
   .ai-shell {
     flex: 1; min-height: 0; display: flex; flex-direction: column;
     opacity: 0; transform: translateY(12px);
@@ -443,18 +440,21 @@
   .ai-icon-btn:active { opacity: .55; }
   .ai-icon-btn svg { width: 22px; height: 22px; display: block; }
   .ai-ticker {
-    flex: none; height: 28px; overflow: hidden;
-    background: rgba(180, 210, 230, .45);
-    mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
-    -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+    flex: none; height: 30px; overflow: hidden;
+    background: rgba(255,255,255,.28);
+    border-top: 1px solid rgba(255,255,255,.2);
+    border-bottom: 1px solid rgba(255,255,255,.15);
+    mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
   }
   .ai-ticker-track {
-    display: flex; gap: 12px; width: max-content;
-    animation: aiTick 18s linear infinite;
-    padding: 0 20px;
+    display: flex; gap: 14px; width: max-content;
+    animation: aiTick 22s linear infinite;
+    padding: 0 24px;
   }
   .ai-ticker-track span {
-    font-size: 13px; line-height: 28px; white-space: nowrap; color: #1a2a3a; font-weight: 500;
+    font-size: 13px; line-height: 30px; white-space: nowrap; color: #1a2a3a; font-weight: 500;
+    letter-spacing: .01em;
   }
   @keyframes aiTick { to { transform: translateX(-50%); } }
   .ai-chat {
@@ -468,41 +468,54 @@
     font-size: 13px; font-weight: 500; padding: 5px 14px; border-radius: 14px;
   }
   .ai-msg {
-    max-width: 92%; margin-bottom: 12px;
+    margin-bottom: 14px;
     opacity: 0; transform: translateY(10px);
     transition: opacity .4s ease, transform .4s ease;
   }
   .ai-msg.show, .ai-chips.show { opacity: 1; transform: none; }
   .ai-msg-bot {
+    max-width: 94%;
     background: transparent; color: #111; font-size: 16px; line-height: 1.45;
   }
   .ai-msg-bot p { margin: 0 0 10px; }
   .ai-msg-bot p:last-of-type { margin-bottom: 0; }
   .ai-msg-q { margin-top: 12px !important; font-weight: 500; }
-  .ai-react { display: flex; gap: 14px; margin-top: 12px; }
+  .ai-react { display: flex; gap: 6px; margin-top: 10px; }
   .ai-react-btn {
-    width: 32px; height: 32px; border: 0; background: none; color: #4a5a6a;
-    display: grid; place-items: center; cursor: pointer; border-radius: 8px;
+    width: 36px; height: 36px; border: 0; background: none; color: #3d4d5c;
+    display: grid; place-items: center; cursor: pointer; border-radius: 10px;
+    transition: background .15s, color .15s;
   }
-  .ai-react-btn:active { opacity: .5; }
-  .ai-react-btn svg { width: 20px; height: 20px; }
+  .ai-react-btn:active { background: rgba(0,0,0,.06); }
+  .ai-react-btn.on { color: #0057B7; }
+  .ai-react-btn svg { width: 20px; height: 20px; display: block; }
   .ai-chips {
     display: flex; flex-direction: column; align-items: flex-end; gap: 8px;
-    margin: 8px 0 16px;
+    margin: 4px 0 16px;
     opacity: 0; transform: translateY(10px);
     transition: opacity .4s ease .15s, transform .4s ease .15s;
   }
   .ai-chip {
-    border: 1.5px solid rgba(255,255,255,.85); background: rgba(255,255,255,.35);
+    border: 1.5px solid rgba(255,255,255,.9); background: rgba(255,255,255,.4);
     color: #111; font: inherit; font-size: 15px; font-weight: 500;
     padding: 10px 16px; border-radius: 20px; cursor: pointer;
     transition: background .15s, transform .12s;
+    max-width: 90%; text-align: right;
   }
-  .ai-chip:active { background: rgba(255,255,255,.6); transform: scale(.97); }
+  .ai-chip:active { background: rgba(255,255,255,.65); transform: scale(.97); }
   .ai-msg-user {
-    margin-left: auto; background: rgba(255,255,255,.7);
-    padding: 12px 16px; border-radius: 20px 20px 6px 20px;
-    font-size: 15.5px; line-height: 1.4; max-width: 85%;
+    display: flex; justify-content: flex-end;
+    width: 100%; max-width: 100%;
+  }
+  .ai-msg-user span {
+    display: inline-block;
+    background: rgba(255,255,255,.78);
+    padding: 11px 16px;
+    border-radius: 20px 20px 6px 20px;
+    font-size: 15.5px; line-height: 1.4; color: #111;
+    max-width: 78%;
+    word-break: break-word;
+    box-shadow: 0 1px 4px rgba(30,50,80,.06);
   }
   .ai-composer {
     flex: none;
@@ -1195,13 +1208,12 @@
     <section class="tab ai-tab" id="tab-ai" data-tab="ai" aria-hidden="true">
       <div class="ai-load" id="aiLoad" aria-hidden="true">
         <div class="ai-tryzub" id="aiTryzub">
-          <svg viewBox="0 0 100 120" fill="none" aria-hidden="true">
-            <path fill="#0057B7" d="M50 8c-2.2 0-4 1.2-5.2 3.2L18 78c-1.4 2.4-.4 5.4 2.2 6.4l8.4 3.2c1.4.5 3-.2 3.8-1.5L50 48.5l17.6 37.6c.8 1.3 2.4 2 3.8 1.5l8.4-3.2c2.6-1 3.6-4 2.2-6.4L55.2 11.2C54 9.2 52.2 8 50 8z"/>
-            <path fill="#FFD700" d="M50 22l-14 38h8l6-16 6 16h8L50 22z"/>
-            <path fill="#0057B7" d="M42 68h16v8H42zm-4 12h24v6H38z"/>
+          <svg viewBox="-70 10 140 210" fill="#fff" aria-hidden="true">
+            <path d="M5.99 78.82a104.08 104.08 0 0 0 14.05 56.02 55 55 0 0 1-13.22 70.64A20 20 0 0 0 0 212.5a20 20 0 0 0-6.82-7.02 55 55 0 0 1-13.22-70.64A104.08 104.08 0 0 0-5.99 78.82l-1.6-45.26A30.1 30.1 0 0 1 0 12.5a30.1 30.1 0 0 1 7.59 21.06zM5 193.62a45 45 0 0 0 6.4-53.75A114.08 114.08 0 0 1 0 112.73a114.08 114.08 0 0 1-11.4 27.14A45 45 0 0 0-5 193.62V162.5H5z"/>
+            <path d="M27.78 75.18A62.65 62.65 0 0 1 60 27.5v145H0l-5-10a22.5 22.5 0 0 1 17.56-21.95l14.63-3.29a10 10 0 1 0-4.43-19.5zm6 34.35a20 20 0 0 1-4.39 37.48l-14.63 3.29A12.5 12.5 0 0 0 5 162.5h45V48.27a52.65 52.65 0 0 0-12.28 28.04zM42 122.5h10v10H42z"/>
+            <path d="M-27.78 75.18A62.65 62.65 0 0 0-60 27.5v145H0l5-10a22.5 22.5 0 0 0-17.56-21.95l-14.63-3.29a10 10 0 1 1 4.43-19.5zm-6 34.35a20 20 0 0 0 4.39 37.48l14.63 3.29A12.5 12.5 0 0 1-5 162.5h-45V48.27a52.65 52.65 0 0 1 12.28 28.04zM-42 122.5h-10v10h10z"/>
           </svg>
         </div>
-        <p class="ai-load-txt">Дія.AI</p>
       </div>
       <div class="ai-shell" id="aiShell">
         <header class="ai-top">
@@ -1214,8 +1226,12 @@
         </header>
         <div class="ai-ticker" aria-hidden="true">
           <div class="ai-ticker-track">
-            <span>Працюю для вас</span><span>•</span><span>Працюю для вас</span><span>•</span>
-            <span>Працюю для вас</span><span>•</span><span>Працюю для вас</span><span>•</span>
+            <span>Державні послуги онлайн</span><span>•</span>
+            <span>Цифрові документи завжди з собою</span><span>•</span>
+            <span>Швидко · Зручно · Безпечно</span><span>•</span>
+            <span>Державні послуги онлайн</span><span>•</span>
+            <span>Цифрові документи завжди з собою</span><span>•</span>
+            <span>Швидко · Зручно · Безпечно</span><span>•</span>
           </div>
         </div>
         <div class="ai-chat" id="aiChat">
@@ -1225,9 +1241,9 @@
             <p>Це не лише підтримка армії та економіки, а й можливість отримати прибуток до 17% річних.</p>
             <p class="ai-msg-q">Розповісти детальніше?</p>
             <div class="ai-react">
-              <button type="button" class="ai-react-btn" aria-label="Подобається"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 10v10M17 10v10M3 12h2a2 2 0 002-2V6a2 2 0 012-2h2l1 4h6a2 2 0 012 2v2H7z"/></svg></button>
-              <button type="button" class="ai-react-btn" aria-label="Не подобається"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 14V4M7 14V4M21 12h-2a2 2 0 00-2 2v4a2 2 0 01-2 2h-2l-1-4H6a2 2 0 01-2-2v-2h14z"/></svg></button>
-              <button type="button" class="ai-react-btn" aria-label="Копіювати"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M4 16V6a2 2 0 012-2h10"/></svg></button>
+              <button type="button" class="ai-react-btn" data-r="up" aria-label="Подобається"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 11v9a1 1 0 01-1 1H5a2 2 0 01-2-2v-6a2 2 0 012-2h1m0 0l5.2-7.1A2 2 0 0112.8 3h.4a2 2 0 011.9 2.5L14 9h4.5a2.5 2.5 0 012.4 3.2l-1.6 6A2.5 2.5 0 0117 20h-5a2 2 0 01-2-2v-7z"/></svg></button>
+              <button type="button" class="ai-react-btn" data-r="down" aria-label="Не подобається"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M17 13V4a1 1 0 011-1h1a2 2 0 012 2v6a2 2 0 01-2 2h-1m0 0l-5.2 7.1A2 2 0 0111.2 21h-.4a2 2 0 01-1.9-2.5L10 15H5.5a2.5 2.5 0 01-2.4-3.2l1.6-6A2.5 2.5 0 017 4h5a2 2 0 012 2v7z"/></svg></button>
+              <button type="button" class="ai-react-btn" data-r="copy" aria-label="Копіювати"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 012-2h10"/></svg></button>
             </div>
           </div>
           <div class="ai-chips" data-anim>
@@ -3138,10 +3154,19 @@
         }, 1600);
       };
 
+      var REACT_HTML = ''
+        + '<div class="ai-react">'
+        + '<button type="button" class="ai-react-btn" data-r="up" aria-label="Подобається"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 11v9a1 1 0 01-1 1H5a2 2 0 01-2-2v-6a2 2 0 012-2h1m0 0l5.2-7.1A2 2 0 0112.8 3h.4a2 2 0 011.9 2.5L14 9h4.5a2.5 2.5 0 012.4 3.2l-1.6 6A2.5 2.5 0 0117 20h-5a2 2 0 01-2-2v-7z"/></svg></button>'
+        + '<button type="button" class="ai-react-btn" data-r="down" aria-label="Не подобається"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M17 13V4a1 1 0 011-1h1a2 2 0 012 2v6a2 2 0 01-2 2h-1m0 0l-5.2 7.1A2 2 0 0111.2 21h-.4a2 2 0 01-1.9-2.5L10 15H5.5a2.5 2.5 0 01-2.4-3.2l1.6-6A2.5 2.5 0 017 4h5a2 2 0 012 2v7z"/></svg></button>'
+        + '<button type="button" class="ai-react-btn" data-r="copy" aria-label="Копіювати"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 012-2h10"/></svg></button>'
+        + '</div>';
+
       function appendUser(text) {
         var d = document.createElement('div');
         d.className = 'ai-msg ai-msg-user show';
-        d.textContent = text;
+        var s = document.createElement('span');
+        s.textContent = text;
+        d.appendChild(s);
         aiChat.appendChild(d);
         aiChat.scrollTop = aiChat.scrollHeight;
       }
@@ -3149,7 +3174,7 @@
       function appendBot(text) {
         var d = document.createElement('div');
         d.className = 'ai-msg ai-msg-bot';
-        d.innerHTML = '<p>' + String(text).replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</p>';
+        d.innerHTML = '<p>' + String(text).replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</p>' + REACT_HTML;
         aiChat.appendChild(d);
         requestAnimationFrame(function () {
           d.classList.add('show');
@@ -3177,6 +3202,22 @@
           if (chip) {
             haptic('light');
             handleUser(chip.textContent);
+            return;
+          }
+          var btn = e.target.closest('.ai-react-btn');
+          if (!btn) return;
+          haptic('light');
+          var r = btn.getAttribute('data-r');
+          var msg = btn.closest('.ai-msg-bot');
+          if (r === 'copy' && msg) {
+            var t = Array.prototype.map.call(msg.querySelectorAll('p'), function (p) { return p.textContent; }).join('\n');
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+              navigator.clipboard.writeText(t).then(function () { showToast('Скопійовано'); }).catch(function () { showToast('Скопійовано'); });
+            } else showToast('Скопійовано');
+          } else if (r === 'up' || r === 'down') {
+            var row = btn.parentNode;
+            row.querySelectorAll('.ai-react-btn').forEach(function (b) { b.classList.remove('on'); });
+            btn.classList.add('on');
           }
         });
       }
