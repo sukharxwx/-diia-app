@@ -602,6 +602,17 @@
     padding-bottom: 8px; border-bottom: 2px solid rgba(0,0,0,.08);
   }
   .sign-step.on { color: #000; border-bottom-color: #000; }
+  .sign-me {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%;
+    padding: 12px 16px; margin-bottom: 14px; border: 0; border-radius: 16px; background: rgba(255,255,255,.55);
+    font: inherit; text-align: left; cursor: pointer;
+  }
+  .sign-me:active { background: rgba(255,255,255,.75); }
+  .sign-me-t { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .sign-me-l { font-size: 12px; color: #5b6773; }
+  .sign-me-n { font-size: 15px; font-weight: 600; color: #000; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .sign-me-a { flex: none; display: inline-flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 600; color: #1f4aa3; }
+  .sign-me-a svg { width: 14px; height: 14px; display: block; }
   .sign-doc-row {
     display: flex; align-items: center; gap: 12px; width: 100%;
     padding: 14px 16px; border: 0; border-radius: 16px; background: rgba(255,255,255,.55);
@@ -1711,7 +1722,6 @@
   <div class="fs-body">
     <button type="button" class="lab-row" id="labRegistry">Реєстр профілів</button>
     <button type="button" class="lab-row" id="labGh">GitHub сховище</button>
-    <button type="button" class="lab-row" id="labEditData">Оновити поточний профіль</button>
     <button type="button" class="lab-row" id="labVerify">Перевірка РНОКПП</button>
     <button type="button" class="lab-row" id="labClearSigns">Очистити історію підписань</button>
     <button type="button" class="lab-row" id="labClearNotif">Очистити повідомлення</button>
@@ -2749,6 +2759,7 @@
 
     /* --- Дія.Підпис (як підпис документа) --- */
     var signState = { step: 1, doc: null };
+    var signEditFromSign = false; /* редактор відкрито з Дія.Підпис — після закриття повертаємось туди */
     function openDiiaSign() {
       haptic('medium');
       signState = { step: 1, doc: null };
@@ -2761,7 +2772,12 @@
       var steps = '<div class="sign-steps"><div class="sign-step' + (signState.step === 1 ? ' on' : '') + '">Документ</div><div class="sign-step' + (signState.step === 2 ? ' on' : '') + '">Підпис</div><div class="sign-step' + (signState.step === 3 ? ' on' : '') + '">Готово</div></div>';
       if (signState.step === 1) {
         var active = getActiveDocs();
-        var html = steps + '<p style="font-size:14px;color:#333;margin-bottom:12px">Оберіть документ для підписання</p>';
+        var fullName = [DOC_DATA.lastName, DOC_DATA.firstName, DOC_DATA.middleName].filter(Boolean).join(' ');
+        var html = steps
+          + '<button type="button" class="sign-me" id="signEditMe">'
+          + '<span class="sign-me-t"><span class="sign-me-l">Підписант</span><span class="sign-me-n">' + _esc(fullName || 'Дані не заповнено') + '</span></span>'
+          + '<span class="sign-me-a">Оновити дані<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3.5L10.5 8 6 12.5"/></svg></span></button>'
+          + '<p style="font-size:14px;color:#333;margin-bottom:12px">Оберіть документ для підписання</p>';
         active.forEach(function (id) {
           var cat = catalogById(id);
           if (!cat) return;
@@ -2769,6 +2785,11 @@
         });
         html += '<button type="button" class="sign-doc-row" data-sid="custom">Інший документ (заява / договір)</button>';
         bodyEl.innerHTML = html;
+        document.getElementById('signEditMe').addEventListener('click', function () {
+          signEditFromSign = true;
+          closeAllFs();
+          openSignEditor();
+        });
         bodyEl.querySelectorAll('[data-sid]').forEach(function (btn) {
           btn.addEventListener('click', function () {
             var id = btn.getAttribute('data-sid');
@@ -3296,10 +3317,6 @@
 
     loadProfilesCache();
 
-    document.getElementById('labEditData').addEventListener('click', function () {
-      closeAllFs();
-      openSignEditor();
-    });
     document.getElementById('labVerify').addEventListener('click', function () {
       closeAllFs();
       openVerify();
@@ -3456,6 +3473,13 @@
         if (d) { d.classList.remove('on'); d.setAttribute('aria-hidden', 'true'); }
       });
       closeAllFs();
+      if (signEditFromSign) {
+        signEditFromSign = false;
+        signState = { step: 1, doc: null };
+        renderSignStep();
+        document.getElementById('fsSign').classList.add('on');
+        document.getElementById('fsSign').setAttribute('aria-hidden', 'false');
+      }
       if (document.activeElement) document.activeElement.blur();
     }
     function closeAllFs() {
