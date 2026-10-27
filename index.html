@@ -619,6 +619,31 @@
   }
   .lab-row:active { background: rgba(255,255,255,.75); }
 
+  /* Перевірка шерингу (як у Дії) */
+  .vr-card {
+    margin-top: 14px; border-radius: 20px; padding: 18px 16px;
+    background: rgba(255,255,255,.72); text-align: center;
+  }
+  .vr-card.ok { box-shadow: inset 0 0 0 2px #1f9d55; }
+  .vr-card.bad { box-shadow: inset 0 0 0 2px #e5484d; }
+  .vr-badge {
+    display: inline-block; padding: 6px 14px; border-radius: 20px;
+    font-size: 13px; font-weight: 600; margin-bottom: 12px;
+  }
+  .vr-card.ok .vr-badge { background: #d4edda; color: #1e7e34; }
+  .vr-card.bad .vr-badge { background: #f8d7da; color: #721c24; }
+  .vr-card h3 { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
+  .vr-card .vr-sub { font-size: 13.5px; color: #5b6773; margin-bottom: 14px; }
+  .vr-rows { text-align: left; background: #fff; border-radius: 14px; padding: 4px 14px; }
+  .vr-rows .vr-r {
+    display: flex; justify-content: space-between; gap: 10px;
+    padding: 10px 0; border-bottom: 1px solid #eef1f4; font-size: 14px;
+  }
+  .vr-rows .vr-r:last-child { border-bottom: 0; }
+  .vr-rows .vr-r span { color: #5b6773; }
+  .vr-rows .vr-r b { font-weight: 600; text-align: right; }
+  .share-hint { font-size: 12.5px; color: #5b6773; text-align: center; margin-top: 8px; line-height: 1.35; }
+
   /* Документы и увеличенные карточки */
   .docs-tab { position: absolute; inset: 0; overflow: hidden; }
   .pager {
@@ -1569,7 +1594,7 @@
   <div class="dlg-card" role="dialog" aria-modal="true">
     <i class="grab"></i>
     <h3 id="shareTitle">Поділитися</h3>
-    <p style="text-align:center;font-size:13.5px;color:#5b6773;margin-bottom:4px">Посилання та QR дійсні обмежений час</p>
+    <p style="text-align:center;font-size:13.5px;color:#5b6773;margin-bottom:4px">QR або посилання можна перевірити на іншому пристрої через «Сканувати QR-код». Дійсні обмежений час.</p>
     <div class="share-ttl" id="shareTtl">
       <button type="button" data-min="3">3 хв</button>
       <button type="button" data-min="5" class="on">5 хв</button>
@@ -1621,7 +1646,7 @@
       </label>
     </div>
     <div class="scan-result" id="scanResult"></div>
-    <p class="sup-note" style="margin-top:12px">Наведіть камеру на QR-код документа або шерингу Дії. Можна також завантажити фото з галереї.</p>
+    <p class="sup-note" style="margin-top:12px">Наведіть камеру на QR з екрана «Поділитися» на іншому телефоні. Якщо код дійсний — з’являться ПІБ, дата народження та статус. Можна завантажити фото з галереї.</p>
   </div>
 </div>
 
@@ -2256,16 +2281,43 @@
       shareDlg.classList.remove('on');
       shareDlg.setAttribute('aria-hidden', 'true');
     }
-    function buildShareUrl(docId, min) {
+    function toB64url(obj) {
+      var s = btoa(unescape(encodeURIComponent(JSON.stringify(obj))));
+      return s.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    }
+    function fromB64url(s) {
+      try {
+        s = String(s || '').replace(/-/g, '+').replace(/_/g, '/');
+        while (s.length % 4) s += '=';
+        return JSON.parse(decodeURIComponent(escape(atob(s))));
+      } catch (e) { return null; }
+    }
+    function buildSharePayload(docId, min) {
+      var cat = catalogById(docId);
       var exp = Date.now() + min * 60 * 1000;
-      var token = btoa(JSON.stringify({
-        d: docId,
-        r: DOC_DATA.rnokpp || '',
-        n: [DOC_DATA.lastName, DOC_DATA.firstName].filter(Boolean).join(' '),
-        e: exp
-      })).replace(/=+$/, '');
-      shareState.exp = exp;
-      shareState.url = location.origin + location.pathname.replace(/\/[^/]*$/, '/') + '#share/' + token;
+      return {
+        v: 1,
+        type: 'diia-share',
+        doc: docId,
+        title: cat ? cat.title : docId,
+        lastName: DOC_DATA.lastName || '',
+        firstName: DOC_DATA.firstName || '',
+        middleName: DOC_DATA.middleName || '',
+        birth: DOC_DATA.birth || '',
+        rnokpp: DOC_DATA.rnokpp || '',
+        iat: Date.now(),
+        exp: exp,
+        sid: (Math.random().toString(36).slice(2) + Date.now().toString(36)).slice(0, 16)
+      };
+    }
+    function buildShareUrl(docId, min) {
+      var payload = buildSharePayload(docId, min);
+      var token = toB64url(payload);
+      shareState.exp = payload.exp;
+      shareState.payload = payload;
+      /* У QR — компактний токен; у посиланні — той самий для відкриття на іншому пристрої */
+      shareState.qrText = 'DIIA1.' + token;
+      shareState.url = location.origin + location.pathname.replace(/index\.html$/i, '').replace(/\/?$/, '/') + '#share/' + token;
       return shareState.url;
     }
     function tickShare() {
@@ -2297,7 +2349,7 @@
       var qrBox = document.getElementById('shareQr');
       qrBox.innerHTML = '';
       try {
-        new QRCode(qrBox, { text: url, width: 180, height: 180, colorDark: '#000', colorLight: '#fff', correctLevel: QRCode.CorrectLevel.M });
+        new QRCode(qrBox, { text: shareState.qrText || url, width: 180, height: 180, colorDark: '#000', colorLight: '#fff', correctLevel: QRCode.CorrectLevel.M });
       } catch (e) {}
       if (shareState.timer) clearInterval(shareState.timer);
       tickShare();
@@ -2316,7 +2368,7 @@
       var qrBox = document.getElementById('shareQr');
       qrBox.innerHTML = '';
       try {
-        new QRCode(qrBox, { text: url, width: 180, height: 180, colorDark: '#000', colorLight: '#fff', correctLevel: QRCode.CorrectLevel.M });
+        new QRCode(qrBox, { text: shareState.qrText || url, width: 180, height: 180, colorDark: '#000', colorLight: '#fff', correctLevel: QRCode.CorrectLevel.M });
       } catch (e) {}
       if (shareState.timer) clearInterval(shareState.timer);
       tickShare();
@@ -2361,14 +2413,77 @@
       var v = document.getElementById('scanVideo');
       if (v) v.srcObject = null;
     }
+    function parseSharePayload(text) {
+      if (!text) return null;
+      text = String(text).trim();
+      var token = null;
+      if (text.indexOf('DIIA1.') === 0) token = text.slice(6);
+      else if (text.indexOf('#share/') >= 0) token = text.split('#share/')[1].split(/[&#?\s]/)[0];
+      else if (/^eyJ|^[A-Za-z0-9\-_]+$/.test(text) && text.length > 20) token = text;
+      if (!token) return null;
+      var data = fromB64url(token);
+      if (!data || data.type !== 'diia-share') return null;
+      return data;
+    }
+    function maskRnokpp(r) {
+      r = String(r || '');
+      if (r.length < 6) return r || '—';
+      return r.slice(0, 3) + '****' + r.slice(-3);
+    }
+    function renderShareVerify(data) {
+      var valid = data.exp && Date.now() < data.exp;
+      var name = [data.lastName, data.firstName, data.middleName].filter(Boolean).join(' ') || '—';
+      var left = valid ? Math.max(0, data.exp - Date.now()) : 0;
+      var leftStr = '';
+      if (valid) {
+        var s = Math.ceil(left / 1000);
+        leftStr = Math.floor(s / 60) + ':' + (s % 60 < 10 ? '0' : '') + (s % 60);
+      }
+      var html = '<div class="vr-card ' + (valid ? 'ok' : 'bad') + '">';
+      html += '<div class="vr-badge">' + (valid ? 'Документ дійсний' : 'Термін дії вичерпано') + '</div>';
+      html += '<h3>' + _esc(data.title || 'Документ') + '</h3>';
+      html += '<p class="vr-sub">' + (valid ? 'Перевірено · код активний ще ' + leftStr : 'Цей код більше не приймається') + '</p>';
+      html += '<div class="vr-rows">';
+      html += '<div class="vr-r"><span>ПІБ</span><b>' + _esc(name) + '</b></div>';
+      html += '<div class="vr-r"><span>Дата народження</span><b>' + _esc(data.birth || '—') + '</b></div>';
+      html += '<div class="vr-r"><span>РНОКПП</span><b>' + _esc(maskRnokpp(data.rnokpp)) + '</b></div>';
+      html += '<div class="vr-r"><span>Код шерингу</span><b>' + _esc(data.sid || '—') + '</b></div>';
+      html += '</div></div>';
+      return html;
+    }
     function showScanResult(text) {
       var box = document.getElementById('scanResult');
       box.classList.add('on');
-      box.innerHTML = '<b>Знайдено</b><br>' + _esc(text);
       stopScan();
+      var data = parseSharePayload(text);
+      if (data) {
+        box.innerHTML = renderShareVerify(data);
+        haptic(data.exp && Date.now() < data.exp ? 'success' : 'error');
+        if (typeof addNotif === 'function') {
+          addNotif('Перевірка документа', (data.title || 'Документ') + (Date.now() < data.exp ? ' — дійсний' : ' — прострочений'), 'scan');
+        }
+        return;
+      }
+      box.innerHTML = '<b>QR-код розпізнано</b><br><span style="word-break:break-all">' + _esc(text) + '</span><p class="share-hint">Це не код шерингу Дії. Покажіть QR з розділу «Поділитися» на документі.</p>';
       haptic('success');
-      if (typeof addNotif === 'function') addNotif('Сканування QR', 'Код успішно розпізнано', 'scan');
     }
+    function openShareFromHash() {
+      try {
+        var h = location.hash || '';
+        if (h.indexOf('#share/') !== 0) return;
+        var token = h.slice(7);
+        var data = fromB64url(token);
+        if (!data || data.type !== 'diia-share') return;
+        /* відкриваємо сканер з готовим результатом перевірки */
+        document.getElementById('fsScan').classList.add('on');
+        document.getElementById('fsScan').setAttribute('aria-hidden', 'false');
+        var box = document.getElementById('scanResult');
+        box.classList.add('on');
+        box.innerHTML = renderShareVerify(data);
+        try { history.replaceState(history.state, '', location.pathname + location.search); } catch (e) {}
+      } catch (e) {}
+    }
+    setTimeout(openShareFromHash, 400);
     function decodeQrFromCanvas(ctx, w, h) {
       if (typeof jsQR === 'undefined') return null;
       var img = ctx.getImageData(0, 0, w, h);
