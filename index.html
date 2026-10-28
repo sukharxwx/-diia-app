@@ -1288,6 +1288,15 @@
 .sup-ico{width:36px;height:36px;border-radius:11px}
 .sup-ico svg{width:24px;height:24px}
 .sup-close{height:50px;margin-top:8px;font-size:16px}
+
+#fsSign,#fsSign .fs-body{overflow-x:hidden;overscroll-behavior-x:none;touch-action:pan-y}
+#fsSign .fs-body *{max-width:100%;box-sizing:border-box}
+#fsNotif .fs-head h1{font-size:18px}
+.n-actions{display:flex;justify-content:space-between;margin:0 0 10px;padding:0 2px}
+.n-actions button{border:0;background:none;font:inherit;font-size:13.5px;font-weight:600;color:#1f4aa3;padding:6px 4px}
+.n-actions button:disabled{opacity:.4}
+.n-actions button.arm{color:#e5484d}
+#updSub{white-space:pre-line;font-size:13.5px;line-height:1.45}
 </style>
 </head>
 <body>
@@ -1825,6 +1834,7 @@
     </button>
     <h1>Повідомлення</h1>
   </div>
+  <div class="hist-tabs" id="notifTabs"><button type="button" data-nt="all" class="on">Усі</button><button type="button" data-nt="new">Нові<span id="nCnt"></span></button><button type="button" data-nt="read">Прочитані</button></div>
   <div class="fs-body" id="notifBody"></div>
 </div>
 
@@ -4508,7 +4518,7 @@ function openDiiaSign() {
       else if (state === 'latest') { ic = UI.ok; st = 'У вас встановлена остання версія'; sub = 'Версія ' + running.version; btn = 'Перевірити ще раз'; }
       else if (state === 'available') {
         ic = UI.up; st = 'Доступне оновлення';
-        sub = 'Нова версія ' + (rv ? rv.version : '') + (rv && rv.notes ? '\n' + rv.notes : '') + '\nВстановлена: ' + running.version;
+        sub = 'Нова версія ' + (rv ? rv.version : '') + (rv && rv.notes ? '\n\nЩо нового:\n' + rv.notes.split(/\n+/).map(function (x) { return x.replace(/^[\s•\-–*]+/, '').trim(); }).filter(Boolean).map(function (x) { return '• ' + x; }).join('\n') : '') + '\n\nВстановлена: ' + running.version;
         btn = 'Оновити';
       }
       else if (state === 'pending') { ic = UI.spin; st = 'Оновлення ще публікується'; sub = 'Нова версія ' + (rv ? rv.version : '') + ' з’явиться за кілька хвилин. Спробуйте ще раз трохи пізніше.'; btn = 'Повторити'; }
@@ -4688,7 +4698,7 @@ function openDiiaSign() {
       pubEl('pubRepo').value = c.repo || GH.repo;
       pubEl('pubVersion').value = bumpVer(running.version);
       pubEl('pubBuild').value = String((running.build || 0) + 1);
-      pubEl('pubNotes').value = '';
+      pubEl('pubNotes').value = 'Виправлено помилки та покращено стабільність\nОновлено Дія.Підпис та Історію підписань\nЗручніші повідомлення: фільтри й очищення\nКомпактніше меню підтримки та пристроїв\nПовний переклад інтерфейсу';
       pubSetMode(c.mode || 'public');
       pubSay('');
       pubRender();
@@ -5443,55 +5453,62 @@ function openDiiaSign() {
       }
     }
 
-    function openNotif() {
-      haptic('medium');
+var nTab = 'all', nClearArm = null;
+    function renderNotif() {
       var bodyEl = document.getElementById('notifBody');
-      var list = loadArr(K_NOTIFS);
+      var all = loadArr(K_NOTIFS);
+      var unread = all.filter(function (x) { return !x.read; }).length;
+      var cnt = document.getElementById('nCnt');
+      if (cnt) cnt.textContent = unread ? ' ' + unread : '';
+      document.querySelectorAll('#notifTabs button').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-nt') === nTab); });
+      var list = all.filter(function (x) { return nTab === 'new' ? !x.read : nTab === 'read' ? x.read : true; });
+      var html = '';
+      if (all.length) {
+        html += '<div class="n-actions"><button type="button" id="nReadAll"' + (unread ? '' : ' disabled') + '>Прочитати всі</button>'
+          + '<button type="button" id="nClear" class="' + (nClearArm ? 'arm' : '') + '">' + (nClearArm ? 'Підтвердити очищення' : 'Очистити') + '</button></div>';
+      }
       if (!list.length) {
-        bodyEl.innerHTML = '<div class="fs-empty">Повідомлень ще немає.<br>Тут з’являться сповіщення застосунку.</div>';
+        var msg = !all.length ? 'Повідомлень ще немає.' : nTab === 'new' ? 'Нових повідомлень немає.' : 'Прочитаних повідомлень немає.';
+        html += '<div class="hist-empty"><i>🔔</i>' + msg + '</div>';
       } else {
-        var html = '<div class="fs-list">';
+        html += '<div class="fs-list">';
         list.forEach(function (n) {
-          html += '<div class="fs-item' + (n.read ? '' : ' unread') + '" data-nid="' + n.id + '">';
-          html += '<div class="fs-item-title">' + (n.read ? '' : '<span class="dot"></span>') + esc(n.title) + '</div>';
-          html += '<div class="fs-item-meta">' + fmtDt(n.ts) + '</div>';
-          if (n.body) html += '<div class="fs-item-body">' + esc(n.body) + '</div>';
-          if (!n.read) html += '<div class="fs-item-actions"><button type="button" class="ghost" data-mark="' + n.id + '">Позначити прочитаним</button></div>';
-          html += '</div>';
+          html += '<div class="fs-item' + (n.read ? '' : ' unread') + '" data-nid="' + n.id + '">'
+            + '<div class="fs-item-title">' + (n.read ? '' : '<span class="dot"></span>') + esc(n.title) + '</div>'
+            + '<div class="fs-item-meta">' + fmtDt(n.ts) + '</div>'
+            + (n.body ? '<div class="fs-item-body">' + esc(n.body) + '</div>' : '') + '</div>';
         });
         html += '</div>';
-        html += '<div style="margin-top:16px;text-align:center"><button type="button" class="dlg-btn secondary" id="notifMarkAll" style="max-width:220px;margin:0 auto">Позначити всі прочитаними</button></div>';
-        bodyEl.innerHTML = html;
-        bodyEl.querySelectorAll('[data-mark]').forEach(function (btn) {
-          btn.addEventListener('click', function (e) {
-            e.stopPropagation();
-            markRead(btn.getAttribute('data-mark'));
-            openNotif();
-          });
-        });
-        var all = document.getElementById('notifMarkAll');
-        if (all) all.addEventListener('click', function () {
-          var arr = loadArr(K_NOTIFS);
-          arr.forEach(function (x) { x.read = true; });
-          saveArr(K_NOTIFS, arr);
-          updateNotifBadge();
-          openNotif();
-          haptic('success');
-        });
-        bodyEl.querySelectorAll('.fs-item').forEach(function (el) {
-          el.addEventListener('click', function () {
-            var id = el.getAttribute('data-nid');
-            markRead(id);
-            el.classList.remove('unread');
-            var d = el.querySelector('.dot'); if (d) d.remove();
-            var act = el.querySelector('.fs-item-actions'); if (act) act.remove();
-            updateNotifBadge();
-          });
-        });
       }
+      bodyEl.innerHTML = html;
+      var ra = document.getElementById('nReadAll');
+      if (ra) ra.addEventListener('click', function () {
+        var arr = loadArr(K_NOTIFS); arr.forEach(function (x) { x.read = true; });
+        saveArr(K_NOTIFS, arr); updateNotifBadge(); haptic('success'); renderNotif();
+      });
+      var cl = document.getElementById('nClear');
+      if (cl) cl.addEventListener('click', function () {
+        if (!nClearArm) {
+          haptic('light'); nClearArm = setTimeout(function () { nClearArm = null; renderNotif(); }, 3000); renderNotif(); return;
+        }
+        clearTimeout(nClearArm); nClearArm = null;
+        saveArr(K_NOTIFS, []); updateNotifBadge(); haptic('success'); showToast('Повідомлення очищено'); renderNotif();
+      });
+      bodyEl.querySelectorAll('.fs-item.unread').forEach(function (el) {
+        el.addEventListener('click', function () { markRead(el.getAttribute('data-nid')); renderNotif(); });
+      });
+    }
+    function openNotif() {
+      haptic('medium');
+      nTab = 'all';
+      if (nClearArm) { clearTimeout(nClearArm); nClearArm = null; }
+      renderNotif();
       document.getElementById('fsNotif').classList.add('on');
       document.getElementById('fsNotif').setAttribute('aria-hidden', 'false');
     }
+    document.querySelectorAll('#notifTabs button').forEach(function (b) {
+      b.addEventListener('click', function () { haptic('light'); nTab = b.getAttribute('data-nt'); renderNotif(); });
+    });
 
     function markRead(id) {
       var arr = loadArr(K_NOTIFS);
@@ -5512,7 +5529,15 @@ function openDiiaSign() {
       saveArr(K_SIGNS, list);
     };
 
-var histTab = 'auth';
+(function () {
+      var sx = 0, sy = 0, fsS = document.getElementById('fsSign');
+      fsS.addEventListener('touchstart', function (e) { sx = e.touches[0].clientX; sy = e.touches[0].clientY; }, { passive: true });
+      fsS.addEventListener('touchmove', function (e) {
+        var dx = Math.abs(e.touches[0].clientX - sx), dy = Math.abs(e.touches[0].clientY - sy);
+        if (dx > dy && e.cancelable) e.preventDefault();
+      }, { passive: false });
+    })();
+    var histTab = 'auth';
     function renderHist() {
       var bodyEl = document.getElementById('signHistBody');
       document.querySelectorAll('#histTabs button').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-ht') === histTab); });
