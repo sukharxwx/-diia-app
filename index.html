@@ -1521,6 +1521,18 @@
     .keypad { gap: 10px clamp(10px, 4vw, 20px); }
   }
 
+
+  /* === Документи: по центру екрана, нижче від верху; стрічка на «податках» по центру === */
+  .pager { top: calc(var(--sat) + 76px); bottom: calc(var(--nav-height) + var(--sab) + 44px); }
+  .flip-card { min-height: 420px; height: min(540px, calc(100dvh - var(--nav-height) - var(--sab) - var(--sat) - 160px)); }
+  /* лицьова сторона на всю висоту картки (як зворот), а не «прилипла» до верху */
+  .flip-card > .dcard { position: absolute !important; inset: 0; height: auto; }
+  .dcard > .dtitle { flex: none; margin-bottom: auto; }
+  .dcard > :last-child { margin-bottom: auto; }
+  /* «Податки»: дані → стрічка по центру → номер */
+  .dcard.tax-layout > .ticker { order: 1; margin-top: 18px; margin-bottom: 0; }
+  .dcard.tax-layout > .dnum { order: 2; margin-top: 16px; margin-bottom: auto; }
+
 </style>
 </head>
 <body>
