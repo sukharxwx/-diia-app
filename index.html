@@ -902,9 +902,8 @@
   }
   .dinfo b:last-child { margin-bottom: 0; }
 
-  /* Authenticity ticker — always pinned to bottom edge of card */
+  /* Authenticity ticker */
   .ticker {
-    margin-top: auto;
     margin-left: -18px;
     margin-right: -18px;
     margin-bottom: 0;
@@ -914,6 +913,22 @@
     flex: none;
     position: relative;
     z-index: 1;
+  }
+  /* єДокумент / паспорт: стрічка під фото, над ПІБ (не внизу) */
+  .photo-layout .ticker {
+    margin-top: 14px;
+  }
+  .photo-layout .dname {
+    padding-top: 12px;
+    padding-bottom: 18px;
+  }
+  /* Карта платника податків: стрічка в самому низу */
+  .tax-layout .ticker {
+    margin-top: auto;
+  }
+  /* Інші документи без фото — стрічка внизу */
+  .dcard:not(.photo-layout):not(.tax-layout) .ticker {
+    margin-top: auto;
   }
   .track {
     display: flex;
@@ -1505,7 +1520,9 @@
     .dcard.tax-layout .dnum { font-size: 24px; }
     .flip-card { min-height: 400px; height: min(520px, calc(100dvh - var(--nav-height) - var(--sab) - var(--sat) - 56px)); }
     .dcard { padding: 16px 14px 0; }
-    .ticker { margin-left: -14px; margin-right: -14px; margin-top: auto; }
+    .ticker { margin-left: -14px; margin-right: -14px; }
+    .photo-layout .ticker { margin-top: 12px; }
+    .tax-layout .ticker, .dcard:not(.photo-layout):not(.tax-layout) .ticker { margin-top: auto; }
     .scard { min-height: 92px; padding: 12px 10px 10px; }
     .sl { font-size: 12px; }
   }
@@ -1695,8 +1712,8 @@
                 <div class="dphoto" data-photo><svg viewBox="0 0 40 48" fill="#000"><circle cx="20" cy="14" r="9"/><path d="M3 47c0-11 7-18 17-18s17 7 17 18z"/></svg></div>
                 <div class="dinfo"><p>Дата<br>народження:</p><b data-f="birth"></b><p>РНОКПП:</p><b data-f="rnokpp"></b></div>
               </div>
-              <div class="dname" data-name></div>
               <div class="ticker" aria-hidden="true"><div class="track"><span data-tick="war"></span><span data-tick="war"></span></div></div>
+              <div class="dname" data-name></div>
             </article>
             <div class="card-back">
               <div class="qr-container">
@@ -1762,8 +1779,8 @@
                 <div class="dphoto" data-photo><svg viewBox="0 0 40 48" fill="#000"><circle cx="20" cy="14" r="9"/><path d="M3 47c0-11 7-18 17-18s17 7 17 18z"/></svg></div>
                 <div class="dinfo"><p>Дата<br>народження:</p><b data-f="birth"></b><p>Номер:</p><b data-f="passport"></b></div>
               </div>
-              <div class="dname" data-name></div>
               <div class="ticker" aria-hidden="true"><div class="track"><span data-tick="stamp"></span><span data-tick="stamp"></span></div></div>
+              <div class="dname" data-name></div>
             </article>
             <div class="card-back">
               <div class="qr-container">
@@ -2826,7 +2843,7 @@
       } else if (cat.kind === 'simple') {
         front = shareBtnHtml(id) + '<h2 class="dtitle">' + title + '</h2><div class="dname" data-name style="margin-top:28px"></div><p class="dcap" style="margin-top:16px">Дата народження<b data-f="birth"></b></p><p class="dcap">РНОКПП<b data-f="rnokpp"></b></p><div class="ticker" aria-hidden="true"><div class="track"><span data-tick="stamp"></span><span data-tick="stamp"></span></div></div>';
       } else {
-        front = shareBtnHtml(id) + '<h2 class="dtitle">' + title + '</h2><div class="dbody"><div class="dphoto" data-photo>' + photoSvg() + '</div><div class="dinfo"><p>Дата<br>народження:</p><b data-f="birth"></b><p>РНОКПП:</p><b data-f="rnokpp"></b></div></div><div class="dname" data-name></div><div class="ticker" aria-hidden="true"><div class="track"><span data-tick="stamp"></span><span data-tick="stamp"></span></div></div>';
+        front = shareBtnHtml(id) + '<h2 class="dtitle">' + title + '</h2><div class="dbody"><div class="dphoto" data-photo>' + photoSvg() + '</div><div class="dinfo"><p>Дата<br>народження:</p><b data-f="birth"></b><p>РНОКПП:</p><b data-f="rnokpp"></b></div></div><div class="ticker" aria-hidden="true"><div class="track"><span data-tick="stamp"></span><span data-tick="stamp"></span></div></div><div class="dname" data-name></div>';
       }
       var qrId = 'qrcode-' + id;
       var layoutCls = (cat.kind === 'tax') ? ' tax-layout' : (cat.kind === 'vehicle' || cat.kind === 'simple' ? '' : ' photo-layout');
