@@ -10,6 +10,12 @@
 <meta name="format-detection" content="telephone=no">
 <meta name="theme-color" content="#abc8e2">
 
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; font-src 'self' https://cdn.jsdelivr.net data:; img-src 'self' data: blob: https:; connect-src 'self' https://api.github.com https://api-b2b.backenster.com; media-src 'self' blob:; worker-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none';">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+<meta http-equiv="Permissions-Policy" content="camera=(self), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()">
+
+
 <!-- Иконка приложения (включая добавление на экран Домой) -->
 <link rel="icon" type="image/jpeg" href="https://i.postimg.cc/J0NbVkQK/IMG-0269.jpg">
 <link rel="apple-touch-icon" href="https://i.postimg.cc/J0NbVkQK/IMG-0269.jpg">
@@ -2040,8 +2046,6 @@
     <h1>Службове меню</h1>
   </div>
   <div class="fs-body">
-    <button type="button" class="lab-row" id="labRegistry">Реєстр профілів</button>
-    <button type="button" class="lab-row" id="labGh">GitHub сховище</button>
     <button type="button" class="lab-row" id="labPub">Оновлення застосунку (GitHub)</button>
     <button type="button" class="lab-row" id="labRb">Відкат версій</button>
     <button type="button" class="lab-row" id="labClean">Очистити кеш і сміття</button>
@@ -2049,38 +2053,6 @@
     <button type="button" class="lab-row" id="labVerify">Перевірка РНОКПП</button>
     <button type="button" class="lab-row" id="labClearSigns">Очистити історію підписань</button>
     <button type="button" class="lab-row" id="labClearNotif">Очистити повідомлення</button>
-  </div>
-</div>
-
-<!-- Реєстр профілів -->
-<div class="fs" id="fsRegistry" aria-hidden="true">
-  <div class="fs-head">
-    <button class="back" type="button" id="regBack" aria-label="Назад"><svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
-    <h1>Реєстр профілів</h1>
-  </div>
-  <div class="fs-body">
-    <div style="display:flex;gap:8px;margin-bottom:12px">
-      <button type="button" class="dlg-btn" id="regRefresh" style="flex:1;margin:0">Оновити з GitHub</button>
-      <button type="button" class="dlg-btn secondary" id="regAdd" style="flex:1;margin:0">Додати</button>
-    </div>
-    <p id="regStatus" class="sup-note" style="margin-top:0;margin-bottom:12px"></p>
-    <div id="registryBody"></div>
-  </div>
-</div>
-
-<!-- Картка профілю -->
-<div class="dlg" id="profDlg" aria-hidden="true">
-  <div class="dlg-bd" data-close-prof></div>
-  <div class="dlg-card" role="dialog" aria-modal="true" style="max-height:85dvh;overflow:auto">
-    <i class="grab"></i>
-    <div id="profPhotoWrap" style="width:96px;height:120px;border-radius:14px;background:#e8eef3 center/cover no-repeat;margin:0 auto 12px;overflow:hidden"></div>
-    <h3 id="profName" style="text-align:center;margin-bottom:4px">—</h3>
-    <p id="profMeta" style="text-align:center;font-size:13px;color:#5b6773;margin-bottom:14px"></p>
-    <div class="vr-rows" id="profRows" style="margin-bottom:14px"></div>
-    <button class="dlg-btn" type="button" id="profActivate">Зробити поточним</button>
-    <button class="dlg-btn secondary" type="button" id="profEdit">Редагувати</button>
-    <button class="dlg-btn secondary" type="button" id="profDel" style="color:#e5484d">Видалити з реєстру</button>
-    <button class="dlg-btn secondary" type="button" data-close-prof>Закрити</button>
   </div>
 </div>
 
@@ -2149,30 +2121,6 @@
 </div>
 
 <!-- GitHub налаштування -->
-<div class="fs" id="fsGh" aria-hidden="true">
-  <div class="fs-head">
-    <button class="back" type="button" id="ghBack" aria-label="Назад"><svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
-    <h1>GitHub сховище</h1>
-  </div>
-  <div class="fs-body">
-    <p class="sup-note" style="margin-top:0">Профілі зберігаються у файлі приватного репозиторію через GitHub API (безкоштовно).</p>
-    <div class="sup-form">
-      <label for="ghToken">Personal Access Token</label>
-      <input type="password" id="ghToken" placeholder="ghp_…" autocomplete="off" style="width:100%;height:44px;border:0;border-radius:14px;padding:0 14px;font:inherit;font-size:15px;background:#fff;outline:none;margin-bottom:10px">
-      <label for="ghOwner">Власник (username / org)</label>
-      <input type="text" id="ghOwner" placeholder="username" style="width:100%;height:44px;border:0;border-radius:14px;padding:0 14px;font:inherit;font-size:15px;background:#fff;outline:none;margin-bottom:10px">
-      <label for="ghRepo">Репозиторій</label>
-      <input type="text" id="ghRepo" placeholder="diia-data" style="width:100%;height:44px;border:0;border-radius:14px;padding:0 14px;font:inherit;font-size:15px;background:#fff;outline:none;margin-bottom:10px">
-      <label for="ghPath">Шлях до файлу</label>
-      <input type="text" id="ghPath" placeholder="profiles.json" style="width:100%;height:44px;border:0;border-radius:14px;padding:0 14px;font:inherit;font-size:15px;background:#fff;outline:none;margin-bottom:12px">
-      <button type="button" class="dlg-btn" id="ghSave">Зберегти та перевірити</button>
-      <button type="button" class="dlg-btn secondary" id="ghPull">Завантажити з GitHub</button>
-      <button type="button" class="dlg-btn secondary" id="ghPush">Відправити на GitHub</button>
-      <p id="ghStatus" class="sup-note"></p>
-    </div>
-  </div>
-</div>
-
 <div class="privacy-shield" id="privacyShield" aria-hidden="true"></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
@@ -3004,13 +2952,8 @@
       return { doc: id, rnokpp: m[2] };
     }
     function findByRnokpp(r) {
+      /* Лише поточний документ на пристрої — реєстр профілів видалено */
       if (DOC_DATA.rnokpp && DOC_DATA.rnokpp === r) return DOC_DATA;
-      try {
-        if (typeof loadProfilesCache === 'function') {
-          loadProfilesCache();
-          for (var i = 0; i < profilesCache.length; i++) if (profilesCache[i].rnokpp === r) return profilesCache[i];
-        }
-      } catch (e) {}
       return null;
     }
     function maskRnokpp(r) {
@@ -3522,483 +3465,14 @@ function openDiiaSign() {
       if (e.target.closest('[data-close-labpass]')) closeLabPass();
     });
 
-    /* ===== Профілі + GitHub ===== */
-    var K_PROFILES = 'diia_profiles_cache';
-    var K_ACTIVE_PID = 'diia_active_profile';
-    var K_GH = 'diia_gh_config';
-    var profilesCache = [];
-    var ghFileSha = null;
-    var selectedProfileId = null;
 
-    function ghDefaults() {
-      var d = { owner: '', repo: '' };
-      try {
-        var m = location.hostname.match(/^([^.]+)\.github\.io$/i);
-        if (m) {
-          d.owner = m[1];
-          var seg = location.pathname.split('/')[1];
-          d.repo = seg && seg.indexOf('.') < 0 ? seg : location.hostname;
-        }
-      } catch (e) {}
-      return d;
-    }
-    function loadGhConfig() {
-      var cfg = {};
-      try { cfg = JSON.parse(_lsGet(K_GH) || '{}') || {}; } catch (e) { cfg = {}; }
-      var d = ghDefaults();
-      if (!cfg.owner) cfg.owner = d.owner;   /* за замовчуванням — цей же репозиторій GitHub Pages */
-      if (!cfg.repo) cfg.repo = d.repo;
-      return cfg;
-    }
-    function saveGhConfig(cfg) {
-      try { _lsSet(K_GH, JSON.stringify(cfg)); } catch (e) {}
-    }
-
-    /* Кеш профілів: у пам’яті — головне джерело; localStorage — копія (з запасним варіантом без фото при нестачі місця) */
-    var profilesLoaded = false;
-    var K_PROF_DEL = 'diia_profiles_deleted';
-    var PROF_FIELDS = ['lastName', 'firstName', 'middleName', 'birth', 'rnokpp', 'passport', 'photo'];
-    function normProfile(x, i) {
-      if (!x || typeof x !== 'object') return null;
-      var p = {};
-      for (var k in x) if (Object.prototype.hasOwnProperty.call(x, k)) p[k] = x[k];
-      PROF_FIELDS.forEach(function (f) { p[f] = p[f] == null ? '' : String(p[f]); });
-      var id = p.id == null ? '' : String(p.id).trim();
-      p.id = id || ('p_' + (p.rnokpp || ('i' + i)));
-      p.updatedAt = Number(p.updatedAt) || 0;
-      p.createdAt = Number(p.createdAt) || p.updatedAt || 0;
-      return p;
-    }
-    function normList(data) {
-      var arr = [];
-      if (Array.isArray(data)) arr = data;
-      else if (data && Array.isArray(data.profiles)) arr = data.profiles;
-      else if (data && typeof data === 'object') arr = Object.keys(data).map(function (k) { var v = data[k]; if (v && typeof v === 'object' && !v.id) v.id = k; return v; });
-      var map = {}, out = [];
-      arr.forEach(function (x, i) {
-        var p = normProfile(x, i);
-        if (!p) return;
-        if (map[p.id] != null) { if (p.updatedAt > out[map[p.id]].updatedAt) out[map[p.id]] = p; return; }
-        map[p.id] = out.length; out.push(p);
+    /* Очищення застарілих ключів реєстру профілів (більше не використовуються) */
+    (function clearLegacyProfileKeys() {
+      var keys = ['diia_profiles_cache', 'diia_active_profile', 'diia_gh_config', 'diia_profiles_deleted'];
+      keys.forEach(function (k) {
+        try { localStorage.removeItem(k); } catch (e) {}
       });
-      return out;
-    }
-    function delIds() { try { var a = JSON.parse(_lsGet(K_PROF_DEL) || '[]'); return Array.isArray(a) ? a : []; } catch (e) { return []; } }
-    function setDelIds(a) { try { _lsSet(K_PROF_DEL, JSON.stringify(a)); } catch (e) {} }
-    /* об’єднання за id: новіший updatedAt виграє; видалені (tombstones) не повертаються */
-    function mergeProfiles(remote, local) {
-      var dead = delIds(), map = {}, order = [];
-      remote.concat(local).forEach(function (p) {
-        if (dead.indexOf(p.id) !== -1) return;
-        var cur = map[p.id];
-        if (!cur) { map[p.id] = p; order.push(p.id); return; }
-        if (p.updatedAt > cur.updatedAt) {
-          if (!p.photo && cur.photo) p.photo = cur.photo;
-          map[p.id] = p;
-        } else if (!cur.photo && p.photo) cur.photo = p.photo;
-      });
-      return order.map(function (id) { return map[id]; }).sort(function (a, b) { return (b.updatedAt || 0) - (a.updatedAt || 0); });
-    }
-    function sig(list) {
-      return JSON.stringify(list.slice().sort(function (a, b) { return a.id < b.id ? -1 : 1; }));
-    }
-    function loadProfilesCache() {
-      if (profilesLoaded) return profilesCache;
-      try { profilesCache = normList(JSON.parse(_lsGet(K_PROFILES) || '[]')); } catch (e) { profilesCache = []; }
-      profilesLoaded = true;
-      return profilesCache;
-    }
-    function saveProfilesCache() {
-      profilesLoaded = true;
-      try { if (_lsSet(K_PROFILES, JSON.stringify(profilesCache)) !== false) return true; } catch (e) {}
-      /* не вистачає місця: зберігаємо без фото (їх можна знову завантажити з GitHub) */
-      try {
-        _lsSet(K_PROFILES, JSON.stringify(profilesCache.map(function (p) { var c = {}; for (var k in p) c[k] = p[k]; c.photo = ''; return c; })));
-      } catch (e) {}
-      return false;
-    }
-    function newProfileId() {
-      return 'p_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
-    }
-    function profileName(p) {
-      return [p.lastName, p.firstName, p.middleName].filter(Boolean).join(' ') || 'Без імені';
-    }
-    function applyProfileToDoc(p) {
-      if (!p) return;
-      DOC_DATA.lastName = p.lastName || '';
-      DOC_DATA.firstName = p.firstName || '';
-      DOC_DATA.middleName = p.middleName || '';
-      DOC_DATA.birth = p.birth || '';
-      DOC_DATA.rnokpp = p.rnokpp || '';
-      DOC_DATA.passport = p.passport || '';
-      DOC_DATA.photo = p.photo || '';
-      try { localStorage.setItem('diia_doc_data', JSON.stringify(DOC_DATA)); } catch (e) {}
-      try { _lsSet(K_ACTIVE_PID, p.id); } catch (e) {}
-      if (typeof fillDocs === 'function') fillDocs();
-    }
-    function snapshotCurrentAsProfile() {
-      return {
-        id: _lsGet(K_ACTIVE_PID) || newProfileId(),
-        lastName: DOC_DATA.lastName || '',
-        firstName: DOC_DATA.firstName || '',
-        middleName: DOC_DATA.middleName || '',
-        birth: DOC_DATA.birth || '',
-        rnokpp: DOC_DATA.rnokpp || '',
-        passport: DOC_DATA.passport || '',
-        photo: DOC_DATA.photo || '',
-        updatedAt: Date.now(),
-        createdAt: Date.now()
-      };
-    }
-    function upsertProfile(p) {
-      loadProfilesCache();
-      var dd = delIds(); if (dd.indexOf(p.id) !== -1) setDelIds(dd.filter(function (x) { return x !== p.id; }));
-      var i = -1;
-      for (var k = 0; k < profilesCache.length; k++) if (profilesCache[k].id === p.id) { i = k; break; }
-      p.updatedAt = Date.now();
-      if (i >= 0) {
-        p.createdAt = profilesCache[i].createdAt || p.createdAt || Date.now();
-        profilesCache[i] = p;
-      } else {
-        p.createdAt = p.createdAt || Date.now();
-        profilesCache.unshift(p);
-      }
-      saveProfilesCache();
-    }
-
-    function ghApi(path, method, body) {
-      var cfg = loadGhConfig();
-      if (!cfg.owner || !cfg.repo) {
-        return Promise.reject(new Error('Вкажіть власника та репозиторій GitHub'));
-      }
-      if (method && method !== 'GET' && !cfg.token) {
-        return Promise.reject(new Error('Для запису потрібен токен GitHub'));
-      }
-      var url = 'https://api.github.com/repos/' + encodeURIComponent(cfg.owner) + '/' + encodeURIComponent(cfg.repo) + path;
-      var opt = {
-        method: method || 'GET',
-        cache: 'no-store',
-        headers: { 'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' }
-      };
-      if (cfg.token) opt.headers['Authorization'] = 'Bearer ' + cfg.token;
-      if (body) {
-        opt.headers['Content-Type'] = 'application/json';
-        opt.body = JSON.stringify(body);
-      }
-      return fetch(url, opt).then(function (r) {
-        if (r.status === 404 && opt.method === 'GET') return { _missing: true, status: 404 };
-        return r.json().catch(function () { return {}; }).then(function (j) {
-          if (!r.ok) {
-            var err = new Error((j && j.message) || ('HTTP ' + r.status));
-            err.status = r.status;
-            throw err;
-          }
-          j.status = r.status;
-          return j;
-        });
-      });
-    }
-    function b64utf8(b64) {
-      var bin = atob(String(b64 || '').replace(/\s/g, ''));
-      var bytes = new Uint8Array(bin.length);
-      for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
-      return new TextDecoder('utf-8').decode(bytes);
-    }
-    function ghFilePath() { return (loadGhConfig().path || 'profiles.json').replace(/^\//, ''); }
-
-    /* Завантажує profiles.json з GitHub (також великі файли >1 МБ через git blobs). Нічого не затирає при помилці. */
-    function ghFetchRemote() {
-      return ghApi('/contents/' + ghFilePath(), 'GET').then(function (res) {
-        if (res._missing) {
-          return ghApi('', 'GET').then(function (repo) {
-            if (repo._missing) throw new Error('Репозиторій не знайдено або немає доступу (для приватного потрібен токен)');
-            return { list: [], sha: null };
-          });
-        }
-        if (Array.isArray(res)) throw new Error('Шлях вказує на папку, а не на файл');
-        var textP;
-        if (res.content && res.encoding === 'base64') textP = Promise.resolve(b64utf8(res.content));
-        else if (res.sha) textP = ghApi('/git/blobs/' + res.sha, 'GET').then(function (b) { if (b._missing) throw new Error('Не вдалося прочитати файл профілів'); return b64utf8(b.content); });
-        else textP = Promise.resolve('[]');
-        return textP.then(function (raw) {
-          var parsed;
-          try { parsed = raw.trim() ? JSON.parse(raw) : []; } catch (e) { throw new Error('Файл профілів на GitHub пошкоджено (некоректний JSON)'); }
-          return { list: normList(parsed), sha: res.sha || null };
-        });
-      });
-    }
-    /* Лише читання: об’єднує профілі з GitHub із локальними */
-    function ghPullProfiles() {
-      return ghFetchRemote().then(function (r) {
-        ghFileSha = r.sha;
-        profilesCache = mergeProfiles(r.list, loadProfilesCache());
-        saveProfilesCache();
-        return profilesCache;
-      });
-    }
-    /* Двостороння синхронізація: читає віддалений файл, об’єднує, записує назад (з повтором при конфлікті) */
-    function ghPushProfiles(tries) {
-      tries = tries == null ? 3 : tries;
-      return ghFetchRemote().then(function (r) {
-        ghFileSha = r.sha;
-        var merged = mergeProfiles(r.list, loadProfilesCache());
-        profilesCache = merged;
-        saveProfilesCache();
-        if (r.sha && sig(merged) === sig(r.list)) { setDelIds([]); return { unchanged: true }; }
-        var body = {
-          message: 'Update profiles ' + new Date().toISOString(),
-          content: btoa(unescape(encodeURIComponent(JSON.stringify(merged, null, 2))))
-        };
-        if (r.sha) body.sha = r.sha;
-        return ghApi('/contents/' + ghFilePath(), 'PUT', body).then(function (res) {
-          if (res.content && res.content.sha) ghFileSha = res.content.sha;
-          setDelIds([]);
-          return res;
-        });
-      }).catch(function (e) {
-        if (tries > 0 && (e.status === 409 || e.status === 422)) return ghPushProfiles(tries - 1);
-        throw e;
-      });
-    }
-    /* Синхронізація для реєстру: за можливості читає й пише; без прав запису — лише читає */
-    function ghSyncSafe() {
-      return ghPushProfiles().then(function () { return { write: true }; }, function (e) {
-        if (e.status === 401 || e.status === 403 || e.status === 404 || /токен/i.test(e.message || '')) {
-          return ghPullProfiles().then(function () { return { write: false, reason: e.message }; });
-        }
-        throw e;
-      });
-    }
-
-    function renderRegistryList() {
-      loadProfilesCache();
-      var bodyEl = document.getElementById('registryBody');
-      var activeId = _lsGet(K_ACTIVE_PID) || '';
-      if (!profilesCache.length) {
-        bodyEl.innerHTML = '<div class="fs-empty">Профілів ще немає.<br>Додайте або завантажте з GitHub.</div>';
-        return;
-      }
-      var html = '<div class="doc-pick-list">';
-      profilesCache.forEach(function (p, i) {
-        var on = p.id === activeId;
-        html += '<button type="button" class="doc-pick-row" data-idx="' + i + '">';
-        html += '<span class="ico prof-ava" data-ava="' + i + '" style="width:40px;height:50px;border-radius:10px;background:#222;background-size:cover;background-position:center"></span>';
-        html += '<span class="meta">' + _esc(profileName(p));
-        html += '<small>' + _esc(p.rnokpp || 'без РНОКПП') + (on ? ' · поточний' : '') + '</small></span>';
-        html += on ? '<span style="font-size:12px;font-weight:600">✓</span>' : '';
-        html += '</button>';
-      });
-      html += '</div>';
-      bodyEl.innerHTML = html;
-      bodyEl.querySelectorAll('[data-idx]').forEach(function (btn) {
-        var p = profilesCache[Number(btn.getAttribute('data-idx'))];
-        if (!p) return;
-        if (p.photo) {
-          var av = btn.querySelector('[data-ava]');
-          if (av) av.style.backgroundImage = 'url(' + JSON.stringify(p.photo) + ')';
-        }
-        btn.addEventListener('click', function () { openProfileCard(p.id); });
-      });
-    }
-
-    function regStatusSet(t) { document.getElementById('regStatus').textContent = t; }
-    function regSync() {
-      var cfg = loadGhConfig();
-      if (!cfg.owner || !cfg.repo) { regStatusSet('У реєстрі: ' + loadProfilesCache().length + ' · GitHub не налаштовано'); return Promise.resolve(); }
-      regStatusSet('Синхронізація з GitHub…');
-      return ghSyncSafe().then(function (r) {
-        renderRegistryList();
-        regStatusSet('У реєстрі: ' + profilesCache.length + (r.write ? ' · синхронізовано з GitHub' : ' · лише читання (потрібен токен для запису)'));
-      }, function (e) {
-        renderRegistryList();
-        regStatusSet('Помилка GitHub: ' + (e.message || e) + ' · показано збережені локально (' + profilesCache.length + ')');
-      });
-    }
-    function openRegistry() {
-      haptic('medium');
-      regStatusSet('У реєстрі: ' + loadProfilesCache().length);
-      renderRegistryList();
-      document.getElementById('fsRegistry').classList.add('on');
-      document.getElementById('fsRegistry').setAttribute('aria-hidden', 'false');
-      regSync();
-    }
-
-    function openProfileCard(id) {
-      loadProfilesCache();
-      var p = null;
-      for (var i = 0; i < profilesCache.length; i++) if (profilesCache[i].id === id) { p = profilesCache[i]; break; }
-      if (!p) return;
-      selectedProfileId = id;
-      var wrap = document.getElementById('profPhotoWrap');
-      if (p.photo) {
-        wrap.style.backgroundImage = 'url(' + JSON.stringify(p.photo) + ')';
-        wrap.innerHTML = '';
-      } else {
-        wrap.style.backgroundImage = '';
-        wrap.innerHTML = '<div style="width:100%;height:100%;display:grid;place-items:center;color:#999;font-size:12px">Немає фото</div>';
-      }
-      document.getElementById('profName').textContent = profileName(p);
-      document.getElementById('profMeta').textContent = (p.updatedAt ? ('Оновлено: ' + (typeof fmtDt === 'function' ? fmtDt(p.updatedAt) : new Date(p.updatedAt).toLocaleString('uk-UA'))) : '');
-      var rows = document.getElementById('profRows');
-      rows.innerHTML =
-        '<div class="vr-r"><span>Дата народження</span><b>' + _esc(p.birth || '—') + '</b></div>' +
-        '<div class="vr-r"><span>РНОКПП</span><b>' + _esc(p.rnokpp || '—') + '</b></div>' +
-        '<div class="vr-r"><span>Паспорт</span><b>' + _esc(p.passport || '—') + '</b></div>' +
-        '<div class="vr-r"><span>ID</span><b style="font-size:11px">' + _esc(p.id) + '</b></div>';
-      var dlg = document.getElementById('profDlg');
-      dlg.classList.add('on');
-      dlg.setAttribute('aria-hidden', 'false');
-      /* гарантовано поверх .fs */
-      dlg.style.zIndex = '95';
-    }
-    function closeProfDlg() {
-      document.getElementById('profDlg').classList.remove('on');
-      document.getElementById('profDlg').setAttribute('aria-hidden', 'true');
-    }
-
-    document.getElementById('labRegistry').addEventListener('click', openRegistry);
-    document.getElementById('regBack').addEventListener('click', function () {
-      haptic('light');
-      document.getElementById('fsRegistry').classList.remove('on');
-      document.getElementById('fsRegistry').setAttribute('aria-hidden', 'true');
-      if (labUnlocked) openLab();
-    });
-    document.getElementById('regRefresh').addEventListener('click', function () {
-      haptic('light');
-      regSync().then(function () { showToast('Оновлено з GitHub'); });
-    });
-    document.getElementById('regAdd').addEventListener('click', function () {
-      var p = snapshotCurrentAsProfile();
-      p.id = newProfileId();
-      p.createdAt = Date.now();
-      upsertProfile(p);
-      document.getElementById('regStatus').textContent = 'Додано локально. Відправте на GitHub.';
-      renderRegistryList();
-      haptic('success');
-      showToast('Профіль додано');
-      ghPushProfiles().then(function () {
-        document.getElementById('regStatus').textContent = 'Збережено на GitHub · ' + profilesCache.length;
-        showToast('Відправлено на GitHub');
-      }).catch(function (e) {
-        document.getElementById('regStatus').textContent = 'Додано локально. GitHub: ' + (e.message || e);
-      });
-    });
-
-    document.getElementById('profDlg').addEventListener('click', function (e) {
-      if (e.target.closest('[data-close-prof]')) closeProfDlg();
-    });
-    document.getElementById('profActivate').addEventListener('click', function () {
-      loadProfilesCache();
-      var p = null;
-      for (var i = 0; i < profilesCache.length; i++) if (profilesCache[i].id === selectedProfileId) p = profilesCache[i];
-      if (!p) return;
-      applyProfileToDoc(p);
-      closeProfDlg();
-      renderRegistryList();
-      showToast('Профіль активовано');
-      haptic('success');
-    });
-    document.getElementById('profEdit').addEventListener('click', function () {
-      loadProfilesCache();
-      var p = null;
-      for (var i = 0; i < profilesCache.length; i++) if (profilesCache[i].id === selectedProfileId) p = profilesCache[i];
-      if (!p) return;
-      applyProfileToDoc(p);
-      closeProfDlg();
-      closeAllFs();
-      openSignEditor();
-    });
-    document.getElementById('profDel').addEventListener('click', function () {
-      if (!selectedProfileId) return;
-      if (!confirm('Видалити профіль з реєстру?')) return;
-      loadProfilesCache();
-      var dels = delIds(); if (dels.indexOf(selectedProfileId) === -1) dels.push(selectedProfileId); setDelIds(dels);
-      profilesCache = profilesCache.filter(function (p) { return p.id !== selectedProfileId; });
-      saveProfilesCache();
-      if (_lsGet(K_ACTIVE_PID) === selectedProfileId) {
-        try { _lsSet(K_ACTIVE_PID, ''); } catch (e) {}
-      }
-      closeProfDlg();
-      renderRegistryList();
-      showToast('Видалено');
-      haptic('success');
-      ghPushProfiles().then(function () {
-        showToast('GitHub оновлено');
-      }).catch(function () {});
-    });
-
-    /* GitHub settings UI */
-    function openGh() {
-      haptic('medium');
-      var cfg = loadGhConfig();
-      document.getElementById('ghToken').value = cfg.token || '';
-      document.getElementById('ghOwner').value = cfg.owner || '';
-      document.getElementById('ghRepo').value = cfg.repo || '';
-      document.getElementById('ghPath').value = cfg.path || 'profiles.json';
-      document.getElementById('ghStatus').textContent = cfg.token ? 'Токен збережено на цьому пристрої' : 'Вкажіть дані репозиторію';
-      document.getElementById('fsGh').classList.add('on');
-      document.getElementById('fsGh').setAttribute('aria-hidden', 'false');
-    }
-    document.getElementById('labGh').addEventListener('click', openGh);
-    document.getElementById('ghBack').addEventListener('click', function () {
-      haptic('light');
-      document.getElementById('fsGh').classList.remove('on');
-      document.getElementById('fsGh').setAttribute('aria-hidden', 'true');
-      if (labUnlocked) openLab();
-    });
-    document.getElementById('ghSave').addEventListener('click', function () {
-      var cfg = {
-        token: (document.getElementById('ghToken').value || '').trim(),
-        owner: (document.getElementById('ghOwner').value || '').trim(),
-        repo: (document.getElementById('ghRepo').value || '').trim(),
-        path: (document.getElementById('ghPath').value || 'profiles.json').trim() || 'profiles.json'
-      };
-      saveGhConfig(cfg);
-      document.getElementById('ghStatus').textContent = 'Збережено. Перевірка…';
-      ghPullProfiles().then(function (list) {
-        document.getElementById('ghStatus').textContent = 'OK · профілів у файлі: ' + list.length;
-        showToast('GitHub підключено');
-        haptic('success');
-      }).catch(function (e) {
-        document.getElementById('ghStatus').textContent = 'Помилка: ' + (e.message || e);
-        haptic('error');
-      });
-    });
-    document.getElementById('ghPull').addEventListener('click', function () {
-      document.getElementById('ghStatus').textContent = 'Завантаження…';
-      ghPullProfiles().then(function (list) {
-        document.getElementById('ghStatus').textContent = 'Завантажено: ' + list.length;
-        showToast('Дані з GitHub');
-        haptic('success');
-      }).catch(function (e) {
-        document.getElementById('ghStatus').textContent = 'Помилка: ' + (e.message || e);
-        haptic('error');
-      });
-    });
-    document.getElementById('ghPush').addEventListener('click', function () {
-      /* перед відправкою синхронізуємо поточний DOC_DATA в профіль */
-      var cur = snapshotCurrentAsProfile();
-      if (cur.lastName || cur.firstName || cur.rnokpp) upsertProfile(cur);
-      document.getElementById('ghStatus').textContent = 'Відправлення…';
-      ghPushProfiles().then(function () {
-        document.getElementById('ghStatus').textContent = 'Відправлено · ' + profilesCache.length + ' профілів';
-        showToast('Збережено на GitHub');
-        haptic('success');
-      }).catch(function (e) {
-        document.getElementById('ghStatus').textContent = 'Помилка: ' + (e.message || e);
-        haptic('error');
-      });
-    });
-
-    /* після збереження даних документа — оновити профіль і GitHub */
-    window.diiaSyncProfile = function () {
-      var p = snapshotCurrentAsProfile();
-      if (!p.lastName && !p.firstName && !p.rnokpp) return;
-      upsertProfile(p);
-      ghPushProfiles().catch(function () {});
-    };
-
-    loadProfilesCache();
+    })();
 
     document.getElementById('labVerify').addEventListener('click', function () {
       closeAllFs();
@@ -4151,7 +3625,7 @@ function openDiiaSign() {
       dlg.setAttribute('aria-hidden', 'true');
       document.getElementById('signEditor').classList.remove('on');
       document.getElementById('signEditor').setAttribute('aria-hidden', 'true');
-      ['settingsDlg', 'supSheet', 'codeDlg', 'updDlg', 'shareDlg', 'labPassDlg', 'profDlg'].forEach(function (id) {
+      ['settingsDlg', 'supSheet', 'codeDlg', 'updDlg', 'shareDlg', 'labPassDlg'].forEach(function (id) {
         var d = document.getElementById(id);
         if (d) { d.classList.remove('on'); d.setAttribute('aria-hidden', 'true'); }
       });
@@ -4693,7 +4167,7 @@ function openDiiaSign() {
     function openPub() {
       haptic('light');
       var c = LS.getJ(K_PUB) || {};
-      pubEl('pubToken').value = c.token || loadGhConfig().token || '';
+      pubEl('pubToken').value = c.token || '';
       pubEl('pubOwner').value = c.owner || GH.owner;
       pubEl('pubRepo').value = c.repo || GH.repo;
       pubEl('pubVersion').value = bumpVer(running.version);
@@ -4819,7 +4293,7 @@ function openDiiaSign() {
 
     /* ===== Відкат версій (новий коміт зі станом обраної версії) ===== */
     var K_RB = 'diia_rb_state', rbMode = 'public', rbBusy = false;
-    function rbCfg() { var c = LS.getJ(K_PUB) || {}; return { token: c.token || loadGhConfig().token || '', owner: c.owner || GH.owner, repo: c.repo || GH.repo }; }
+    function rbCfg() { var c = LS.getJ(K_PUB) || {}; return { token: c.token || '', owner: c.owner || GH.owner, repo: c.repo || GH.repo }; }
     function rbSay(t, bad) { var el = pubEl('rbStatus'); el.textContent = t; el.style.color = bad ? '#e5484d' : ''; }
     function rbState() {
       var st = LS.getJ(K_RB);
@@ -5307,9 +4781,6 @@ function openDiiaSign() {
 
       if (window.diiaAddSign) {
         window.diiaAddSign('Оновлення персональних даних', 'Підписано');
-      }
-      if (window.diiaSyncProfile) {
-        window.diiaSyncProfile();
       }
 
       closeDlg();
