@@ -729,8 +729,8 @@
     position: absolute;
     left: 0;
     right: 0;
-    top: calc(var(--sat) + 28px);
-    bottom: calc(var(--nav-height) + var(--sab) + 28px);
+    top: calc(var(--sat) + 52px);
+    bottom: calc(var(--nav-height) + var(--sab) + 36px);
     display: flex;
     overflow-x: auto;
     overflow-y: hidden;
@@ -758,11 +758,10 @@
   .flip-card {
     position: relative;
     width: 100%;
-    max-width: 380px;
-    margin-left: auto;
-    margin-right: auto;
-    height: min(560px, calc(100dvh - var(--nav-height) - var(--sab) - var(--sat) - 56px));
-    min-height: 440px;
+    max-width: 390px;
+    margin: auto;
+    height: min(600px, calc(100dvh - var(--nav-height) - var(--sab) - var(--sat) - 100px));
+    min-height: 480px;
     transform-style: preserve-3d;
     transition: transform 0.55s cubic-bezier(0.4, 0.15, 0.2, 1);
     cursor: pointer;
@@ -851,7 +850,7 @@
   .dtitle {
     font-size: 20px;
     line-height: 1.22;
-    font-weight: 600;
+    font-weight: 500;
     letter-spacing: -0.02em;
     padding-right: 44px; /* room for share */
     margin: 0;
@@ -896,7 +895,7 @@
   .dinfo b {
     display: block;
     font-size: 15px;
-    font-weight: 600;
+    font-weight: 500;
     color: #0a0a0a;
     margin-top: 2px;
     margin-bottom: 12px;
@@ -905,8 +904,9 @@
   }
   .dinfo b:last-child { margin-bottom: 0; }
 
-  /* Authenticity ticker */
+  /* Authenticity ticker — under data block (center), same on all docs */
   .ticker {
+    margin-top: 16px;
     margin-left: -18px;
     margin-right: -18px;
     margin-bottom: 0;
@@ -917,22 +917,8 @@
     position: relative;
     z-index: 1;
   }
-  /* єДокумент / паспорт: стрічка під фото, над ПІБ */
-  .photo-layout .ticker {
-    margin-top: 14px;
-  }
-  .photo-layout .dname {
-    padding-top: 12px;
-    padding-bottom: 18px;
-  }
-  /* Карта платника податків — стрічка в самому низу */
-  .tax-layout .ticker {
-    margin-top: auto;
-  }
-  /* Інші документи без фото — стрічка внизу */
-  .dcard:not(.photo-layout):not(.tax-layout) .ticker {
-    margin-top: auto;
-  }
+  .photo-layout .ticker { margin-top: 14px; }
+  .tax-layout .ticker { margin-top: 18px; }
   .track {
     display: flex;
     width: max-content;
@@ -952,10 +938,10 @@
 
   .dname {
     margin: 0;
-    padding: 14px 0 14px;
+    padding: 14px 0 16px;
     font-size: 21px;
     line-height: 1.22;
-    font-weight: 600;
+    font-weight: 500;
     letter-spacing: -0.015em;
     overflow-wrap: anywhere;
     word-break: break-word;
@@ -966,7 +952,7 @@
     margin: 6px 0 0;
     padding: 0;
     font-size: 17px;
-    font-weight: 500;
+    font-weight: 400;
     line-height: 1.3;
   }
 
@@ -975,16 +961,17 @@
     margin-bottom: 0;
     font-size: 14px;
     color: #3a4550;
-    font-weight: 500;
+    font-weight: 400;
   }
   .dcap {
     margin-top: 12px;
     font-size: 14px;
     color: #3a4550;
+    font-weight: 400;
   }
   .dcap b {
     display: block;
-    font-weight: 600;
+    font-weight: 500;
     font-size: 16px;
     margin-top: 3px;
     color: #0a0a0a;
@@ -994,9 +981,9 @@
   /* Tax / large number docs */
   .dnum {
     margin: 0;
-    padding: 14px 18px 18px;
+    padding: 14px 0 4px;
     font-size: 26px;
-    font-weight: 600;
+    font-weight: 500;
     letter-spacing: 0.04em;
     font-variant-numeric: tabular-nums;
     overflow-wrap: anywhere;
@@ -1015,7 +1002,7 @@
     letter-spacing: 0.06em;
   }
 
-  .pg-add { display: flex; flex-direction: column; gap: 14px; width: 100%; max-width: 380px; margin-left: auto; margin-right: auto; }
+  .pg-add { display: flex; flex-direction: column; gap: 14px; width: 100%; max-width: 400px; }
   .acard {
     position: relative;
     flex: 1;
@@ -1036,7 +1023,7 @@
   .acard:active { transform: scale(.98); background: rgba(255, 255, 255, 0.42); }
   .acard svg { width: 36px; height: 36px; display: block; }
 
-  .dpg { position: absolute; left: 0; right: 0; bottom: calc(var(--nav-height) + var(--sab) + 14px); display: flex; justify-content: center; gap: 7px; pointer-events: none; }
+  .dpg { position: absolute; left: 0; right: 0; bottom: calc(var(--nav-height) + var(--sab) + 12px); display: flex; justify-content: center; gap: 7px; pointer-events: none; }
   .dpg i { width: 7px; height: 7px; border-radius: 50%; background: rgba(255, 255, 255, .5); transition: background .2s, transform .2s; }
   .dpg i.on { background: #fff; transform: scale(1.2); }
 
@@ -1521,17 +1508,14 @@
     .dtitle { font-size: 18px; }
     .dnum { font-size: 22px; }
     .dcard.tax-layout .dnum { font-size: 24px; }
-    .flip-card { min-height: 400px; height: min(520px, calc(100dvh - var(--nav-height) - var(--sab) - var(--sat) - 56px)); }
+    .flip-card { min-height: 440px; height: min(560px, calc(100dvh - var(--nav-height) - var(--sab) - var(--sat) - 90px)); }
     .dcard { padding: 16px 14px 0; }
-    .ticker { margin-left: -14px; margin-right: -14px; }
-    .photo-layout .ticker { margin-top: 12px; }
-    .tax-layout .ticker,
-    .dcard:not(.photo-layout):not(.tax-layout) .ticker { margin-top: auto; }
+    .ticker { margin-left: -14px; margin-right: -14px; margin-top: 14px; }
     .scard { min-height: 92px; padding: 12px 10px 10px; }
     .sl { font-size: 12px; }
   }
   @media (max-height: 700px) {
-    .flip-card { min-height: 380px; height: min(500px, calc(100dvh - var(--nav-height) - var(--sab) - var(--sat) - 48px)); }
+    .flip-card { min-height: 420px; height: min(540px, calc(100dvh - var(--nav-height) - var(--sab) - var(--sat) - 80px)); }
     .dphoto { width: 92px; height: 120px; }
     .dbody { gap: 12px; margin-top: 12px; }
     .keypad { gap: 10px clamp(10px, 4vw, 20px); }
