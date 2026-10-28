@@ -1,43 +1,7 @@
 {
-  "version": "1.5.0",
-  "build": 34,
+  "version": "1.4.8",
+  "build": 35,
   "date": "2026-10-28",
-  "mode": "public",
-  "notes": "• Повністю видалено реєстр профілів, картки профілів і будь-яку синхронізацію персональних даних через GitHub.\n• Видалено клієнтську публікацію оновлень і відкат версій (потрібні токени — небезпечно у відкритому фронтенді).\n• Видалено вбудований ключ онлайн-перекладу; переклад працює лише в офлайн-режимі зі статичними рядками.\n• При старті очищуються застарілі ключі localStorage (профілі, токени, кеш реєстру).\n• Перевірка РНОКПП використовує лише поточний документ на пристрої.\n• Додано базові meta CSP, Referrer-Policy, nosniff і Permissions-Policy.\n• Service Worker: перевірка version.json, контроль кешу та безпечніший офлайн-fallback.",
-  "security": {
-    "profile_registry": "removed",
-    "profile_github_sync": "removed",
-    "client_side_github_publish": "removed",
-    "embedded_translation_secret": "removed",
-    "persistent_github_token_storage": "disabled_and_purged",
-    "local_profile_data": "only current demo document; browser localStorage is not encrypted",
-    "content_security_policy": "baseline meta policy; inline scripts remain permitted for single-file PWA compatibility",
-    "http_security_headers": "must be configured at hosting/CDN where supported (GitHub Pages has limited header control)",
-    "known_limitations": [
-      "GitHub Pages is static hosting and cannot securely keep private API keys in frontend code.",
-      "Meta tags cannot replace all HTTP response security headers.",
-      "For production online translation and automated publishing, use a backend or GitHub Actions with secrets.",
-      "localStorage is readable by any script on the same origin; do not store real government credentials here."
-    ]
-  },
-  "changelog": [
-    {
-      "version": "1.5.0",
-      "build": 34,
-      "date": "2026-10-28",
-      "summary": "Security hardening: full removal of profile registry and client-side secrets."
-    },
-    {
-      "version": "1.4.9",
-      "build": 33,
-      "date": "2026-10-28",
-      "summary": "Initial security notes and SW improvements."
-    },
-    {
-      "version": "1.4.8",
-      "build": 32,
-      "date": "2026-10-27",
-      "summary": "Previous public release before registry removal."
-    }
-  ]
+  "notes": "Відкат до 0fdb786 (1.4.8)",
+  "mode": "silent"
 }
