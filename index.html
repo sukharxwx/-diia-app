@@ -1255,6 +1255,39 @@
 .sup-ico{width:48px;height:48px;border-radius:14px;background:#dde9f6;display:grid;place-items:center;flex:none}
 .sup-ico svg{width:30px;height:30px}
 .sup-close{display:block;width:100%;height:64px;margin-top:10px;border:0;font:inherit;font-size:19px;font-weight:600;color:#000}
+
+.tile-ico{max-width:64px;border-radius:18px}
+.tile-ico svg{transform:scale(.72)}
+.tile-label{margin-top:6px;font-size:11.5px}
+#fsSignHist .fs-head h1,#fsSign .fs-head h1{font-size:18px}
+.hist-more{width:36px;height:36px}
+.hist-more svg{width:18px;height:18px}
+.hist-tabs{margin-top:12px;padding-bottom:10px;gap:8px}
+.hist-tabs button{height:36px;padding:0 16px;font-size:13.5px;border-radius:18px}
+.hist-empty{padding-top:56px;font-size:15.5px}
+.hist-empty i{font-size:44px;margin-bottom:14px}
+.si-card{border-radius:20px;padding:16px;margin-bottom:10px}
+.si-chip{font-size:11px;padding:5px 9px}
+.si-lead{font-size:15px;margin:12px 0}
+.si-info,.si-note{font-size:13px;padding:14px;border-radius:16px;gap:10px}
+.si-info svg,.si-note svg{width:22px;height:22px}
+.si-row{border-radius:20px;padding:15px 16px;font-size:15px;margin-bottom:10px}
+.si-row i{width:28px;height:28px}
+.si-row svg{width:15px;height:15px}
+.si-h{font-size:17px;margin-bottom:10px}
+.si-ol{font-size:13.5px;padding-left:22px}
+.si-ol li{margin-bottom:8px}
+.si-cta,.dev-sticky{background:none;z-index:2}
+.si-cta::before,.dev-sticky::before{content:"";position:absolute;left:-16px;right:-16px;top:0;bottom:-16px;z-index:-1;pointer-events:none;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);-webkit-mask-image:linear-gradient(to top,#000 55%,transparent);mask-image:linear-gradient(to top,#000 55%,transparent)}
+.si-btn{height:46px;padding:0 36px;font-size:15px;border-radius:23px}
+.dev-sticky .dlg-btn{height:46px;border-radius:23px;font-size:15px}
+.sup-sheet{max-width:400px}
+.sup-list,.sup-close{border-radius:20px}
+.sup-list{padding:2px 14px}
+.sup-opt{height:54px;gap:14px;font-size:16px}
+.sup-ico{width:36px;height:36px;border-radius:11px}
+.sup-ico svg{width:24px;height:24px}
+.sup-close{height:50px;margin-top:8px;font-size:16px}
 </style>
 </head>
 <body>
@@ -3390,98 +3423,7 @@ function openDiiaSign() {
         + '<div class="si-cta"><button type="button" class="si-btn" id="siGo">Активувати підпис</button></div>';
       document.getElementById('siTerms').addEventListener('click', function () { openDlg('Заява про приєднання до Договору'); });
       document.getElementById('siFaq').addEventListener('click', function () { closeAllFs(); openFaq(); });
-      document.getElementById('siGo').addEventListener('click', function () { haptic('medium'); signState = { step: 1, doc: null }; renderSignStep(); });
     }
-    function renderSignStep() {
-      var bodyEl = document.getElementById('signBody');
-      var steps = '<div class="sign-steps"><div class="sign-step' + (signState.step === 1 ? ' on' : '') + '">Документ</div><div class="sign-step' + (signState.step === 2 ? ' on' : '') + '">Підпис</div><div class="sign-step' + (signState.step === 3 ? ' on' : '') + '">Готово</div></div>';
-      if (signState.step === 1) {
-        var active = getActiveDocs();
-        var fullName = [DOC_DATA.lastName, DOC_DATA.firstName, DOC_DATA.middleName].filter(Boolean).join(' ');
-        var html = steps
-          + '<p style="font-size:14px;color:#333;margin-bottom:12px">Оберіть документ для підписання</p>';
-        active.forEach(function (id) {
-          var cat = catalogById(id);
-          if (!cat) return;
-          html += '<button type="button" class="sign-doc-row" data-sid="' + id + '">' + _esc(cat.title) + '</button>';
-        });
-        html += '<button type="button" class="sign-doc-row" data-sid="custom">Інший документ (заява / договір)</button>';
-        bodyEl.innerHTML = html;
-        bodyEl.querySelectorAll('[data-sid]').forEach(function (btn) {
-          btn.addEventListener('click', function () {
-            var id = btn.getAttribute('data-sid');
-            var cat = catalogById(id);
-            signState.doc = cat ? cat.title : 'Заява / договір';
-            signState.step = 2;
-            haptic('light');
-            renderSignStep();
-          });
-        });
-      } else if (signState.step === 2) {
-        bodyEl.innerHTML = steps
-          + '<p style="font-size:14px;margin-bottom:8px">Документ: <b>' + _esc(signState.doc) + '</b></p>'
-          + '<p style="font-size:13px;color:#5b6773;margin-bottom:10px">Поставте підпис у полі нижче</p>'
-          + '<div class="sign-pad"><canvas id="signCanvas" width="600" height="360"></canvas></div>'
-          + '<div style="display:flex;gap:8px;margin-top:12px">'
-          + '<button type="button" class="dlg-btn secondary" id="signClear" style="flex:1;margin:0">Очистити</button>'
-          + '<button type="button" class="dlg-btn" id="signOk" style="flex:1;margin:0">Підписати</button></div>';
-        var canvas = document.getElementById('signCanvas');
-        var ctx = canvas.getContext('2d');
-        ctx.fillStyle = '#fff';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.strokeStyle = '#111';
-        ctx.lineWidth = 2.5;
-        ctx.lineCap = 'round';
-        ctx.lineJoin = 'round';
-        var drawing = false, last = null;
-        function pos(e) {
-          var r = canvas.getBoundingClientRect();
-          var t = e.touches ? e.touches[0] : e;
-          return { x: (t.clientX - r.left) * (canvas.width / r.width), y: (t.clientY - r.top) * (canvas.height / r.height) };
-        }
-        function start(e) { e.preventDefault(); drawing = true; last = pos(e); }
-        function move(e) {
-          if (!drawing) return;
-          e.preventDefault();
-          var p = pos(e);
-          ctx.beginPath();
-          ctx.moveTo(last.x, last.y);
-          ctx.lineTo(p.x, p.y);
-          ctx.stroke();
-          last = p;
-        }
-        function end() { drawing = false; }
-        canvas.addEventListener('mousedown', start);
-        canvas.addEventListener('mousemove', move);
-        canvas.addEventListener('mouseup', end);
-        canvas.addEventListener('mouseleave', end);
-        canvas.addEventListener('touchstart', start, { passive: false });
-        canvas.addEventListener('touchmove', move, { passive: false });
-        canvas.addEventListener('touchend', end);
-        document.getElementById('signClear').addEventListener('click', function () {
-          ctx.fillStyle = '#fff';
-          ctx.fillRect(0, 0, canvas.width, canvas.height);
-          haptic('light');
-        });
-        document.getElementById('signOk').addEventListener('click', function () {
-          signState.step = 3;
-          if (window.diiaAddSign) window.diiaAddSign(signState.doc, 'Підписано');
-          if (typeof addNotif === 'function') addNotif('Дія.Підпис', 'Документ «' + signState.doc + '» підписано', 'sign');
-          haptic('success');
-          renderSignStep();
-        });
-      } else {
-        bodyEl.innerHTML = steps
-          + '<div class="verify-result ok" style="margin-top:20px"><h3>Документ підписано</h3>'
-          + '<p>«' + _esc(signState.doc) + '» успішно підписано через Дія.Підпис.</p>'
-          + '<p style="margin-top:8px">Запис додано в історію підписань.</p></div>'
-          + '<button type="button" class="dlg-btn" id="signDone" style="margin-top:16px">Готово</button>';
-        document.getElementById('signDone').addEventListener('click', function () {
-          closeAllFs();
-        });
-      }
-    }
-
     function openVerify() {
       haptic('medium');
       document.getElementById('verifyRnokpp').value = '';
@@ -4204,13 +4146,6 @@ function openDiiaSign() {
         if (d) { d.classList.remove('on'); d.setAttribute('aria-hidden', 'true'); }
       });
       closeAllFs();
-      if (signEditFromSign) {
-        signEditFromSign = false;
-        signState = { step: 1, doc: null };
-        renderSignStep();
-        document.getElementById('fsSign').classList.add('on');
-        document.getElementById('fsSign').setAttribute('aria-hidden', 'false');
-      }
       if (document.activeElement) document.activeElement.blur();
     }
     function closeAllFs() {
