@@ -1355,6 +1355,10 @@
       </section>
 
       <div class="tiles">
+        <button class="tile" type="button" data-act="Сканувати QR-код">
+          <span class="tile-ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><path d="M3 7V5a2 2 0 012-2h2M17 3h2a2 2 0 012 2v2M21 17v2a2 2 0 01-2 2h-2M7 21H5a2 2 0 01-2-2v-2"/><rect x="7" y="7" width="4" height="4" rx=".5"/><rect x="13" y="7" width="4" height="4" rx=".5"/><rect x="7" y="13" width="4" height="4" rx=".5"/><path d="M13 13h1.5v1.5H13V13zm2.5 0H17v1.5h-1.5V13zm-2.5 2.5h1.5V17H13v-1.5zm2.5 0H17V17h-1.5v-1.5z"/></svg></span>
+          <span class="tile-label">Сканувати<br>QR-код</span>
+        </button>
         <button class="tile" type="button" data-act="Військові облігації">
           <span class="tile-ico"><svg width="34" height="52" viewBox="12 0 76 116" fill="none" stroke="#fff" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"><path d="M50 24V84"/><path d="M26 34V62Q26 76 40 76H60Q74 76 74 62V34"/><path d="M33 62H67"/><path d="M50 76V104"/><g fill="#fff" stroke="none"><path d="M50 4L42 26L50 22L58 26Z"/><path d="M26 16L19 38L26 34L33 38Z"/><path d="M74 16L67 38L74 34L81 38Z"/><path d="M50 112L44 98H56Z"/></g></svg></span>
           <span class="tile-label">Військові<br>облігації</span>
@@ -5794,293 +5798,270 @@
     })();
 
 
-    /* ===== i18n (uk / en) — static dictionary, instant, offline ===== */
+    /* ===== i18n (uk / en) — LingvaNex API translation ===== */
     (function () {
       var K_LANG = 'diia_lang';
-      var I18N = {
-        uk: {
-          'settings.language': 'Мова',
-          'settings.languageSub': 'Українська',
-          'settings.title': 'Налаштування',
-          'settings.code': 'Змінити код для входу',
-          'settings.autolock': 'Автоблокування',
-          'settings.face': 'Дозволити Face ID',
-          'settings.notif': 'Дозволити сповіщення',
-          'settings.close': 'Закрити',
-          'nav.home': 'Головна',
-          'nav.services': 'Послуги',
-          'nav.ai': 'Дія.AI',
-          'nav.docs': 'Документи',
-          'nav.menu': 'Меню',
-          'greet': 'Привіт',
-          'pin.title': 'Код для входу',
-          'pin.forgot': 'Не пам’ятаю код для входу',
-          'menu.settings': 'Налаштування',
-          'menu.update': 'Оновити застосунок',
-          'menu.notifs': 'Повідомлення',
-          'menu.signs': 'Історія підписань',
-          'menu.devices': 'Пристрої',
-          'menu.support': 'Підтримка',
-          'menu.faq': 'Питання та відповіді',
-          'menu.deviceId': 'Номер пристрою',
-          'tile.bonds': 'Військові облігації',
-          'tile.noconnect': 'Відсутній зв’язок',
-          'card.nezlam': 'Незламність',
-          'card.nezlam.p': 'Мапа укриттів, Пунктів незламності та відділень Power Banking. Заява про відсутній зв’язок.',
-          'upd.title': 'Оновлення застосунку',
-          'upd.check': 'Перевірити оновлення',
-          'upd.close': 'Закрити',
-          'common.back': 'Назад',
-          'common.cancel': 'Скасувати',
-          'common.save': 'Зберегти',
-          'auth.lead': 'Увійдіть, щоб користуватися цифровими документами та послугами',
-          'welcome': 'Привіт',
-          'scan.title': 'Сканувати QR-код',
-          'scan.hint': 'Наведіть камеру на QR-код'
-        },
-        en: {
-          'settings.language': 'Language',
-          'settings.languageSub': 'English',
-          'settings.title': 'Settings',
-          'settings.code': 'Change login code',
-          'settings.autolock': 'Auto-lock',
-          'settings.face': 'Allow Face ID',
-          'settings.notif': 'Allow notifications',
-          'settings.close': 'Close',
-          'nav.home': 'Home',
-          'nav.services': 'Services',
-          'nav.ai': 'Diia.AI',
-          'nav.docs': 'Documents',
-          'nav.menu': 'Menu',
-          'greet': 'Hi',
-          'pin.title': 'Login code',
-          'pin.forgot': 'I forgot my login code',
-          'menu.settings': 'Settings',
-          'menu.update': 'Update app',
-          'menu.notifs': 'Notifications',
-          'menu.signs': 'Signing history',
-          'menu.devices': 'Devices',
-          'menu.support': 'Support',
-          'menu.faq': 'FAQ',
-          'menu.deviceId': 'Device ID',
-          'tile.bonds': 'Military bonds',
-          'tile.noconnect': 'No connection',
-          'card.nezlam': 'Resilience',
-          'card.nezlam.p': 'Shelter map, Resilience Points and Power Banking branches. Report missing connection.',
-          'upd.title': 'App update',
-          'upd.check': 'Check for updates',
-          'upd.close': 'Close',
-          'common.back': 'Back',
-          'common.cancel': 'Cancel',
-          'common.save': 'Save',
-          'auth.lead': 'Sign in to use digital documents and services',
-          'welcome': 'Hi',
-          'scan.title': 'Scan QR code',
-          'scan.hint': 'Point the camera at the QR code'
-        }
-      };
-
-      /* Full UI string map for bulk replace (uk source -> en) */
-      var BULK = {
-        'Налаштування': 'Settings',
-        'Змінити код для входу': 'Change login code',
-        'Автоблокування': 'Auto-lock',
-        'Дозволити Face ID': 'Allow Face ID',
-        'Дозволити сповіщення': 'Allow notifications',
-        'Закрити': 'Close',
-        'Головна': 'Home',
-        'Послуги': 'Services',
-        'Документи': 'Documents',
-        'Меню': 'Menu',
-        'Привіт': 'Hi',
-        'Код для входу': 'Login code',
-        'Не пам’ятаю код для входу': 'I forgot my login code',
-        'Оновити застосунок': 'Update app',
-        'Повідомлення': 'Notifications',
-        'Історія підписань': 'Signing history',
-        'Пристрої': 'Devices',
-        'Підтримка': 'Support',
-        'Питання та відповіді': 'FAQ',
-        'Номер пристрою': 'Device ID',
-        'Військові облігації': 'Military bonds',
-        'Військові<br>облігації': 'Military<br>bonds',
-        'Відсутній зв’язок': 'No connection',
-        'Відсутній<br>зв’язок': 'No<br>connection',
-        'Незламність': 'Resilience',
-        'Оновлення застосунку': 'App update',
-        'Перевірити оновлення': 'Check for updates',
-        'Скасувати': 'Cancel',
-        'Зберегти': 'Save',
-        'Назад': 'Back',
-        'Сканувати QR-код': 'Scan QR code',
-        'Наведіть камеру на QR-код': 'Point the camera at the QR code',
-        'Сканувати ще': 'Scan again',
-        'Позначити прочитаним': 'Mark as read',
-        'Позначити всі прочитаними': 'Mark all as read',
-        'Повідомлень ще немає.': 'No notifications yet.',
-        'Тут з’являться сповіщення застосунку.': 'App notifications will appear here.',
-        'Історія підписань порожня.': 'Signing history is empty.',
-        'Тут з’являться ваші підписані документи.': 'Your signed documents will appear here.',
-        'Ваше звернення': 'Your request',
-        'Надіслати': 'Send',
-        'Опишіть проблему або запитання…': 'Describe the issue or question…',
-        'Ми відповімо якнайшвидше. Середній час відповіді — до 24 годин.': 'We will reply as soon as possible. Average response time is up to 24 hours.',
-        'Попередні звернення': 'Previous requests',
-        'Надіслано': 'Sent',
-        'Введіть текст звернення': 'Enter your message',
-        'Звернення надіслано': 'Request sent',
-        'Номер пристрою скопійовано': 'Device ID copied',
-        'Пристрій відключено': 'Device disconnected',
-        'Підключено:': 'Connected:',
-        'цей пристрій': 'this device',
-        'Відключити': 'Disconnect',
-        'Якщо ви не впізнаєте пристрій — відключіть його для безпеки.': 'If you do not recognise a device, disconnect it for security.',
-        'Одразу': 'Immediately',
-        '30 с': '30 s',
-        '1 хв': '1 min',
-        '5 хв': '5 min',
-        '15 хв': '15 min',
-        'Блокування після 1 хвилини у фоні': 'Lock after 1 minute in background',
-        'Мапа укриттів, Пунктів незламності та<br>відділень Power Banking.<br>Заява про відсутній зв’язок.': 'Shelter map, Resilience Points and<br>Power Banking branches.<br>Report missing connection.',
-        'Накопичено кешбеку за жовтень': 'Cashback earned in October',
-        'Увійти через БанкID': 'Sign in with BankID',
-        'БанкID': 'BankID',
-        'Дія.Підпис': 'Diia.Sign',
-        'Дія.AI': 'Diia.AI',
-        'Зимова єПідтримка': 'Winter eSupport',
-        'Національний кешбек': 'National cashback',
-        'Оберіть банк': 'Choose a bank',
-        'Пошук': 'Search',
-        'Нічого не знайдено': 'Nothing found',
-        'Продовжити': 'Continue',
-        'Підтвердити': 'Confirm',
-        'Видалити': 'Delete',
-        'Очистити кеш': 'Clear cache',
-        'Версія': 'Version',
-        'Застосунок оновлено': 'App updated',
-        'Доступне оновлення': 'Update available',
-        'Останні зміни': 'Latest changes',
-        'Оновити': 'Update',
-        'Пізніше': 'Later',
-        'Документ': 'Document',
-        'Підписано': 'Signed',
-        'Успішно': 'Success',
-        'Помилка': 'Error',
-        'Служба підтримки': 'Support service',
-        'Ваше звернення прийнято. Очікуйте відповіді.': 'Your request has been received. Please wait for a reply.',
-        'Скопійовано': 'Copied',
-        'Так, цікаво': 'Yes, interested',
-        'Які облігації зараз доступні?': 'Which bonds are available now?',
-        'Мова': 'Language',
-        'Українська': 'Ukrainian',
-        'English': 'English'
-      };
+      var K_CACHE = 'diia_i18n_cache_v2';
+      var API_URL = 'https://api-b2b.backenster.com/b1/api/v3/translate';
+      var API_KEY = 'a_Gsn4KHjYHEyNOen5ufZ7S1eufumV4r6RqrlOTjYXsUAuOAyqwcEnZvNeqZMasjrtJKzBLCprYsneSESP';
+      var LANG_MAP = { uk: 'uk_UA', en: 'en_US' };
+      var translating = false;
+      var originals = null; /* Map of node -> original text/attr, built once from Ukrainian DOM */
 
       var cur = (function () {
         try { return localStorage.getItem(K_LANG) || 'uk'; } catch (e) { return 'uk'; }
       })();
       if (cur !== 'uk' && cur !== 'en') cur = 'uk';
 
-      function t(key) {
-        var d = I18N[cur] || I18N.uk;
-        return d[key] || (I18N.uk[key] || key);
+      function loadCache() {
+        try {
+          var raw = localStorage.getItem(K_CACHE);
+          return raw ? JSON.parse(raw) : {};
+        } catch (e) { return {}; }
+      }
+      function saveCache(c) {
+        try { localStorage.setItem(K_CACHE, JSON.stringify(c)); } catch (e) {}
+      }
+
+      function collectNodes() {
+        var items = [];
+        var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null);
+        var node;
+        while ((node = walker.nextNode())) {
+          var v = node.nodeValue;
+          if (!v || !v.trim()) continue;
+          var parent = node.parentElement;
+          if (!parent) continue;
+          var tag = parent.tagName;
+          if (tag === 'SCRIPT' || tag === 'STYLE' || parent.closest('script,style,svg')) continue;
+          /* skip pure numbers / codes */
+          if (/^[\d\s.,:%€$₴+\-–—/()]+$/.test(v.trim())) continue;
+          items.push({ type: 'text', node: node, text: v });
+        }
+        document.querySelectorAll('[aria-label],[placeholder],[title],[alt]').forEach(function (el) {
+          ['aria-label', 'placeholder', 'title', 'alt'].forEach(function (a) {
+            var v = el.getAttribute(a);
+            if (!v || !v.trim()) return;
+            if (/^[\d\s.,:%€$₴+\-–—/()]+$/.test(v.trim())) return;
+            items.push({ type: 'attr', el: el, attr: a, text: v });
+          });
+        });
+        return items;
+      }
+
+      function captureOriginals() {
+        if (originals) return originals;
+        originals = collectNodes().map(function (it) {
+          return { type: it.type, node: it.node, el: it.el, attr: it.attr, text: it.text };
+        });
+        return originals;
+      }
+
+      function batchTranslate(texts, toCode) {
+        if (!texts.length) return Promise.resolve([]);
+        var chunks = [];
+        var size = 40;
+        for (var i = 0; i < texts.length; i += size) chunks.push(texts.slice(i, i + size));
+        var results = new Array(texts.length);
+        var chain = Promise.resolve();
+        chunks.forEach(function (chunk, ci) {
+          chain = chain.then(function () {
+            return fetch(API_URL, {
+              method: 'POST',
+              headers: {
+                'Authorization': API_KEY,
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+              },
+              body: JSON.stringify({
+                platform: 'api',
+                from: LANG_MAP.uk,
+                to: toCode,
+                data: chunk,
+                enableTransliteration: false
+              })
+            }).then(function (r) {
+              if (!r.ok) throw new Error('translate http ' + r.status);
+              return r.json();
+            }).then(function (j) {
+              var out = j && (j.result != null ? j.result : j);
+              if (!Array.isArray(out)) out = [out];
+              for (var k = 0; k < chunk.length; k++) {
+                results[ci * size + k] = (out[k] != null ? String(out[k]) : chunk[k]);
+              }
+            }).catch(function (err) {
+              console.warn('LingvaNex translate error', err);
+              for (var k = 0; k < chunk.length; k++) results[ci * size + k] = chunk[k];
+            });
+          });
+        });
+        return chain.then(function () { return results; });
+      }
+
+      function applyToNodes(items, translated) {
+        items.forEach(function (it, i) {
+          var t = translated[i];
+          if (t == null) return;
+          if (it.type === 'text' && it.node) {
+            try { it.node.nodeValue = t; } catch (e) {}
+          } else if (it.type === 'attr' && it.el) {
+            try { it.el.setAttribute(it.attr, t); } catch (e) {}
+          }
+        });
+      }
+
+      function restoreUkrainian() {
+        var items = captureOriginals();
+        items.forEach(function (it) {
+          if (it.type === 'text' && it.node) {
+            try { it.node.nodeValue = it.text; } catch (e) {}
+          } else if (it.type === 'attr' && it.el) {
+            try { it.el.setAttribute(it.attr, it.text); } catch (e) {}
+          }
+        });
+        document.documentElement.lang = 'uk';
+        var sel = document.getElementById('langSelect');
+        if (sel) sel.value = 'uk';
+        var sub = document.getElementById('setLangSub');
+        if (sub) sub.textContent = 'Українська';
+        if (typeof syncSettingsUI === 'function') try { syncSettingsUI(); } catch (e) {}
       }
 
       function applyLang(lang) {
         if (lang !== 'uk' && lang !== 'en') return;
+        if (translating) return;
         cur = lang;
         try { localStorage.setItem(K_LANG, lang); } catch (e) {}
-        document.documentElement.lang = lang === 'en' ? 'en' : 'uk';
 
-        /* data-i18n elements */
-        document.querySelectorAll('[data-i18n]').forEach(function (el) {
-          var k = el.getAttribute('data-i18n');
-          if (k) el.textContent = t(k);
-        });
-        document.querySelectorAll('[data-i18n-html]').forEach(function (el) {
-          var k = el.getAttribute('data-i18n-html');
-          if (k) el.innerHTML = t(k);
-        });
-        document.querySelectorAll('[data-i18n-placeholder]').forEach(function (el) {
-          var k = el.getAttribute('data-i18n-placeholder');
-          if (k) el.setAttribute('placeholder', t(k));
-        });
-
-        /* Bulk text walk for remaining static Ukrainian */
-        if (lang === 'en') {
-          var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null);
-          var node, nodes = [];
-          while ((node = walker.nextNode())) {
-            var v = node.nodeValue;
-            if (!v || !v.trim()) continue;
-            var parent = node.parentElement;
-            if (parent && (parent.tagName === 'SCRIPT' || parent.tagName === 'STYLE' || parent.closest('script,style'))) continue;
-            nodes.push(node);
-          }
-          nodes.forEach(function (n) {
-            var v = n.nodeValue;
-            var out = v;
-            Object.keys(BULK).forEach(function (uk) {
-              if (out.indexOf(uk) !== -1) out = out.split(uk).join(BULK[uk]);
-            });
-            if (out !== v) n.nodeValue = out;
-          });
-          /* attributes */
-          document.querySelectorAll('[aria-label],[placeholder],[title],[alt]').forEach(function (el) {
-            ['aria-label', 'placeholder', 'title', 'alt'].forEach(function (a) {
-              var v = el.getAttribute(a);
-              if (!v) return;
-              var out = v;
-              Object.keys(BULK).forEach(function (uk) {
-                if (out.indexOf(uk) !== -1) out = out.split(uk).join(BULK[uk]);
-              });
-              if (out !== v) el.setAttribute(a, out);
-            });
-          });
-        } else {
-          /* switching back to UK: reload is cleanest & fast for SPA shell */
-          location.reload();
+        if (lang === 'uk') {
+          restoreUkrainian();
           return;
         }
 
+        /* English via API */
+        document.documentElement.lang = 'en';
         var sel = document.getElementById('langSelect');
-        if (sel) sel.value = lang;
+        if (sel) sel.value = 'en';
         var sub = document.getElementById('setLangSub');
-        if (sub) sub.textContent = lang === 'en' ? 'English' : 'Українська';
+        if (sub) sub.textContent = 'English';
 
-        /* auto-lock labels already handled by bulk; refresh subtitle if needed */
-        if (typeof syncSettingsUI === 'function') try { syncSettingsUI(); } catch (e) {}
+        var items = captureOriginals();
+        var texts = items.map(function (it) { return it.text; });
+        var unique = [];
+        var indexMap = [];
+        var seen = {};
+        texts.forEach(function (t, i) {
+          if (seen[t] != null) {
+            indexMap[i] = seen[t];
+          } else {
+            seen[t] = unique.length;
+            indexMap[i] = unique.length;
+            unique.push(t);
+          }
+        });
+
+        var cache = loadCache();
+        var cacheKey = 'en';
+        if (!cache[cacheKey]) cache[cacheKey] = {};
+        var need = [];
+        var needIdx = [];
+        unique.forEach(function (t, i) {
+          if (cache[cacheKey][t]) return;
+          need.push(t);
+          needIdx.push(i);
+        });
+
+        function finish(map) {
+          var translated = texts.map(function (t, i) {
+            var u = unique[indexMap[i]];
+            return map[u] || t;
+          });
+          applyToNodes(items, translated);
+          if (typeof syncSettingsUI === 'function') try { syncSettingsUI(); } catch (e) {}
+          translating = false;
+          if (typeof showToast === 'function') showToast('Language: English');
+        }
+
+        if (!need.length) {
+          finish(cache[cacheKey]);
+          return;
+        }
+
+        translating = true;
+        if (typeof showToast === 'function') showToast('Translating…');
+        batchTranslate(need, LANG_MAP.en).then(function (results) {
+          need.forEach(function (t, i) {
+            cache[cacheKey][t] = results[i];
+          });
+          saveCache(cache);
+          finish(cache[cacheKey]);
+        });
+      }
+
+      function t(key) {
+        /* minimal static for UI that must work offline before API */
+        var staticMap = {
+          uk: {
+            'settings.language': 'Мова',
+            'settings.languageSub': 'Українська',
+            'settings.title': 'Налаштування',
+            'nav.home': 'Головна',
+            'nav.services': 'Послуги',
+            'nav.ai': 'Дія.AI',
+            'nav.docs': 'Документи',
+            'nav.menu': 'Меню',
+            'greet': 'Привіт',
+            'pin.title': 'Код для входу',
+            'common.back': 'Назад',
+            'common.cancel': 'Скасувати',
+            'common.save': 'Зберегти',
+            'scan.title': 'Сканувати QR-код',
+            'scan.hint': 'Наведіть камеру на QR-код'
+          },
+          en: {
+            'settings.language': 'Language',
+            'settings.languageSub': 'English',
+            'settings.title': 'Settings',
+            'nav.home': 'Home',
+            'nav.services': 'Services',
+            'nav.ai': 'Diia.AI',
+            'nav.docs': 'Documents',
+            'nav.menu': 'Menu',
+            'greet': 'Hi',
+            'pin.title': 'Login code',
+            'common.back': 'Back',
+            'common.cancel': 'Cancel',
+            'common.save': 'Save',
+            'scan.title': 'Scan QR code',
+            'scan.hint': 'Point the camera at the QR code'
+          }
+        };
+        var d = staticMap[cur] || staticMap.uk;
+        return d[key] || (staticMap.uk[key] || key);
       }
 
       window.diiaI18n = { t: t, apply: applyLang, get: function () { return cur; } };
 
-      document.addEventListener('DOMContentLoaded', function () {
+      function bindSelect() {
         var sel = document.getElementById('langSelect');
-        if (sel) {
-          sel.value = cur;
-          sel.addEventListener('change', function () {
-            applyLang(sel.value);
-            if (typeof haptic === 'function') haptic('medium');
-          });
-        }
-        if (cur === 'en') {
-          /* defer slightly so DOM is fully built */
-          setTimeout(function () { applyLang('en'); }, 50);
-        }
+        if (!sel || sel._diiaBound) return;
+        sel._diiaBound = true;
+        sel.value = cur;
+        sel.addEventListener('change', function () {
+          applyLang(sel.value);
+          if (typeof haptic === 'function') haptic('medium');
+        });
+      }
+
+      document.addEventListener('DOMContentLoaded', function () {
+        bindSelect();
+        if (cur === 'en') setTimeout(function () { applyLang('en'); }, 120);
       });
-      /* also run if DOM already ready */
       if (document.readyState !== 'loading') {
         setTimeout(function () {
-          var sel = document.getElementById('langSelect');
-          if (sel) {
-            sel.value = cur;
-            sel.addEventListener('change', function () {
-              applyLang(sel.value);
-              if (typeof haptic === 'function') haptic('medium');
-            });
-          }
+          bindSelect();
           if (cur === 'en') applyLang('en');
-        }, 80);
+        }, 100);
       }
     })();
 
