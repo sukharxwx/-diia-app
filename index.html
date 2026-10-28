@@ -744,7 +744,7 @@
   .pg {
     flex: 0 0 100%;
     width: 100%;
-    padding: 0 14px;
+    padding: 0 16px;
     scroll-snap-align: center;
     scroll-snap-stop: always;
     overflow: hidden;
@@ -752,12 +752,15 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    box-sizing: border-box;
   }
 
   .flip-card {
     position: relative;
     width: 100%;
-    max-width: 400px;
+    max-width: 380px;
+    margin-left: auto;
+    margin-right: auto;
     height: min(560px, calc(100dvh - var(--nav-height) - var(--sab) - var(--sat) - 56px));
     min-height: 440px;
     transform-style: preserve-3d;
@@ -914,7 +917,7 @@
     position: relative;
     z-index: 1;
   }
-  /* єДокумент / паспорт: стрічка під фото, над ПІБ (не внизу) */
+  /* єДокумент / паспорт: стрічка під фото, над ПІБ */
   .photo-layout .ticker {
     margin-top: 14px;
   }
@@ -922,7 +925,7 @@
     padding-top: 12px;
     padding-bottom: 18px;
   }
-  /* Карта платника податків: стрічка в самому низу */
+  /* Карта платника податків — стрічка в самому низу */
   .tax-layout .ticker {
     margin-top: auto;
   }
@@ -1012,7 +1015,7 @@
     letter-spacing: 0.06em;
   }
 
-  .pg-add { display: flex; flex-direction: column; gap: 14px; width: 100%; max-width: 400px; }
+  .pg-add { display: flex; flex-direction: column; gap: 14px; width: 100%; max-width: 380px; margin-left: auto; margin-right: auto; }
   .acard {
     position: relative;
     flex: 1;
@@ -1522,7 +1525,8 @@
     .dcard { padding: 16px 14px 0; }
     .ticker { margin-left: -14px; margin-right: -14px; }
     .photo-layout .ticker { margin-top: 12px; }
-    .tax-layout .ticker, .dcard:not(.photo-layout):not(.tax-layout) .ticker { margin-top: auto; }
+    .tax-layout .ticker,
+    .dcard:not(.photo-layout):not(.tax-layout) .ticker { margin-top: auto; }
     .scard { min-height: 92px; padding: 12px 10px 10px; }
     .sl { font-size: 12px; }
   }
