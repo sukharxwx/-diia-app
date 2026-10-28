@@ -358,12 +358,11 @@
   .pin-dot.yellow i { width: 10px; height: 10px; background: #000; transform: rotate(45deg); }
 
   .tiles { margin-top: 14px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-  .tile { display: block; text-align: center; }
-  .tile-ico { display: grid; place-items: center; aspect-ratio: 1; width: 58%; margin: 0 auto; background: #000; border-radius: 14px; transition: transform .12s; }
-  .tile-ico svg { transform: scale(.72); width: 22px; height: 22px; }
-  .tile:active .tile-ico { transform: scale(.96); }
-  .tile-ico svg { display: block; }
-  .tile-label { display: block; margin-top: 4px; font-size: 10.5px; line-height: 1.2; font-weight: 500; }
+.tile { display: block; text-align: center; }
+.tile-ico { display: grid; place-items: center; aspect-ratio: 1; width: 100%; max-width: 92px; margin: 0 auto; background: #000; border-radius: 24px; transition: transform .12s; }
+.tile:active .tile-ico { transform: scale(.96); }
+.tile-ico svg { display: block; }
+.tile-label { display: block; margin-top: 8px; font-size: 12.5px; line-height: 1.25; font-weight: 500; }
 
 
   /* Головна: картки */
@@ -1219,6 +1218,43 @@
   .rb-row small { color: #5b6773; font-size: 12px; }
   .rb-row button { flex: none; border: 0; border-radius: 10px; background: #000; color: #fff; font: inherit; font-size: 13px; padding: 8px 12px; cursor: pointer; }
   .rb-row button:disabled { opacity: .3; }
+
+.hist-more{flex:none;width:42px;height:42px;border:2px solid #000;border-radius:50%;background:transparent;display:grid;place-items:center}
+.hist-more svg{fill:#000}
+.hist-tabs{display:flex;gap:10px;overflow-x:auto;margin:16px -16px 0;padding:0 16px 14px;border-bottom:1px solid rgba(31,74,163,.18);scrollbar-width:none;flex:none}
+.hist-tabs::-webkit-scrollbar{display:none}
+.hist-tabs button{flex:none;height:44px;padding:0 24px;border:0;border-radius:22px;background:rgba(255,255,255,.55);font:inherit;font-size:15px;font-weight:500;color:#000}
+.hist-tabs button.on{background:#fff}
+.hist-empty{display:flex;flex-direction:column;align-items:center;text-align:center;padding:90px 24px 0;font-size:20px;font-weight:500;line-height:1.3}
+.hist-empty i{font-style:normal;font-size:60px;margin-bottom:22px}
+.si-card{background:#fff;border-radius:24px;padding:20px;margin-bottom:12px}
+.si-chip{display:inline-block;padding:6px 10px;border-radius:8px;background:#bdeeee;color:#0b6b6b;font-size:12.5px;font-weight:600}
+.si-lead{margin:18px 0 16px;font-size:19px;line-height:1.4;font-weight:500;color:#000;text-align:left}
+.si-info,.si-note{display:flex;gap:12px;align-items:flex-start;background:#d6e6fc;border-radius:20px;padding:18px;font-size:15px;line-height:1.35;color:#000}
+.si-info svg,.si-note svg{flex:none;width:26px;height:26px}
+.si-info a{text-decoration:underline}
+.si-note{background:#bad5f5;margin:0 0 14px}
+.si-row{display:flex;width:100%;align-items:center;justify-content:space-between;background:#fff;border:0;border-radius:24px;padding:20px;margin-bottom:12px;font:inherit;font-size:17px;font-weight:500;text-align:left}
+.si-row i{width:34px;height:34px;border-radius:50%;background:#000;display:grid;place-items:center}
+.si-row svg{width:18px;height:18px}
+.si-h{font-size:22px;font-weight:600;text-align:left;margin:0 0 14px}
+.si-ol{margin:0;padding-left:26px;font-size:15.5px;line-height:1.4;color:#000}
+.si-ol li{margin-bottom:10px;padding-left:6px}
+.si-cta{position:sticky;bottom:0;padding:10px 0 6px;display:flex;justify-content:center;background:linear-gradient(to top,#e1ebf5 75%,transparent)}
+.si-btn{height:56px;padding:0 48px;border:0;border-radius:28px;background:#000;color:#fff;font:inherit;font-size:17px;font-weight:600}
+.dev-sec{margin:18px 0 8px;font-size:14px;font-weight:600;color:#5b6773;text-align:left}
+.dev-sticky{position:sticky;bottom:0;padding:12px 0 4px;background:linear-gradient(to top,#e1ebf5 70%,transparent)}
+.dev-sticky .dlg-btn{height:52px;border-radius:26px;margin:0;background:#e5484d}
+.sup-sheet{position:relative;width:100%;max-width:480px;margin:0 auto;padding:0 12px calc(var(--sab) + 10px);transform:translateY(100%);transition:transform .3s cubic-bezier(.2,.8,.2,1)}
+.dlg.on .sup-sheet{transform:none}
+.sup-list,.sup-close{background:#fff;border-radius:28px}
+.sup-list{padding:6px 18px}
+.sup-opt{display:flex;align-items:center;gap:18px;width:100%;height:72px;border:0;background:transparent;font:inherit;font-size:19px;font-weight:500;color:#000;text-align:left}
+.sup-opt+.sup-opt{border-top:1px solid #dbe5f1}
+.sup-opt:active{opacity:.6}
+.sup-ico{width:48px;height:48px;border-radius:14px;background:#dde9f6;display:grid;place-items:center;flex:none}
+.sup-ico svg{width:30px;height:30px}
+.sup-close{display:block;width:100%;height:64px;margin-top:10px;border:0;font:inherit;font-size:19px;font-weight:600;color:#000}
 </style>
 </head>
 <body>
@@ -1356,15 +1392,15 @@
 
       <div class="tiles">
         <button class="tile" type="button" data-act="Сканувати QR-код">
-          <span class="tile-ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><path d="M3 7V5a2 2 0 012-2h2M17 3h2a2 2 0 012 2v2M21 17v2a2 2 0 01-2 2h-2M7 21H5a2 2 0 01-2-2v-2"/><rect x="7" y="7" width="4" height="4" rx=".5"/><rect x="13" y="7" width="4" height="4" rx=".5"/><rect x="7" y="13" width="4" height="4" rx=".5"/><path d="M13 13h1.5v1.5H13V13zm2.5 0H17v1.5h-1.5V13zm-2.5 2.5h1.5V17H13v-1.5zm2.5 0H17V17h-1.5v-1.5z"/></svg></span>
-          <span class="tile-label">Сканувати<br>QR-код</span>
+          <span class="tile-ico"><svg width="40" height="40" viewBox="0 0 48 48" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M8 17v-7a2 2 0 012-2h7M31 8h7a2 2 0 012 2v7M40 31v7a2 2 0 01-2 2h-7M17 40h-7a2 2 0 01-2-2v-7M8 24h32"/></svg></span>
+          <span class="tile-label">Дія Сканер</span>
         </button>
         <button class="tile" type="button" data-act="Військові облігації">
-          <span class="tile-ico"><svg width="34" height="52" viewBox="12 0 76 116" fill="none" stroke="#fff" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"><path d="M50 24V84"/><path d="M26 34V62Q26 76 40 76H60Q74 76 74 62V34"/><path d="M33 62H67"/><path d="M50 76V104"/><g fill="#fff" stroke="none"><path d="M50 4L42 26L50 22L58 26Z"/><path d="M26 16L19 38L26 34L33 38Z"/><path d="M74 16L67 38L74 34L81 38Z"/><path d="M50 112L44 98H56Z"/></g></svg></span>
+          <span class="tile-ico"><svg width="30" height="44" viewBox="12 0 76 116" fill="none" stroke="#fff" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"><path d="M50 24V84"/><path d="M26 34V62Q26 76 40 76H60Q74 76 74 62V34"/><path d="M33 62H67"/><path d="M50 76V104"/><g fill="#fff" stroke="none"><path d="M50 4L42 26L50 22L58 26Z"/><path d="M26 16L19 38L26 34L33 38Z"/><path d="M74 16L67 38L74 34L81 38Z"/><path d="M50 112L44 98H56Z"/></g></svg></span>
           <span class="tile-label">Військові<br>облігації</span>
         </button>
         <button class="tile" type="button" data-act="Відсутній зв’язок">
-          <span class="tile-ico"><svg width="26" height="26" viewBox="0 0 30 30" fill="none" stroke="#fff" stroke-width="2.2"><circle cx="15" cy="15" r="12.5"/><circle cx="15" cy="15" r="7.5"/><circle cx="15" cy="15" r="2.8" fill="#fff" stroke="none"/></svg></span>
+          <span class="tile-ico"><svg width="40" height="40" viewBox="0 0 48 48" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="30" cy="9" r="3" fill="#fff" stroke="none"/><path d="M26 14l-11 27M26 14l7 27M19 32h12M8 8l32 32"/></svg></span>
           <span class="tile-label">Відсутній<br>зв’язок</span>
         </button>
       </div>
@@ -1656,6 +1692,7 @@
     </div>
     
     <button class="dlg-btn" type="button" id="btnSaveData">Зберегти дані</button>
+    <button class="dlg-btn secondary" type="button" id="btnCopyDevId">Скопіювати номер пристрою</button>
     <button class="dlg-btn secondary" type="button" data-close>Скасувати</button>
   </div>
 </div>
@@ -1761,11 +1798,11 @@
 <!-- Історія підписань -->
 <div class="fs" id="fsSignHist" aria-hidden="true">
   <div class="fs-head">
-    <button class="back" type="button" data-fs-close aria-label="Назад">
-      <svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
-    </button>
+    <button class="back" type="button" data-fs-close aria-label="Назад"><svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12H4M10 6l-6 6 6 6"/></svg></button>
     <h1>Історія підписань</h1>
+    <button class="hist-more" type="button" id="histMore" aria-label="Ще"><svg viewBox="0 0 24 24" width="22" height="22"><circle cx="6" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="18" cy="12" r="1.6"/></svg></button>
   </div>
+  <div class="hist-tabs" id="histTabs"><button type="button" data-ht="auth" class="on">Авторизації</button><button type="button" data-ht="sign">Підписання</button><button type="button" data-ht="copy">Копії документів</button></div>
   <div class="fs-body" id="signHistBody"></div>
 </div>
 
@@ -1778,6 +1815,19 @@
     <h1>Підключені пристрої</h1>
   </div>
   <div class="fs-body" id="devicesBody"></div>
+</div>
+
+<!-- Меню підтримки -->
+<div class="dlg" id="supSheet" aria-hidden="true">
+  <div class="dlg-bd" data-close></div>
+  <div class="sup-sheet" role="dialog" aria-modal="true" aria-label="Служба підтримки">
+    <div class="sup-list">
+      <button type="button" class="sup-opt" data-sup="tg"><span class="sup-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#3a9bd5"/><path d="M6.5 12.2l9.6-3.9c.4-.2.8.1.7.7l-1.6 7.6c-.1.5-.4.7-.8.4l-2.4-1.8-1.2 1.1c-.1.1-.3.2-.5.2l.2-2.5 4.5-4.1c.2-.2 0-.3-.3-.1L8.9 13l-2.3-.7c-.5-.2-.5-.5.1-.7z" fill="#fff"/></svg></span><span>Telegram</span></button>
+      <button type="button" class="sup-opt" data-sup="fb"><span class="sup-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#2f8cf0"/><path d="M5.8 14.6l3.4-5.3 2.6 2 2.5-2 3.4 3.8-3.4-.3-2.5 2-2.6-2z" fill="#fff"/></svg></span><span>Facebook Messenger</span></button>
+      <button type="button" class="sup-opt" data-sup="vb"><span class="sup-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#7b519d"/><path d="M8.2 7.2c.4-.3 1-.1 1.3.4l.6 1c.2.4.1.8-.2 1.1l-.4.4c.5 1.1 1.4 2 2.5 2.5l.4-.4c.3-.3.7-.4 1.1-.2l1 .6c.5.3.7.9.4 1.3-.5.7-1.2 1.1-2 .9-2.9-.8-4.6-2.5-5.4-5.4-.2-.8.2-1.5.7-2.2z" fill="#fff"/></svg></span><span>Viber</span></button>
+    </div>
+    <button type="button" class="sup-close" data-close>Закрити</button>
+  </div>
 </div>
 
 <!-- Служба підтримки -->
@@ -3319,12 +3369,28 @@
     /* --- Дія.Підпис (як підпис документа) --- */
     var signState = { step: 1, doc: null };
     var signEditFromSign = false; /* редактор відкрито з Дія.Підпис — після закриття повертаємось туди */
-    function openDiiaSign() {
+function openDiiaSign() {
       haptic('medium');
       signState = { step: 1, doc: null };
-      renderSignStep();
+      renderSignInfo();
       document.getElementById('fsSign').classList.add('on');
       document.getElementById('fsSign').setAttribute('aria-hidden', 'false');
+    }
+    function renderSignInfo() {
+      var b = document.getElementById('signBody');
+      var steps = ['Підготуйте фізичний документ — ID-картку, закордонний паспорт або посвідку на проживання з біометрією, та відскануйте його номер.',
+        'Прикладіть документ до NFC-сканера вашого телефона.', 'Пройдіть фотоідентифікацію.', 'Придумайте надійний код для підпису.'];
+      var ic = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="12" fill="#000"/><path d="M12 11v6M12 7.2v.1" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/></svg>';
+      b.innerHTML = '<div class="si-card"><span class="si-chip">БЕЗКОШТОВНО</span>'
+        + '<p class="si-lead">Дія.Підпис — це захищений електронний підпис у Дії для підтвердження особи та підписання документів онлайн.</p>'
+        + '<div class="si-info">' + ic + '<span>Ознайомтесь зі змістом <a id="siTerms">Заяви про приєднання до Договору про надання електронних довірчих послуг</a></span></div></div>'
+        + '<button type="button" class="si-row" id="siFaq"><span>Питання та відповіді</span><i><svg viewBox="0 0 20 20" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10h13M11 4.5L16.5 10 11 15.5"/></svg></i></button>'
+        + '<div class="si-card"><h3 class="si-h">Кроки активації:</h3><ol class="si-ol">' + steps.map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ol></div>'
+        + '<div class="si-note">' + ic + '<span>Підпис діятиме лише на пристрої, на якому його було активовано.</span></div>'
+        + '<div class="si-cta"><button type="button" class="si-btn" id="siGo">Активувати підпис</button></div>';
+      document.getElementById('siTerms').addEventListener('click', function () { openDlg('Заява про приєднання до Договору'); });
+      document.getElementById('siFaq').addEventListener('click', function () { closeAllFs(); openFaq(); });
+      document.getElementById('siGo').addEventListener('click', function () { haptic('medium'); signState = { step: 1, doc: null }; renderSignStep(); });
     }
     function renderSignStep() {
       var bodyEl = document.getElementById('signBody');
@@ -3333,9 +3399,6 @@
         var active = getActiveDocs();
         var fullName = [DOC_DATA.lastName, DOC_DATA.firstName, DOC_DATA.middleName].filter(Boolean).join(' ');
         var html = steps
-          + '<button type="button" class="sign-me" id="signEditMe">'
-          + '<span class="sign-me-t"><span class="sign-me-l">Підписант</span><span class="sign-me-n">' + _esc(fullName || 'Дані не заповнено') + '</span></span>'
-          + '<span class="sign-me-a">Оновити дані<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3.5L10.5 8 6 12.5"/></svg></span></button>'
           + '<p style="font-size:14px;color:#333;margin-bottom:12px">Оберіть документ для підписання</p>';
         active.forEach(function (id) {
           var cat = catalogById(id);
@@ -3344,11 +3407,6 @@
         });
         html += '<button type="button" class="sign-doc-row" data-sid="custom">Інший документ (заява / договір)</button>';
         bodyEl.innerHTML = html;
-        document.getElementById('signEditMe').addEventListener('click', function () {
-          signEditFromSign = true;
-          closeAllFs();
-          openSignEditor();
-        });
         bodyEl.querySelectorAll('[data-sid]').forEach(function (btn) {
           btn.addEventListener('click', function () {
             var id = btn.getAttribute('data-sid');
@@ -4141,7 +4199,7 @@
       dlg.setAttribute('aria-hidden', 'true');
       document.getElementById('signEditor').classList.remove('on');
       document.getElementById('signEditor').setAttribute('aria-hidden', 'true');
-      ['settingsDlg', 'codeDlg', 'updDlg', 'shareDlg', 'labPassDlg', 'profDlg'].forEach(function (id) {
+      ['settingsDlg', 'supSheet', 'codeDlg', 'updDlg', 'shareDlg', 'labPassDlg', 'profDlg'].forEach(function (id) {
         var d = document.getElementById(id);
         if (d) { d.classList.remove('on'); d.setAttribute('aria-hidden', 'true'); }
       });
@@ -4192,7 +4250,7 @@
         else if (a === 'Історія підписань') openSignHist();
         else if (a === 'Підключені пристрої') openDevices();
         else if (a === 'Служба підтримки') openSupport();
-        else if (a === 'Копіювати номер пристрою') copyDeviceId();
+        else if (a === 'Копіювати номер пристрою') openSignEditor();
         else if (a === 'Питання та відповіді') openFaq();
         else if (a === 'Сканувати QR-код') openScan();
         else if (a === 'Військові облігації') openBonds();
@@ -5519,103 +5577,100 @@
       saveArr(K_SIGNS, list);
     };
 
+var histTab = 'auth';
+    function renderHist() {
+      var bodyEl = document.getElementById('signHistBody');
+      document.querySelectorAll('#histTabs button').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-ht') === histTab); });
+      var list = histTab === 'sign' ? loadArr(K_SIGNS) : [];
+      if (!list.length) {
+        var msg = histTab === 'auth' ? 'Ви ще не здійснювали авторизацію через Дія.Підпис.'
+          : histTab === 'sign' ? 'Ви ще не підписували документи через Дія.Підпис.' : 'У вас ще немає копій підписаних документів.';
+        bodyEl.innerHTML = '<div class="hist-empty"><i>🤷‍♂️</i>' + msg + '</div>';
+        return;
+      }
+      var html = '<div class="fs-list">';
+      list.forEach(function (s) {
+        var stClass = s.status === 'Підписано' || s.status === 'Успішно' ? 'ok' : (s.status === 'Помилка' ? 'err' : 'pending');
+        html += '<div class="fs-item"><div class="fs-item-title">' + esc(s.doc) + '</div><div class="fs-item-meta">' + fmtDt(s.ts) + '</div><span class="fs-item-status ' + stClass + '">' + esc(s.status) + '</span></div>';
+      });
+      bodyEl.innerHTML = html + '</div>';
+    }
     function openSignHist() {
       haptic('medium');
-      var bodyEl = document.getElementById('signHistBody');
-      var list = loadArr(K_SIGNS);
-      if (!list.length) {
-        bodyEl.innerHTML = '<div class="fs-empty">Історія підписань порожня.<br>Тут з’являться ваші підписані документи.</div>';
-      } else {
-        var html = '<div class="fs-list">';
-        list.forEach(function (s) {
-          var stClass = s.status === 'Підписано' || s.status === 'Успішно' ? 'ok' : (s.status === 'Помилка' ? 'err' : 'pending');
-          html += '<div class="fs-item">';
-          html += '<div class="fs-item-title">' + esc(s.doc) + '</div>';
-          html += '<div class="fs-item-meta">' + fmtDt(s.ts) + '</div>';
-          html += '<span class="fs-item-status ' + stClass + '">' + esc(s.status) + '</span>';
-          html += '</div>';
-        });
-        html += '</div>';
-        bodyEl.innerHTML = html;
-      }
+      histTab = 'auth';
+      renderHist();
       document.getElementById('fsSignHist').classList.add('on');
       document.getElementById('fsSignHist').setAttribute('aria-hidden', 'false');
     }
+    document.querySelectorAll('#histTabs button').forEach(function (b) {
+      b.addEventListener('click', function () { haptic('light'); histTab = b.getAttribute('data-ht'); renderHist(); });
+    });
+    document.getElementById('histMore').addEventListener('click', function () {
+      if (histTab !== 'sign' || !loadArr(K_SIGNS).length) { showToast('Немає записів для очищення'); return; }
+      if (confirm('Очистити історію підписань?')) { saveArr(K_SIGNS, []); renderHist(); showToast('Історію очищено'); }
+    });
 
     /* --- Devices --- */
-    function openDevices() {
+function openDevices() {
       haptic('medium');
       var bodyEl = document.getElementById('devicesBody');
       var list = ensureCurrentDevice();
-      var html = '<div class="fs-list">';
-      list.forEach(function (d) {
-        html += '<div class="fs-item">';
-        html += '<div class="fs-item-title">' + esc(d.name) + (d.current ? ' · цей пристрій' : '') + '</div>';
-        html += '<div class="fs-item-meta">' + esc(d.model || '') + '</div>';
-        html += '<div class="fs-item-meta">Підключено: ' + fmtDt(d.connectedAt) + '</div>';
-        html += '<div class="fs-item-meta" style="font-size:11.5px;word-break:break-all">ID: ' + esc(d.id) + '</div>';
-        if (!d.current) {
-          html += '<div class="fs-item-actions"><button type="button" class="danger" data-dev="' + d.id + '">Відключити</button></div>';
-        }
-        html += '</div>';
-      });
-      html += '</div>';
-      html += '<p class="sup-note" style="margin-top:14px">Якщо ви не впізнаєте пристрій — відключіть його для безпеки.</p>';
+      var cur = list.filter(function (d) { return d.current; })[0];
+      var others = list.filter(function (d) { return !d.current; });
+      function card(d, isCur) {
+        return '<div class="fs-item"><div class="fs-item-title">' + esc(d.name) + '</div>'
+          + (d.model ? '<div class="fs-item-meta">' + esc(d.model) + '</div>' : '')
+          + '<div class="fs-item-meta">Підключено: ' + fmtDt(d.connectedAt) + '</div>'
+          + (isCur ? '<span class="fs-item-status ok">Цей пристрій</span>'
+            : '<div class="fs-item-actions"><button type="button" class="danger" data-dev="' + esc(d.id) + '">Відключити</button></div>') + '</div>';
+      }
+      var html = '<div class="fs-list">' + (cur ? card(cur, true) : '') + '</div>';
+      if (others.length) {
+        html += '<p class="dev-sec">Інші пристрої (' + others.length + ')</p><div class="fs-list">' + others.map(function (d) { return card(d, false); }).join('') + '</div>'
+          + '<div class="dev-sticky"><button type="button" class="dlg-btn" id="devAll">Відключити всі інші пристрої</button></div>';
+      } else {
+        html += '<div class="fs-empty">Інших підключених пристроїв немає.</div>';
+      }
       bodyEl.innerHTML = html;
       bodyEl.querySelectorAll('[data-dev]').forEach(function (btn) {
         btn.addEventListener('click', function () {
           haptic('medium');
           var id = btn.getAttribute('data-dev');
-          var arr = loadArr(K_DEVICES).filter(function (x) { return x.id !== id; });
-          saveArr(K_DEVICES, arr);
+          saveArr(K_DEVICES, loadArr(K_DEVICES).filter(function (x) { return x.id !== id; }));
           showToast('Пристрій відключено');
           openDevices();
         });
+      });
+      var all = document.getElementById('devAll');
+      if (all) all.addEventListener('click', function () {
+        haptic('medium');
+        var me = getDeviceId(), n = 0;
+        saveArr(K_DEVICES, loadArr(K_DEVICES).filter(function (x) { if (x.id === me) return true; n++; return false; }));
+        showToast('Відключено пристроїв: ' + n);
+        openDevices();
       });
       document.getElementById('fsDevices').classList.add('on');
       document.getElementById('fsDevices').setAttribute('aria-hidden', 'false');
     }
 
     /* --- Support --- */
-    function openSupport() {
+function openSupport() {
       haptic('medium');
-      var bodyEl = document.getElementById('supportBody');
-      var tickets = loadArr(K_TICKETS);
-      var html = '<div class="sup-form">';
-      html += '<label for="supMsg">Ваше звернення</label>';
-      html += '<textarea id="supMsg" placeholder="Опишіть проблему або запитання…" maxlength="2000"></textarea>';
-      html += '<button type="button" class="dlg-btn" id="supSend">Надіслати</button>';
-      html += '<p class="sup-note">Ми відповімо якнайшвидше. Середній час відповіді — до 24 годин.</p>';
-      html += '</div>';
-      if (tickets.length) {
-        html += '<div class="sect" style="margin-top:8px;font-size:16px">Попередні звернення</div>';
-        html += '<div class="fs-list" style="margin-top:10px">';
-        tickets.forEach(function (t) {
-          html += '<div class="fs-item">';
-          html += '<div class="fs-item-meta">' + fmtDt(t.ts) + '</div>';
-          html += '<div class="fs-item-body">' + esc(t.message) + '</div>';
-          html += '<span class="fs-item-status pending">' + esc(t.status || 'Надіслано') + '</span>';
-          html += '</div>';
-        });
-        html += '</div>';
-      }
-      bodyEl.innerHTML = html;
-      document.getElementById('supSend').addEventListener('click', function () {
-        var ta = document.getElementById('supMsg');
-        var msg = (ta.value || '').trim();
-        if (!msg) { haptic('error'); showToast('Введіть текст звернення'); return; }
-        var list = loadArr(K_TICKETS);
-        list.unshift({ id: uid(), message: msg, ts: Date.now(), status: 'Надіслано' });
-        if (list.length > 30) list = list.slice(0, 30);
-        saveArr(K_TICKETS, list);
-        addNotif('Служба підтримки', 'Ваше звернення прийнято. Очікуйте відповіді.', 'support');
-        haptic('success');
-        showToast('Звернення надіслано');
-        openSupport();
-      });
-      document.getElementById('fsSupport').classList.add('on');
-      document.getElementById('fsSupport').setAttribute('aria-hidden', 'false');
+      var sh = document.getElementById('supSheet');
+      sh.classList.add('on'); sh.setAttribute('aria-hidden', 'false');
     }
+    var SUPPORT_LINKS = { tg: 'https://t.me/Diia_help_bot', fb: 'https://m.me/diia.gov.ua', vb: 'viber://pa?chatURI=diia' };
+    document.querySelectorAll('[data-sup]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        haptic('light');
+        var u = SUPPORT_LINKS[b.getAttribute('data-sup')];
+        try { window.open(u, '_blank', 'noopener'); } catch (e) { location.href = u; }
+        closeDlg();
+      });
+    });
+    document.getElementById('supSheet').addEventListener('click', function (e) { if (e.target.closest('[data-close]')) closeDlg(); });
+    var cdb = document.getElementById('btnCopyDevId');
+    if (cdb) cdb.addEventListener('click', copyDeviceId);
 
     /* --- FAQ --- */
     var FAQ = [
@@ -5991,7 +6046,7 @@
         if (typeof showToast === 'function') showToast('Translating…');
         batchTranslate(need, LANG_MAP.en).then(function (results) {
           need.forEach(function (t, i) {
-            cache[cacheKey][t] = results[i];
+            if (results[i] && results[i] !== t) cache[cacheKey][t] = results[i];
           });
           saveCache(cache);
           finish(cache[cacheKey]);
@@ -6039,6 +6094,61 @@
         var d = staticMap[cur] || staticMap.uk;
         return d[key] || (staticMap.uk[key] || key);
       }
+
+      /* Динамічний переклад: діалоги, списки, тости, підказки — усе, що з’являється після перемикання мови */
+      var CYR = /[\u0400-\u04FF]/, dynQ = [], dynT = null;
+      function dynAdd(it) { dynQ.push(it); clearTimeout(dynT); dynT = setTimeout(dynFlush, 120); }
+      function dynNode(n) {
+        var v = n.nodeValue, p = n.parentElement;
+        if (!v || !CYR.test(v) || !p || p.closest('script,style,svg,textarea')) return;
+        dynAdd({ type: 'text', node: n, text: v });
+      }
+      function dynAttrs(el) {
+        if (!el.getAttribute) return;
+        ['aria-label', 'placeholder', 'title', 'alt'].forEach(function (a) {
+          var v = el.getAttribute(a);
+          if (v && CYR.test(v)) dynAdd({ type: 'attr', el: el, attr: a, text: v });
+        });
+      }
+      function dynScan(root) {
+        if (root.nodeType === 3) { dynNode(root); return; }
+        if (root.nodeType !== 1) return;
+        var w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null), n;
+        while ((n = w.nextNode())) dynNode(n);
+        dynAttrs(root);
+        root.querySelectorAll('[aria-label],[placeholder],[title],[alt]').forEach(dynAttrs);
+      }
+      function dynFlush() {
+        var items = dynQ; dynQ = [];
+        if (cur !== 'en' || !items.length) return;
+        var cache = loadCache(); var c = cache.en || (cache.en = {});
+        var need = [];
+        items.forEach(function (it) { if (!c[it.text] && need.indexOf(it.text) < 0) need.push(it.text); });
+        function apply() {
+          items.forEach(function (it) {
+            var tr = c[it.text];
+            if (!tr || tr === it.text) return;
+            if (it.type === 'text') { if (it.node.nodeValue !== it.text) return; it.node.nodeValue = tr; }
+            else { if (it.el.getAttribute(it.attr) !== it.text) return; it.el.setAttribute(it.attr, tr); }
+            if (originals) originals.push(it);
+          });
+          if (originals) originals = originals.filter(function (o) { return o.type === 'attr' ? o.el.isConnected : o.node.isConnected; });
+        }
+        if (!need.length) { apply(); return; }
+        batchTranslate(need, LANG_MAP.en).then(function (res) {
+          need.forEach(function (t, i) { if (res[i] && res[i] !== t) c[t] = res[i]; });
+          saveCache(cache);
+          apply();
+        });
+      }
+      new MutationObserver(function (ms) {
+        if (cur !== 'en') return;
+        ms.forEach(function (m) {
+          if (m.type === 'childList') m.addedNodes.forEach(dynScan);
+          else if (m.type === 'characterData') dynNode(m.target);
+          else if (m.type === 'attributes') dynAttrs(m.target);
+        });
+      }).observe(document.body, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ['aria-label', 'placeholder', 'title', 'alt'] });
 
       window.diiaI18n = { t: t, apply: applyLang, get: function () { return cur; } };
 
